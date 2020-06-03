@@ -2,5 +2,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.catmousedog</groupId>
   <artifactId>fractals</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
+  
+  <dependencies>
+  	<!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+	<dependency>
+	    <groupId>org.jetbrains</groupId>
+	    <artifactId>annotations</artifactId>
+	    <version>16.0.1</version>
+	</dependency>
+  </dependencies>
+  
 </project>
