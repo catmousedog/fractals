@@ -85,6 +85,7 @@ public class Main {
 		add(new JLabel("test"), 1, 2);
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridy = 3;
+		//test
 		jpi.add(new JLabel("ttt"), gbc);
 	}
 	
