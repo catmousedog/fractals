@@ -1,7 +1,6 @@
 package me.catmousedog.fractals.components;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 
 import javax.swing.JLabel;
 
@@ -26,11 +25,4 @@ public class Label extends Component {
 		lbl = new JLabel(text);
 		add(lbl);
 	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		
-	}
-
 }
