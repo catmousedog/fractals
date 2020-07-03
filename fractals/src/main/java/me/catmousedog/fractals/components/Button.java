@@ -6,6 +6,7 @@ import javax.swing.JButton;
 
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("serial")
 public class Button extends Component {
 	
 	public Button(@NotNull JButton jb, @NotNull ActionListener e) {
