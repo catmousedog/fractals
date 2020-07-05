@@ -25,4 +25,9 @@ public class Label extends Component {
 		lbl = new JLabel(text);
 		add(lbl);
 	}
+	
+	public void setText(String text) {
+		lbl.setText(text);
+	}
+	
 }

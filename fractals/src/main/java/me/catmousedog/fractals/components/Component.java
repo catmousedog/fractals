@@ -10,9 +10,6 @@ import javax.swing.JPanel;
  */
 @SuppressWarnings("serial")
 public abstract class Component extends JPanel {
-	
-	
-	
 	public Component() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 	}

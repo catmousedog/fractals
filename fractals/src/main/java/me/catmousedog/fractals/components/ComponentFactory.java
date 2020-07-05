@@ -17,15 +17,15 @@ public final class ComponentFactory {
 		this.jpi = jpi;
 	}
 	
-	public Component createLabel(@NotNull String lbl, int style, int size) {
+	public Label createLabel(@NotNull String lbl, int style, int size) {
 		return new Label(lbl, style, size);
 	}
 	
-	public Component createLabel(@NotNull String lbl, int style) {
+	public Label createLabel(@NotNull String lbl, int style) {
 		return new Label(lbl, style);
 	}
 	
-	public Component createLabel(@NotNull String lbl) {
+	public Label createLabel(@NotNull String lbl) {
 		return new Label(lbl);
 	}
 	
@@ -36,11 +36,11 @@ public final class ComponentFactory {
 	 * @param e the ActionListener attached to the jtf
 	 * @return the TextField {@link Component}
 	 */
-	public Component createTextField(@Nullable String lbl, @NotNull JTextField jtf, @NotNull ActionListener e) {
+	public TextField createTextField(@Nullable String lbl, @NotNull JTextField jtf, @NotNull ActionListener e) {
 		return new TextField(lbl, jtf, jpi.getWidth() / 2, e);
 	}
 	
-	public Component createButton(JButton jb, ActionListener e) {
+	public Button createButton(JButton jb, ActionListener e) {
 		return new Button(jb, e);
 	}
 	

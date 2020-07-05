@@ -1,42 +1,41 @@
 package me.catmousedog.fractals.main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-/**
- * 
- */
+import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.IterativeMandelbrot;
+import me.catmousedog.fractals.fractals.ScalarField;
+
 public class Fractals {
 
 	private final Properties properties = new Properties();
 
 	private final JFrame frame;
-
+	
+	private final Fractal fractal;
+	
 	/**
 	 * JPanel where the images are rendered
 	 */
-	private final JPanel canvas;
+	private final ScalarField canvas;
 
 	/**
-	 * master panel on the right side containing {@link Fractal#jsp} and
-	 * {@link Fractals#feedback}
+	 * master panel on the right side containing {@link ScalarField#jsp} and
+	 * {@link Fractals#logger}
 	 */
 	private final JPanel rpanel;
 
 	/**
 	 * Logger containing a JPanel to display any feedback such as progress bars
 	 */
-	private final Logger feedback;
+	private final Logger logger;
 
 	/**
 	 * JPanel interface for the user
@@ -85,6 +84,13 @@ public class Fractals {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		//create fractal
+		fractal = new IterativeMandelbrot();
+		fractal.setIterations(1000);
+		
+		//create logger
+		logger = new Logger(iwidth + 2 * hgap, feedbackheight);
 
 		// create JFrame
 		frame = new JFrame(properties.getProperty("artifactId") + " " + properties.getProperty("version"));
@@ -92,25 +98,16 @@ public class Fractals {
 		frame.setLayout(new BorderLayout());
 
 		// create canvas
-		canvas = new JPanel();
-		canvas.setPreferredSize(new Dimension(width, height));
-		canvas.setBorder(BorderFactory.createLoweredBevelBorder());
-		canvas.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-//				System.out.println("Resized to " + e.getComponent().getSize());
-			}
-		});
-		canvas.setBackground(Color.LIGHT_GRAY);
+		canvas = new ScalarField(width, height, fractal, logger);
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 
 		// create right panel
 		rpanel = new JPanel();
 		rpanel.setPreferredSize(new Dimension(iwidth + 2 * hgap, height));
 		rpanel.setLayout(new BorderLayout());
-
+		
 		// create interface panel
-		jpi = new JPInterface(iwidth, vgap, hgap);
+		jpi = new JPInterface(iwidth, vgap, hgap, this);
 
 		// create scroll panel
 		jsp = new JScrollPane(jpi, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -119,8 +116,7 @@ public class Fractals {
 		rpanel.add(jsp, BorderLayout.CENTER);
 
 		// create feedback panel
-		feedback = new Logger(iwidth + 2 * hgap, feedbackheight);
-		rpanel.add(feedback, BorderLayout.PAGE_END);
+		rpanel.add(logger, BorderLayout.PAGE_END);
 
 		// add right panel
 		frame.getContentPane().add(rpanel, BorderLayout.LINE_END);
@@ -134,5 +130,19 @@ public class Fractals {
 
 		frame.validate();
 		
+		canvas.setLocation(0, 0, 0.001, 0.001, 0);
+		canvas.generate();
+		canvas.repaint();
+		
+		jpi.update();
 	}
+	
+	public ScalarField getCanvas() {
+		return canvas;
+	}
+	
+	public Logger getLogger() {
+		return logger;
+	}
+	
 }
