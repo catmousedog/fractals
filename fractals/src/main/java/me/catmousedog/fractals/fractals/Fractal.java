@@ -10,4 +10,8 @@ public abstract class Fractal {
 		iterations = i;
 	}
 	
+	public int getIterations() {
+		return iterations;
+	}
+	
 }

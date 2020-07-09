@@ -14,7 +14,12 @@ public class LinearTransform {
 	 * translation coordinates from complex origin
 	 */
 	private double dx, dy;
-
+	
+	/**
+	 * rotation angle in radians
+	 */
+	private double theta;
+	
 	/**
 	 * Translation coordinates in pixels. <br>
 	 * This should be half the width and height of the canvas.
@@ -28,7 +33,7 @@ public class LinearTransform {
 	 * @param y
 	 * @return array of transformed coordinates (tx, ty)
 	 */
-	public double[] transform(int x, int y) {
+	public double[] apply(int x, int y) {
 
 		// affine
 		double tx = x - ox;
@@ -59,6 +64,7 @@ public class LinearTransform {
 	 * @param t
 	 */
 	public void setTheta(double t) {
+		theta = t;
 		c = Math.cos(t);
 		s = Math.sin(t);
 	}
@@ -99,6 +105,10 @@ public class LinearTransform {
 	
 	public double getn() {
 		return n;
+	}
+	
+	public double gettheta() {
+		return theta;
 	}
 	
 }

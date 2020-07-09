@@ -1,22 +1,21 @@
 package me.catmousedog.fractals.main;
 
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import me.catmousedog.fractals.components.Component;
+//import me.catmousedog.fractals.components.Component;
 import me.catmousedog.fractals.components.ComponentFactory;
-import me.catmousedog.fractals.components.Label;
+import me.catmousedog.fractals.fractals.Canvas;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.ScalarField;
 
 /**
  * class containing all the data entered by the user through the interface panel
@@ -29,117 +28,201 @@ public class JPInterface extends JPanel {
 	 */
 	private final ComponentFactory factory;
 
-	private final ScalarField canvas;
+	private final Fractals fractals;
+
+	private final Canvas canvas;
 
 	private final Logger logger;
 
 	/**
+	 * true if the components have been created and the class has been fully
+	 * initialsed
+	 */
+	private boolean init = false;
+
+	/*
 	 * below are all the components that the user can interact with and their
-	 * respective data, if any
+	 * respective data
 	 */
 
-	private JTextField jtf1;
+	// window
+	private JTextField width, height;
 
-	private Label pos, zoom;
+	// location
+	private JLabel pos, zoom;
 
-	private JButton jb1;
+	// calculation
+	private JTextField iterations;
+
+	// colour
+	private JButton render;
+
+	// picture
+
+	// other
 
 	public JPInterface(int iwidth, int vgap, int hgap, Fractals fractals) {
 		factory = new ComponentFactory(this);
+		this.fractals = fractals;
 		canvas = fractals.getCanvas();
 		logger = fractals.getLogger();
-
-		canvas.addMouseListener(new Mouse());
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(iwidth, Integer.MAX_VALUE));
 		setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
+		addComponentListener(new ComponentListener() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				if (init) {
+					width.setText(Integer.toString(canvas.getPanel().getWidth()));
+					height.setText(Integer.toString(canvas.getPanel().getHeight()));
+				}
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+			}
+		});
 	}
 
 	/**
-	 * adds all the necessary JComponents
+	 * create and add all the JComponents
 	 */
 	public void addComponents() {
-		// window
-		add(factory.createLabel("Window", Font.BOLD, 15), 0, 10);
-		jtf1 = new JTextField(Integer.toString(this.getWidth()));
-		add(factory.createTextField("textfield", jtf1, a -> System.out.println(jtf1.getText())), 0, 10);
+		/* Window */
+		add(factory.create(factory.title("Window")));
+		add(factory.padding(10));
 
-		// location
-		add(factory.createLabel("Location", Font.BOLD, 15), 20, 10);
-		LinearTransform matrix = canvas.getMatrix();
-		pos = factory.createLabel(String.format("x:%f    y:%f", matrix.getdx(), matrix.getdy()));
-		add(pos, 0, 5);
-		zoom = factory.createLabel(String.format("m:%f    n:%f", matrix.getm(), matrix.getn()));
-		add(zoom, 0, 10);
-		jb1 = new JButton("Repaint");
-		add(factory.createButton(jb1, a -> {
-			canvas.generate();
-			canvas.repaint();
-		}), 0, 10);
+		// width textfield
+		width = new JTextField(Integer.toString(canvas.getPanel().getWidth()));
+		add(factory.create(factory.label("width"), factory.textField(width, "width of the canvas")));
+		add(factory.padding(5));
+		// height textfield
+		height = new JTextField(Integer.toString(canvas.getPanel().getWidth()));
+		add(factory.create(factory.label("height"), factory.textField(height, "height of the canvas")));
+		add(factory.padding(20));
 
-		// calculations
-		add(factory.createLabel("Calculations", Font.BOLD, 15), 20, 10);
+		/* Location */
+		add(factory.create(factory.title("Location")));
+		add(factory.padding(10));
+		// pos
+		pos = factory.label("Re:0.000000    Im:0.000000",
+				"the real and imaginary components of the central point of the canvas");
+		add(factory.create(pos));
+		add(factory.padding(5));
+		// zoom
+		zoom = factory.label("zoom: 0.000000    rot: 0.000000", "the zoom factor");
+		add(factory.create(zoom));
+		add(factory.padding(20));
 
-		// colors
-		add(factory.createLabel("Colors", Font.BOLD, 15), 20, 10);
+		/* Calculation */
+		add(factory.create(factory.title("Calculation")));
+		add(factory.padding(10));
+		// iterations
+		iterations = new JTextField(Integer.toString(canvas.getFractal().getIterations()));
+		add(factory.create(factory.label("iterations"), factory.textField(iterations, "the amount of iterations")));
+		add(factory.padding(5));
+		// render
+		render = new JButton("Render");
+		add(factory.create(factory.button(render, a -> {
+			render();
+		}, "saves user input and renders the image")));
+		add(factory.padding(20));
 
-		// picture
-		add(factory.createLabel("Picture", Font.BOLD, 15), 20, 10);
+		/* Colour */
+		add(factory.create(factory.title("Colour")));
+		add(factory.padding(20));
 
-		// other
-		add(factory.createLabel("Other", Font.BOLD, 15), 20, 10);
+		/* Picture */
+		add(factory.create(factory.title("Picture")));
+		add(factory.padding(20));
+
+		/* Other */
+		add(factory.create(factory.title("Other")));
+		add(factory.padding(20));
+
+		init = true;
 	}
 
 	/**
-	 * update all components
+	 * Grabs user input, restores any illegal inputs, generates the image and paints
+	 * it.
+	 */
+	public void render() {
+		boolean s = save();
+		update();
+
+		if (!s) {
+			logger.log("Illegal data, not rendering");
+			return;
+		}
+
+		long b = System.nanoTime();
+		canvas.generate();
+		canvas.getPanel().repaint();
+		long e = System.nanoTime();
+		logger.log(String.format("Rendered in %d ms!", (e - b) / 1000000));
+	}
+
+	/**
+	 * Opposite of {@link JPInterface#update()}, will take all values that the user
+	 * entered and apply/save it internally.<br>
+	 * When calling {@linkplain JPInterface#save()}, {@link JPInterface#update()}
+	 * should be called right after to make sure any illegal data, the user tried
+	 * entering, gets restored.
+	 * 
+	 * @return true if successful, false otherwise. It is advised to log a message
+	 *         if false is returned.
+	 */
+	public boolean save() {
+		boolean b = true;
+		/* Window */
+		try {
+			int w = Integer.parseInt(width.getText());
+			int h = Integer.parseInt(height.getText());
+			fractals.setSize(w, h);
+		} catch (NumberFormatException e) {
+			logger.log("window width and height must be integers");
+		}
+		/* Location */
+		/* Calculation */
+		try {
+			int i = Integer.parseInt(iterations.getText());
+			canvas.getFractal().setIterations(i);
+		} catch (NumberFormatException e) {
+			logger.log("iterations must be an integer");
+			b = false;
+		}
+		/* Colour */
+		/* Picture */
+		/* Other */
+		return b;
+	}
+
+	/**
+	 * Update all components by setting their values to the ones found from the
+	 * internal (hidden) data.
 	 */
 	public void update() {
-
-		// location
-		LinearTransform matrix = canvas.getMatrix();
-		pos.setText(String.format("x:%f    y:%f", matrix.getdx(), matrix.getdy()));
-		zoom.setText(String.format("m:%f    n:%f", matrix.getm(), matrix.getn()));
+		/* Window */
+		width.setText(Integer.toString(canvas.getPanel().getWidth()));
+		height.setText(Integer.toString(canvas.getPanel().getHeight()));
+		/* Location */
+		LinearTransform transform = canvas.getMatrix();
+		pos.setText(String.format("Re:%f    Im:%f", transform.getdx(), transform.getdy()));
+		zoom.setText(String.format("zoom:%f    rot:%f", 1/transform.getm(), transform.gettheta()));
+		/* Calculation */
+		iterations.setText(Integer.toString(canvas.getFractal().getIterations()));
+		/* Colour */
+		/* Picture */
+		/* Other */
 	}
-
-	/**
-	 * for adding components with extra padding
-	 * 
-	 * @param c  component to be added
-	 * @param v1 padding above
-	 * @param v2 padding below
-	 */
-	public void add(Component c, int v1, int v2) {
-		if (v1 > 0)
-			add(Box.createVerticalStrut(v1));
-		add(c);
-		if (v2 > 0)
-			add(Box.createVerticalStrut(v2));
-	}
-
-	private class Mouse implements MouseListener {
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-
-	}
-
 }

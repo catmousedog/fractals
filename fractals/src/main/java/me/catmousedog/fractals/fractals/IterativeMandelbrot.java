@@ -1,7 +1,7 @@
 package me.catmousedog.fractals.fractals;
 
 public final class IterativeMandelbrot extends Fractal {
-
+	
 	@Override
 	public double get(double cx, double cy) {
 		
