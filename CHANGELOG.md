@@ -16,15 +16,16 @@
 - Concrete Fractals
   - Iterative Mandelbrot
 
-## [0.0.2] *(unreleased)*
+## [0.0.2]
 ### Added
 - components
   - iterations textfield
-  - location display
-  - save button
+  - location label
+  - render button
 
 ### Changed
 - improved Logger
   - multiple messages
 - cleaned up render button
 - cleaned up JPInterface and Canvas
+
