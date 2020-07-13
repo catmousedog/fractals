@@ -167,7 +167,7 @@ public class JPInterface extends JPanel {
 
 		long b = System.nanoTime();
 		canvas.generate();
-		canvas.getPanel().repaint();
+		canvas.getPanel().repaint();//
 		long e = System.nanoTime();
 		logger.log(String.format("Rendered in %d ms!", (e - b) / 1000000));
 	}
