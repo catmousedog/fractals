@@ -24,10 +24,13 @@ public class Logger extends JPanel {
 	 */
 	private int m = 5;
 
+	/**
+	 * array of JLabels representing the logged messages
+	 */
 	private final JLabel[] logs = new JLabel[m];
 
 	/**
-	 * Stack of JLabels representing the first to last logged messages
+	 * Stack of Strings representing the first to last logged messages
 	 */
 	private final Vector<String> logMessages = new Vector<String>();
 
@@ -36,8 +39,9 @@ public class Logger extends JPanel {
 	 */
 	private final JLabel progress;
 
-	private String progressMessage = "";
-
+	/**
+	 * the progress bar at the bottom of the feedback panel
+	 */
 	private final JProgressBar jpb;
 
 	public Logger(int w, int h) {
@@ -64,7 +68,7 @@ public class Logger extends JPanel {
 		// progress bar
 		jpb = new JProgressBar();
 		add(jpb);
-		setProgress(0);
+		setProgress("no calculations", 0);
 	}
 
 	/**
@@ -73,7 +77,9 @@ public class Logger extends JPanel {
 	 * @param message to be logged
 	 */
 	public void log(@NotNull String message) {
-
+		
+		System.out.println("logger: " + message);
+		
 		logMessages.add(message);
 
 		if (logMessages.size() > m)
@@ -87,34 +93,14 @@ public class Logger extends JPanel {
 	}
 
 	/**
-	 * sets the progress message
+	 * sets the progress message and the progress bar value
 	 * 
-	 * @param progressMessage
+	 * @param progressMessage the message above the progress bar without the
+	 *                        progress value
+	 * @param p               percentage of the progress bar
 	 */
-	public void setProgressMessage(@NotNull String progressMessage) {
-		this.progressMessage = progressMessage;
-	}
-
-	/**
-	 * sets the progress bars' value
-	 * 
-	 * @param value int between 0 - 100 (inclusive)
-	 */
-	public void setProgress(int value) {
-		jpb.setValue(value);
-	}
-
-	/**
-	 * add 1 percent to the progress bar
-	 */
-	public void addProgress() {
-		jpb.setValue(jpb.getValue() + 1);
-	}
-
-	/**
-	 * sets the progress bar message
-	 */
-	public void showMessage() {
-		progress.setText(String.format("%s - %d%s", progressMessage, jpb.getValue(), "%"));
+	public void setProgress(@NotNull String progressMessage, int p) {
+		jpb.setValue(p);
+		progress.setText(String.format("%s - %d%s", progressMessage, p, "%"));
 	}
 }

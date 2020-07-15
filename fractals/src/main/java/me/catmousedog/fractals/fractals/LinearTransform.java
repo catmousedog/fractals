@@ -6,20 +6,28 @@ package me.catmousedog.fractals.fractals;
 public class LinearTransform {
 
 	/**
-	 * |m*c, -n*s| |m*s, n*c|
+	 * <b>m</b> the x scaling factor<br>
+	 * <b>n</b> the y scaling factor<br>
+	 * <b>c</b> cosine <br>
+	 * <b>s</b> sine
+	 * <p>
+	 * the transformation matrix without translation becomes: <br>
+	 * |m*c,-n*s| <br>
+	 * |m*s, n*c|
 	 */
 	private double m, n, c, s;
 
 	/**
-	 * translation coordinates from complex origin
+	 * translation coordinates from the origin determined by
+	 * {@link LinearTransform#ox} and {@link LinearTransform#oy}
 	 */
 	private double dx, dy;
-	
+
 	/**
 	 * rotation angle in radians
 	 */
 	private double theta;
-	
+
 	/**
 	 * Translation coordinates in pixels. <br>
 	 * This should be half the width and height of the canvas.
@@ -35,16 +43,16 @@ public class LinearTransform {
 	 */
 	public double[] apply(int x, int y) {
 
-		// affine
+		// affine pixel transformation
 		double tx = x - ox;
 		double ty = y - oy;
 
-		// matrix
+		// scaling
 		tx *= m;
 		ty *= n;
 
-		// matrix + affine
-		return new double[] { tx * c - ty * s - dx, tx * s + ty * c - dy };
+		// rotation + displacement 
+		return new double[] { tx * c - ty * s + dx, tx * s + ty * c + dy };
 	}
 
 	/**
@@ -70,45 +78,45 @@ public class LinearTransform {
 	}
 
 	/**
+	 * set the origin from which the translated coordinates shift
+	 * 
+	 * @param ox origin x-coordinate in pixels
+	 * @param oy origin y-coordinate in pixels
+	 */
+	public void setOrigin(int ox, int oy) {
+		this.ox = ox;
+		this.oy = oy;
+	}
+
+	/**
 	 * set the translation coordinates
 	 * 
 	 * @param dx
 	 * @param dy
 	 */
-	public void setTranslation(int ox, int oy, double dx, double dy) {
-		this.ox = ox;
-		this.oy = oy;
+	public void setTranslation(double dx, double dy) {
 		this.dx = dx;
 		this.dy = dy;
 	}
-	
-	/**
-	 * for lazy people like myself
-	 */
-	public void setAll(int ox, int oy, double dx, double dy, double m, double n, double t) {
-		setTranslation(ox, oy, dx, dy);
-		setScalar(m, n);
-		setTheta(t);
-	}
-	
+
 	public double getdx() {
 		return dx;
 	}
-	
+
 	public double getdy() {
 		return dy;
 	}
-	
+
 	public double getm() {
 		return m;
 	}
-	
+
 	public double getn() {
 		return n;
 	}
-	
+
 	public double gettheta() {
 		return theta;
 	}
-	
+
 }

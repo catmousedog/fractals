@@ -2,6 +2,7 @@ package me.catmousedog.fractals.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -10,43 +11,43 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ToolTipManager;
 
+import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.IterativeMandelbrot;
-import me.catmousedog.fractals.fractals.Canvas;
 
-public class Fractals {
+public class Fractals implements Runnable {
 
 	private final Properties properties = new Properties();
 
-	private final JFrame frame;
+	private JFrame frame;
 
-	private final Fractal fractal;
+	private Fractal fractal;
 
 	/**
 	 * JPanel where the images are rendered
 	 */
-	private final Canvas canvas;
+	private Canvas canvas;
 
 	/**
 	 * master panel on the right side containing {@link Canvas#jsp} and
 	 * {@link Fractals#logger}
 	 */
-	private final JPanel rpanel;
+	private JPanel rpanel;
 
 	/**
 	 * Logger containing a JPanel to display any feedback such as progress bars
 	 */
-	private final Logger logger;
+	private Logger logger;
 
 	/**
 	 * JPanel interface for the user
 	 */
-	private final JPInterface jpi;
+	private JPInterface jpi;
 
 	/**
 	 * ScrollPane which contains {@link Fractals#jpi}
 	 */
-	private final JScrollPane jsp;
+	private JScrollPane jsp;
 
 	/**
 	 * default width and height of the {@link Fractals#canvas}
@@ -79,7 +80,14 @@ public class Fractals {
 	 * intialises the frame, panel and JComponents
 	 */
 	public Fractals() {
+		EventQueue.invokeLater(this);
+	}
 
+	/**
+	 * ran on the EDT, creates all the swing components
+	 */
+	@Override
+	public void run() {
 		// load properties
 		try {
 			properties.load(this.getClass().getClassLoader().getResourceAsStream("project.properties"));
@@ -89,12 +97,11 @@ public class Fractals {
 
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 
-		// create fractal
-		fractal = new IterativeMandelbrot();
-		fractal.setIterations(102);
-
 		// create logger
 		logger = new Logger(iwidth + 2 * hgap, feedbackheight);
+
+		// create fractal
+		fractal = new IterativeMandelbrot();
 
 		// create JFrame
 		frame = new JFrame(properties.getProperty("artifactId") + " - " + properties.getProperty("version"));
@@ -103,7 +110,7 @@ public class Fractals {
 
 		// create canvas
 		canvas = new Canvas(width, height, fractal, logger);
-		frame.getContentPane().add(canvas.getPanel(), BorderLayout.CENTER);
+		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 
 		// create right panel (containing logger and jpi)
 		rpanel = new JPanel();
@@ -135,7 +142,7 @@ public class Fractals {
 		// make sure all components are displayed
 		frame.validate();
 
-		canvas.setLocation(0.5, 0, 0.005, 0.005, 0);
+		canvas.setLocation(1, 1, 500, 0);
 	}
 
 	public Canvas getCanvas() {
@@ -159,7 +166,7 @@ public class Fractals {
 	public void setSize(int w, int h) {
 		rpanel.setPreferredSize(new Dimension(iwidth + 2 * hgap, h));
 		jsp.setPreferredSize(new Dimension(iwidth + 2 * hgap, h - feedbackheight));
-		canvas.setSize(w, h);
+		canvas.setPanelSize(w, h);
 		frame.pack();
 		frame.validate();
 	}
