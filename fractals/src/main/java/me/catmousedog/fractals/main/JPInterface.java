@@ -19,6 +19,9 @@ import me.catmousedog.fractals.fractals.LinearTransform;
 
 /**
  * class containing all the data entered by the user through the interface panel
+ * <p>
+ * This class is also used to render the image as it contains all the
+ * JComponents it needs to change after rendering.
  */
 @SuppressWarnings("serial")
 public class JPInterface extends JPanel {
@@ -34,7 +37,7 @@ public class JPInterface extends JPanel {
 	private final Fractals fractals;
 
 	/**
-	 * the Canvas instance used to interact with the image
+	 * the Canvas instance used to render the image
 	 */
 	private final Canvas canvas;
 
@@ -147,10 +150,7 @@ public class JPInterface extends JPanel {
 		add(factory.padding(5));
 		// render
 		renderjb = new JButton("Render");
-		add(factory.create(factory.button(renderjb, a -> {
-			renderjb.setEnabled(false);
-			render();
-		}, "saves user input and renders the image")));
+		add(factory.create(factory.button(renderjb, a -> render(), "saves user input and renders the image")));
 		add(factory.padding(20));
 
 		/* Colour */
@@ -171,20 +171,35 @@ public class JPInterface extends JPanel {
 	/**
 	 * Grabs user input, restores any illegal inputs, generates the image and paints
 	 * it.
+	 * <p>
+	 * Must be run on the EDT
 	 */
 	public void render() {
+		// disable render button
+		renderjb.setEnabled(false);
+
+		// save & update
 		boolean s = save();
 		update();
 
 		if (!s) {
 			logger.log("Illegal data, not rendering");
 			renderjb.setEnabled(true);
-			return;
+		} else {
+			// render
+			canvas.render(this);
 		}
+	}
 
-		canvas.render(() -> {
-			renderjb.setEnabled(true);
-		});
+	/**
+	 * This method is run after the image is done rendering. It shouldn't be
+	 * possible for this to occur concurrently or in the wrong order of calling
+	 * {@link JPInterface#render}.
+	 * <p>
+	 * Must be run on the EDT.
+	 */
+	public void afterRender() {
+		renderjb.setEnabled(true);
 	}
 
 	/**

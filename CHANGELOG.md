@@ -38,3 +38,6 @@
 - Moved all swing components to EDT
 - Moved fractal calculation to SwingWorker
 - Fixed JProgressBar and progressMessage in feedback panel
+
+### Removed
+- unused KeyListener package and class

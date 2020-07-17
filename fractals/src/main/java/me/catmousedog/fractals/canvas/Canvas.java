@@ -10,9 +10,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
+import me.catmousedog.fractals.main.JPInterface;
 import me.catmousedog.fractals.main.Logger;
 
 /**
@@ -21,6 +24,11 @@ import me.catmousedog.fractals.main.Logger;
  */
 @SuppressWarnings("serial")
 public class Canvas extends JPanel {
+
+	/**
+	 * the mouse listener
+	 */
+	private final Mouse mouse;
 
 	/**
 	 * the linear transformation used to get the actual coordinates the pixels point
@@ -70,7 +78,8 @@ public class Canvas extends JPanel {
 		setPanelSize(width, height);
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
-		addMouseListener(new Mouse(this));
+		mouse = new Mouse(this);
+		addMouseListener(mouse);
 	}
 
 	/**
@@ -89,10 +98,11 @@ public class Canvas extends JPanel {
 	/**
 	 * generates the image using a {@link SwingWorker} and paints it
 	 * 
-	 * @param r the runnable executed after the image is done generating and painted
+	 * @param jpi the user interface containing the
+	 *            {@link JPInterface#afterRender()} method
 	 */
-	public synchronized void render(Runnable r) {
-		new Generator(this, r, logger).execute();
+	public void render(@NotNull JPInterface jpi) {
+		new Generator(this, jpi, logger).execute();
 	}
 
 	/**
@@ -142,6 +152,16 @@ public class Canvas extends JPanel {
 		transform.setTranslation(dx, dy);
 		transform.setScalar(1 / z, 1 / z);
 		transform.setTheta(t);
+	}
+
+	/**
+	 * sets the instance of the {@link JPInterface} so the Canvas can save and
+	 * update the user input
+	 * 
+	 * @param jpi the instance of {@link JPInterface}
+	 */
+	public void setJPI(@NotNull JPInterface jpi) {
+		mouse.setJPI(jpi);
 	}
 
 	/**

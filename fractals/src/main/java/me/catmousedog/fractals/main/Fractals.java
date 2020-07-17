@@ -15,6 +15,9 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.IterativeMandelbrot;
 
+/**
+ * the main class
+ */
 public class Fractals implements Runnable {
 
 	private final Properties properties = new Properties();
@@ -77,7 +80,7 @@ public class Fractals implements Runnable {
 	}
 
 	/**
-	 * intialises the frame, panel and JComponents
+	 * Initialises the frame, panel and JComponents
 	 */
 	public Fractals() {
 		EventQueue.invokeLater(this);
@@ -119,6 +122,9 @@ public class Fractals implements Runnable {
 
 		// create interface panel
 		jpi = new JPInterface(iwidth, vgap, hgap, this);
+
+		// add jpi to canvas
+		canvas.setJPI(jpi);
 
 		// create scroll panel
 		jsp = new JScrollPane(jpi, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
