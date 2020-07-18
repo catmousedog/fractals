@@ -1,21 +1,28 @@
-package me.catmousedog.fractals.main;
+package me.catmousedog.fractals.ui;
 
-import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import me.catmousedog.fractals.canvas.Canvas;
-//import me.catmousedog.fractals.components.Component;
-import me.catmousedog.fractals.components.ComponentFactory;
 import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.main.Fractals;
+import me.catmousedog.fractals.main.Settings;
 
 /**
  * class containing all the data entered by the user through the interface panel
@@ -26,14 +33,6 @@ import me.catmousedog.fractals.fractals.LinearTransform;
 @SuppressWarnings("serial")
 public class JPInterface extends JPanel {
 
-	/**
-	 * factory to easily create {@link Component}s
-	 */
-	private final ComponentFactory factory;
-
-	/**
-	 * the main class instance, used to set the size of the frame
-	 */
 	private final Fractals fractals;
 
 	/**
@@ -45,6 +44,11 @@ public class JPInterface extends JPanel {
 	 * the logger instance
 	 */
 	private final Logger logger;
+
+	/**
+	 * user settings
+	 */
+	private final Settings settings;
 
 	/**
 	 * true if the components have been created and the class has been fully
@@ -59,13 +63,15 @@ public class JPInterface extends JPanel {
 
 	// window
 	private JTextField widthjtf, heightjtf;
-	private int wjtf, hjtf;
 
 	// location
-	private JLabel poslbl, zoomlbl;
+	private JTextField xjtf, yjtf, mjtf, njtf, rotjtf;
+	private JButton copyjb, pastejb;
+	private JComboBox<Position> jcbpos;
 
 	// calculation
 	private JTextField iterationjtf, zoomjtf;
+	private JButton zoominjb, zoomoutjb;
 
 	// colour
 	private JButton renderjb;
@@ -74,11 +80,12 @@ public class JPInterface extends JPanel {
 
 	// other
 
-	public JPInterface(int iwidth, int vgap, int hgap, Fractals fractals) {
-		factory = new ComponentFactory(this);
+	public JPInterface(int iwidth, int vgap, int hgap, Fractals fractals, Canvas canvas, Logger logger,
+			Settings settings) {
 		this.fractals = fractals;
-		canvas = fractals.getCanvas();
-		logger = fractals.getLogger();
+		this.canvas = canvas;
+		this.logger = logger;
+		this.settings = settings;
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(iwidth, Integer.MAX_VALUE));
@@ -111,70 +118,131 @@ public class JPInterface extends JPanel {
 	 */
 	public void addComponents() {
 		/* Window */
-		add(factory.create(factory.title("Window")));
-		add(factory.padding(10));
+		add((ComponentFactory.title("Window")));
+		add(ComponentFactory.padding(10));
 
 		// width textfield
 		widthjtf = new JTextField(Integer.toString(canvas.getWidth()));
-		add(factory.create(factory.label("width"), factory.textField(widthjtf, "width of the canvas")));
-		add(factory.padding(5));
+		add(ComponentFactory.textField(widthjtf, "width", "width of the canvas"));
+		add(ComponentFactory.padding(5));
 		// height textfield
 		heightjtf = new JTextField(Integer.toString(canvas.getWidth()));
-		add(factory.create(factory.label("height"), factory.textField(heightjtf, "height of the canvas")));
-		add(factory.padding(20));
+		add(ComponentFactory.textField(heightjtf, "height", "height of the canvas"));
+		add(ComponentFactory.padding(20));
 
 		/* Location */
-		add(factory.create(factory.title("Location")));
-		add(factory.padding(10));
-		// pos
-		poslbl = factory.label("Re: 0.000000    Im: 0.000000",
-				"the real and imaginary components of the central point of the canvas");
-		add(factory.create(poslbl));
-		add(factory.padding(5));
-		// zoom
-		zoomlbl = factory.label("zoom: 0.000000    rot: 0.000000",
-				"the zoom factor as an exponent of 10 and the rotation in radians");
-		add(factory.create(zoomlbl));
-		add(factory.padding(20));
+		add((ComponentFactory.title("Location")));
+		add(ComponentFactory.padding(10));
+		// position textfield
+		xjtf = new JTextField();
+		add(ComponentFactory.textField(xjtf, "x coordinate"));
+		add(ComponentFactory.padding(5));
+		yjtf = new JTextField();
+		add(ComponentFactory.textField(yjtf, "y coordinate"));
+		add(ComponentFactory.padding(5));
+		mjtf = new JTextField();
+		add(ComponentFactory.textField(mjtf, "x zoom"));
+		add(ComponentFactory.padding(5));
+		njtf = new JTextField();
+		add(ComponentFactory.textField(njtf, "y zoom"));
+		add(ComponentFactory.padding(5));
+		rotjtf = new JTextField();
+		add(ComponentFactory.textField(rotjtf, "rotation"));
+		add(ComponentFactory.padding(5));
+		// copy
+		copyjb = new JButton("Copy");
+		copyjb.addActionListener(a -> copy());
+		add(ComponentFactory.button(copyjb, "copy location to clipboard"));
+		add(ComponentFactory.padding(5));
+		// paste
+		pastejb = new JButton("Paste");
+		pastejb.addActionListener(a -> paste());
+		add(ComponentFactory.button(pastejb, "paste location from clipboard"));
+		add(ComponentFactory.padding(5));
+		// dropdown locations
+		jcbpos = new JComboBox<Position>(Position.preSaved);
+		jcbpos.addActionListener(a -> {
+			Position pos = (Position) (jcbpos.getSelectedItem());
+			LinearTransform transform = pos.getTransform();
+			canvas.getTransform().set(transform);
+			canvas.getFractal().setIterations(pos.getIterations());
+			update();
+			if (settings.isRender_on_changes())
+				renderNow();
+		});
+		add(ComponentFactory.dropDown(jcbpos, "locations", "a set of interesting locations"));
+		add(ComponentFactory.padding(20));
 
 		/* Calculation */
-		add(factory.create(factory.title("Calculation")));
-		add(factory.padding(10));
+		add(ComponentFactory.title("Calculation"));
+		add(ComponentFactory.padding(10));
 		// iterations
-		iterationjtf = new JTextField(Integer.toString(canvas.getFractal().getIterations()));
-		add(factory.create(factory.label("iterations"), factory.textField(iterationjtf, "the amount of iterations")));
-		add(factory.padding(5));
-		zoomjtf = new JTextField(Double.toString(Math.log10(1 / canvas.getTransform().getm())));
-		add(factory.create(factory.label("zoom factor"),
-				factory.textField(zoomjtf, "the zoom factor increment, when zooming in or out")));
-		add(factory.padding(5));
+		iterationjtf = new JTextField();
+		add(ComponentFactory.textField(iterationjtf, "iterations", "the amount of iterations"));
+		add(ComponentFactory.padding(5));
+		zoomjtf = new JTextField();
+		add(ComponentFactory.textField(zoomjtf, "zoom factor", "the zoom factor increment, when zooming in or out"));
+		add(ComponentFactory.padding(5));
+		// zoom
+		zoominjb = new JButton("Zoom In");
+		zoominjb.addActionListener(a -> {
+			try {
+				canvas.getTransform().zoom(Double.parseDouble(zoomjtf.getText()));
+				renderNow();
+			} catch (NumberFormatException e) {
+				logger.log("zoom factor must be a valid double");
+			}
+		});
+		add(ComponentFactory.button(zoominjb, "zooms in with the current zoom factor"));
+		add(ComponentFactory.padding(5));
+		zoomoutjb = new JButton("Zoom Out");
+		zoomoutjb.addActionListener(a -> {
+			try {
+				canvas.getTransform().zoom(1 / Double.parseDouble(zoomjtf.getText()));
+			} catch (NumberFormatException e) {
+				logger.log("zoom factor must be a valid double");
+			}
+		});
+		add(ComponentFactory.button(zoomoutjb, "zooms out with the current zoom factor"));
+		add(ComponentFactory.padding(10));
 		// render
 		renderjb = new JButton("Render");
-		add(factory.create(factory.button(renderjb, a -> render(), "saves user input and renders the image")));
-		add(factory.padding(20));
+		renderjb.addActionListener(a -> render());
+		add(ComponentFactory.button(renderjb, "saves user input and renders the image"));
+		add(ComponentFactory.padding(20));
 
 		/* Colour */
-		add(factory.create(factory.title("Colour")));
-		add(factory.padding(20));
+		add((ComponentFactory.title("Colour")));
+		add(ComponentFactory.padding(20));
 
 		/* Picture */
-		add(factory.create(factory.title("Picture")));
-		add(factory.padding(20));
+		add((ComponentFactory.title("Picture")));
+		add(ComponentFactory.padding(20));
 
 		/* Other */
-		add(factory.create(factory.title("Other")));
-		add(factory.padding(20));
+		add((ComponentFactory.title("Other")));
+		add(ComponentFactory.padding(20));
+
+		// set position labels
+		update();
 
 		init = true;
 	}
 
 	/**
 	 * Grabs user input, restores any illegal inputs, generates the image and paints
-	 * it.
+	 * it. <br>
+	 * This is the preferred method to render the fractal.
 	 * <p>
 	 * Must be run on the EDT
 	 */
 	public void render() {
+		// already rendering
+		if (!renderjb.isEnabled()) {
+			logger.log("already rendering...");
+			return;
+		}
+
 		// disable render button
 		renderjb.setEnabled(false);
 
@@ -192,13 +260,32 @@ public class JPInterface extends JPanel {
 	}
 
 	/**
+	 * Renders the image without calling {@link JPInterface#save()} pr
+	 * {@link JPInterface#update()}.
+	 * <p>
+	 * This method still calls the {@link JPInterface#postRender()} method.
+	 */
+	public void renderNow() {
+		// already rendering
+		if (!renderjb.isEnabled()) {
+			logger.log("already rendering...");
+			return;
+		}
+
+		// disable render button
+		renderjb.setEnabled(false);
+
+		canvas.render(this);
+	}
+
+	/**
 	 * This method is run after the image is done rendering. It shouldn't be
 	 * possible for this to occur concurrently or in the wrong order of calling
 	 * {@link JPInterface#render}.
 	 * <p>
 	 * Must be run on the EDT.
 	 */
-	public void afterRender() {
+	public void postRender() {
 		renderjb.setEnabled(true);
 	}
 
@@ -220,12 +307,37 @@ public class JPInterface extends JPanel {
 		try {
 			int w = Integer.parseInt(widthjtf.getText());
 			int h = Integer.parseInt(heightjtf.getText());
+//			canvas.setPanelSize(w, h);
 			fractals.setSize(w, h);
+
 		} catch (NumberFormatException e) {
 			logger.log("window width and height must be valid integers");
 			b = false;
 		}
 		/* Location */
+		try {
+			double dx = Double.parseDouble(xjtf.getText());
+			double dy = Double.parseDouble(yjtf.getText());
+			canvas.getTransform().setTranslation(dx, dy);
+		} catch (NumberFormatException e) {
+			logger.log("the x and y coordinate have to be valid doubles");
+			b = false;
+		}
+		try {
+			double m = Double.parseDouble(mjtf.getText());
+			double n = Double.parseDouble(njtf.getText());
+			canvas.getTransform().setScalar(m, n);
+		} catch (NumberFormatException e) {
+			logger.log("the x and y scalars have to be valid doubles");
+			b = false;
+		}
+		try {
+			double rot = Double.parseDouble(rotjtf.getText());
+			canvas.getTransform().setRot(rot);
+		} catch (NumberFormatException e) {
+			logger.log("the rotation has to be a valid double");
+			b = false;
+		}
 		/* Calculation */
 		try {
 			int i = Integer.parseInt(iterationjtf.getText());
@@ -234,12 +346,7 @@ public class JPInterface extends JPanel {
 			logger.log("iterations must be a valid integer");
 			b = false;
 		}
-		try {
-			double z = Double.parseDouble(zoomjtf.getText());
-		} catch (NumberFormatException e) {
-			logger.log("zoom factor must be a valid double");
-			b = false;
-		}
+		// zoom factor is not saved, it is retrieved when clicking
 		/* Colour */
 		/* Picture */
 		/* Other */
@@ -252,16 +359,66 @@ public class JPInterface extends JPanel {
 	 */
 	public void update() {
 		/* Window */
-		widthjtf.setText(Integer.toString(canvas.getWidth()));
-		heightjtf.setText(Integer.toString(canvas.getHeight()));
 		/* Location */
 		LinearTransform transform = canvas.getTransform();
-		poslbl.setText(String.format("Re: %f    Im: %f", transform.getdx(), transform.getdy()));
-		zoomlbl.setText(String.format("zoom: %f    rot: %f", Math.log10(1 / transform.getm()), transform.gettheta()));
+		xjtf.setText(Double.toString(transform.getdx()));
+		yjtf.setText(Double.toString(transform.getdy()));
+		mjtf.setText(Double.toString(transform.getm()));
+		njtf.setText(Double.toString(transform.getn()));
+		rotjtf.setText(Double.toString(transform.getrot()));
 		/* Calculation */
 		iterationjtf.setText(Integer.toString(canvas.getFractal().getIterations()));
 		/* Colour */
 		/* Picture */
 		/* Other */
+	}
+
+	/**
+	 * copy current {@link LinearTransform} to clipboard
+	 */
+	private void copy() {
+		update();
+
+		String clip = new Position(canvas.getTransform(), canvas.getFractal().getIterations()).getID();
+
+		try {
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
+			logger.log("successfully copied to clipboard!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.log(e.getMessage());
+			logger.log("unable to copy to clipboard");
+		}
+	}
+
+	/**
+	 * paste new {@link LinearTransform} from clipboard
+	 */
+	private void paste() {
+		try {
+			try {
+				String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard()
+						.getData(DataFlavor.stringFlavor);
+				Position pos = Position.fromID(clip);
+				canvas.getTransform().set(pos.getTransform());
+				canvas.getFractal().setIterations(pos.getIterations());
+				update();
+				logger.log("successfully pasted from clipboard");
+			} catch (NumberFormatException e) {
+				logger.log("unable to parse from clipboard");
+			}
+		} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
+			e.printStackTrace();
+			logger.exception(e);
+		}
+
+		if (settings.isRender_on_changes()) {
+			update();
+			renderNow();
+		}
+	}
+
+	public JTextField getZoomJTF() {
+		return zoomjtf;
 	}
 }

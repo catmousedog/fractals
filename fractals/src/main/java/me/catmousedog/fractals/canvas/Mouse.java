@@ -6,49 +6,62 @@ import java.awt.event.MouseListener;
 import javax.swing.SwingUtilities;
 
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.main.JPInterface;
+import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.Logger;
 
+/**
+ * the mouse listener for interacting with the canvas
+ */
 public class Mouse implements MouseListener {
 
 	/**
 	 * the instance of the canvas this MouseListener belongs to
 	 */
 	private final Canvas canvas;
-	
-	private JPInterface jpi;
-	
-	/**
-	 * factor to multiply the zoom with each time the user clicks
-	 */
-	private double zoomFactor = 2;
 
-	public Mouse(Canvas canvas) {
+	/**
+	 * the logger instance
+	 */
+	private final Logger logger;
+
+	/**
+	 * the user interface, used to {@link JPInterface#render()} and retrieve user
+	 * data
+	 */
+	private JPInterface jpi;
+
+	private double zoomFactor = 1.5;
+
+	public Mouse(Canvas canvas, Logger logger) {
 		this.canvas = canvas;
+		this.logger = logger;
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		e = SwingUtilities.convertMouseEvent(e.getComponent(), e, canvas);
-		
+	public void mouseReleased(MouseEvent me) {
+		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
+
 		LinearTransform transform = canvas.getTransform();
-		double[] t = transform.apply(e.getX(), e.getY());
-		double newZoom = transform.getm();
-		
-		// lmb (zoom in)
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			transform.setTranslation(t[0], t[1]);
-			newZoom /= zoomFactor;
+		double[] t = transform.apply(me.getX(), me.getY());
+		transform.setTranslation(t[0], t[1]);
+
+		// manually save zoomFactor as it is needed for the transformation
+		try {
+			zoomFactor = Double.parseDouble(jpi.getZoomJTF().getText());
+		} catch (NumberFormatException e) {
+			logger.log("zoom factor must be a valid double");
 		}
+
+		// lmb (zoom in)
+		if (me.getButton() == MouseEvent.BUTTON1)
+			transform.zoom(1 / zoomFactor);
 
 		// rmb (zoom out)
-		if (e.getButton() == MouseEvent.BUTTON3) {
-			transform.setTranslation(t[0], t[1]);
-			newZoom *= zoomFactor;
-		}
+		if (me.getButton() == MouseEvent.BUTTON3)
+			transform.zoom(zoomFactor);
 
-		transform.setScalar(newZoom, newZoom);
-		
-		jpi.render();
+		jpi.update();
+		jpi.renderNow();
 	}
 
 	@Override
@@ -67,15 +80,6 @@ public class Mouse implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 	}
 
-	/**
-	 * sets the zoomFactor
-	 * 
-	 * @param z the new zoomFactor
-	 */
-	public void setZoomFactor(double z) {
-		zoomFactor = z;
-	}
-	
 	public void setJPI(JPInterface jpi) {
 		this.jpi = jpi;
 	}

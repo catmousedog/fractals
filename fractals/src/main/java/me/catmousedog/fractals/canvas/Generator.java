@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
-import me.catmousedog.fractals.main.JPInterface;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.Logger;
 
 /**
  * swing worker used for generating the image and updating at the same time
@@ -27,7 +27,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	private final Canvas canvas;
 
 	/**
-	 * the user interface containing the {@link JPInterface#afterRender()} method
+	 * the user interface containing the {@link JPInterface#postRender()} method
 	 */
 	private final JPInterface jpi;
 
@@ -115,7 +115,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 	/**
 	 * Called each percent of completion, updates the progress bar and runs the
-	 * {@link JPInterface#afterRender()} method.
+	 * {@link JPInterface#postRender()} method.
 	 * <p>
 	 * Ran on the EDT
 	 */
@@ -126,7 +126,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 				logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
 			logger.setProgress("done!", 100);
-			jpi.afterRender();
+			jpi.postRender();
 		}
 	}
 

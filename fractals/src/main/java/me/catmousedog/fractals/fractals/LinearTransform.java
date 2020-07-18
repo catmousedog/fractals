@@ -15,7 +15,7 @@ public class LinearTransform {
 	 * |m*c,-n*s| <br>
 	 * |m*s, n*c|
 	 */
-	private double m, n, c, s;
+	private double m = 0.01, n = 0.01, c = 1, s = 0;
 
 	/**
 	 * translation coordinates from the origin determined by
@@ -26,13 +26,24 @@ public class LinearTransform {
 	/**
 	 * rotation angle in radians
 	 */
-	private double theta;
+	private double rot;
 
 	/**
 	 * Translation coordinates in pixels. <br>
 	 * This should be half the width and height of the canvas.
 	 */
 	private int ox, oy;
+
+	public LinearTransform() {
+	}
+
+	public LinearTransform(double dx, double dy, double m, double n, double rot) {
+		this.dx = dx;
+		this.dy = dy;
+		this.m = m;
+		this.n = n;
+		this.rot = rot;
+	}
 
 	/**
 	 * apply the transformation to the given coordinates
@@ -51,7 +62,7 @@ public class LinearTransform {
 		tx *= m;
 		ty *= n;
 
-		// rotation + displacement 
+		// rotation + displacement
 		return new double[] { tx * c - ty * s + dx, tx * s + ty * c + dy };
 	}
 
@@ -69,12 +80,12 @@ public class LinearTransform {
 	/**
 	 * set the angle
 	 * 
-	 * @param t
+	 * @param rot
 	 */
-	public void setTheta(double t) {
-		theta = t;
-		c = Math.cos(t);
-		s = Math.sin(t);
+	public void setRot(double rot) {
+		this.rot = rot;
+		c = Math.cos(rot);
+		s = Math.sin(rot);
 	}
 
 	/**
@@ -99,6 +110,17 @@ public class LinearTransform {
 		this.dy = dy;
 	}
 
+	public void set(LinearTransform transform) {
+		setTranslation(transform.dx, transform.dy);
+		setRot(transform.rot);
+		setScalar(transform.m, transform.n);
+	}
+
+	public void zoom(double f) {
+		m *= f;
+		n *= f;
+	}
+
 	public double getdx() {
 		return dx;
 	}
@@ -115,8 +137,7 @@ public class LinearTransform {
 		return n;
 	}
 
-	public double gettheta() {
-		return theta;
+	public double getrot() {
+		return rot;
 	}
-
 }

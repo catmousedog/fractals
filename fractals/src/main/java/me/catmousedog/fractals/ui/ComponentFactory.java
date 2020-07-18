@@ -1,13 +1,13 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -17,20 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 public final class ComponentFactory {
 
-	private final JPanel jpi;
-
-	public ComponentFactory(JPanel jpi) {
-		this.jpi = jpi;
-	}
-	
 	/**
-	 * creates a label
-	 * 
-	 * @param text the label
-	 * @param tip  tooltip if you hover over the label
-	 * @return
+	 * creates a label with a tooltip
 	 */
-	public JLabel label(@NotNull String text, @Nullable String tip) {
+	public static JLabel label(@NotNull String text, @Nullable String tip) {
 		JLabel lbl = new JLabel(text);
 		lbl.setFont(new Font(null, Font.PLAIN, 12));
 		lbl.setToolTipText(tip);
@@ -43,20 +33,16 @@ public final class ComponentFactory {
 	 * @param text the label
 	 * @return
 	 */
-	public JLabel label(@NotNull String text) {
+	public static JLabel label(@NotNull String text) {
 		JLabel lbl = new JLabel(text);
 		lbl.setFont(new Font(null, Font.PLAIN, 12));
 		return lbl;
 	}
 
 	/**
-	 * creates a title
-	 * 
-	 * @param text the title
-	 * @param tip  tooltip if you hover over the title
-	 * @return
+	 * creates a title with a tooltip
 	 */
-	public JLabel title(@NotNull String text, @Nullable String tip) {
+	public static JLabel title(@NotNull String text, @Nullable String tip) {
 		JLabel lbl = new JLabel(text);
 		lbl.setFont(new Font(null, Font.BOLD, 15));
 		lbl.setToolTipText(tip);
@@ -65,97 +51,175 @@ public final class ComponentFactory {
 
 	/**
 	 * creates a title
-	 * 
-	 * @param text the title
-	 * @return
 	 */
-	public JLabel title(@NotNull String text) {
+	public static JLabel title(@NotNull String text) {
 		JLabel lbl = new JLabel(text);
 		lbl.setFont(new Font(null, Font.BOLD, 15));
 		return lbl;
-	}
-
-	/**
-	 * creates a horizontal space
-	 * 
-	 * @param w width in pixels
-	 * @return
-	 */
-	public Component space(int w) {
-		return Box.createRigidArea(new Dimension(w, 0));
-	}
-
-	/**
-	 * creates horizontal glue
-	 * 
-	 * @return
-	 */
-	public Component glue() {
-		return Box.createHorizontalGlue();
 	}
 
 	/**
 	 * creates a vertical rigid area that acts as padding between components
-	 * 
-	 * @param h height in pixels
-	 * @return
 	 */
-	public Component padding(int h) {
+	public static Component padding(int h) {
 		return Box.createRigidArea(new Dimension(0, h));
+	}
+
+	/**
+	 * creates a JPanel with a textfield inside
+	 */
+	public static JPanel textField(@NotNull JTextField jtf) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
+		jtf.setAlignmentX(0);
+
+		jp.add(jtf);
+
+		return jp;
+	}
+
+	/**
+	 * creates a JPanel with a textfield and text inside
+	 */
+	public static JPanel textField(@NotNull JTextField jtf, @Nullable String text) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		JLabel lbl = new JLabel(text);
+		lbl.setFont(new Font(null, Font.PLAIN, 12));
+		lbl.setAlignmentX(0);
+		jp.add(lbl);
+
+		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
+		jtf.setAlignmentX(0);
+		jp.add(jtf);
+
+		return jp;
+	}
+
+	/**
+	 * creates a JPanel with a textfield and text with both a tooltip inside
+	 */
+	public static JPanel textField(@NotNull JTextField jtf, @Nullable String text, @Nullable String tip) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		JLabel lbl = new JLabel(text);
+		lbl.setFont(new Font(null, Font.PLAIN, 12));
+		lbl.setToolTipText(tip);
+		lbl.setAlignmentX(0);
+		jp.add(lbl);
+
+		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
+		jtf.setToolTipText(tip);
+		jtf.setAlignmentX(0);
+		jp.add(jtf);
+
+		return jp;
+	}
+
+	/**
+	 * creates a JPanel with a button inside
+	 */
+	public static JPanel button(@NotNull JButton jb) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		jb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jb.getPreferredSize().height));
+		jb.setAlignmentX(0);
+		jp.add(jb);
+
+		return jp;
+	}
+
+	/**
+	 * creates a JPanel with a button with a tip inside
+	 */
+	public static JPanel button(@NotNull JButton jb, @Nullable String tip) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		jb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jb.getPreferredSize().height));
+		jb.setToolTipText(tip);
+		jb.setAlignmentX(0);
+		jp.add(jb);
+
+		return jp;
+	}
+
+	/**
+	 * creates a JPanel with a button and text with both a tooltip inside
+	 */
+	public static JPanel button(@NotNull JButton jb, @Nullable String text, @Nullable String tip) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		JLabel lbl = new JLabel(text);
+		lbl.setFont(new Font(null, Font.PLAIN, 12));
+		lbl.setToolTipText(tip);
+		lbl.setAlignmentX(0);
+		jp.add(lbl);
+
+		jb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jb.getPreferredSize().height));
+		jb.setToolTipText(tip);
+		jb.setAlignmentX(0);
+		jp.add(jb);
+
+		return jp;
+	}
+
+	/**
+	 * creates a JPanel with a JComboBox inside it
+	 */
+	public static JPanel dropDown(@NotNull JComboBox<String> jcb) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
+		jcb.setAlignmentX(0);
+		jp.add(jcb);
+
+		return jp;
 	}
 	
 	/**
-	 * returns {@link JTextField} with added tooltip
-	 * 
-	 * @param jtf
-	 * @param tip the tooltip to be added to <b>jtf</b>
-	 * @return
+	 * creates a JPanel with a JComboBox and a JLabel inside it
 	 */
-	public JTextField textField(@NotNull JTextField jtf, @Nullable String tip) {
-		jtf.setToolTipText(tip);
-		return jtf;
-	}
-
-	/**
-	 * this method is just for clean code, it just returns the argument
-	 * 
-	 * @param jtf
-	 * @return jtf
-	 */
-	public JTextField textField(@NotNull JTextField jtf) {
-		return jtf;
-	}
-
-	public JButton button(@NotNull JButton jb, @Nullable ActionListener e, @Nullable String tip) {
-		jb.addActionListener(e);
-		jb.setToolTipText(tip);
-		return jb;
-	}
-
-	public Component button(@NotNull JButton jb, @Nullable ActionListener e) {
-		jb.addActionListener(e);
-		return jb;
-	}
-
-	/**
-	 * creates a JPanel that can be added to the user interface. The given
-	 * Components will distribute the horizontal space equally.
-	 * <p>
-	 * This method should always be used when adding components to the user
-	 * interface as it resizes them correctly.
-	 * 
-	 * @param components that need to be added to the returned JPanel
-	 * @return the JPanel with the resized components
-	 */
-	public JPanel create(Component... components) {
+	public static JPanel dropDown(@NotNull JComboBox<String> jcb, @Nullable String text) {
 		JPanel jp = new JPanel();
-		jp.setLayout(new BoxLayout(jp, BoxLayout.X_AXIS));
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
 
-		int w = jpi.getWidth() / components.length;
-		for (Component c : components) {
-			c.setMaximumSize(new Dimension(w, c.getPreferredSize().height));
-			jp.add(c);
-		}
+		JLabel lbl = new JLabel(text);
+		lbl.setFont(new Font(null, Font.PLAIN, 12));
+		lbl.setAlignmentX(0);
+		jp.add(lbl);
+		
+		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
+		jcb.setAlignmentX(0);
+		jp.add(jcb);
+
+		return jp;
+	}
+	
+	/**
+	 * creates a JPanel with a JComboBox and a JLabel inside it
+	 */
+	public static <T> JPanel dropDown(@NotNull JComboBox<T> jcb, @Nullable String text, @Nullable String tip) {
+		JPanel jp = new JPanel();
+		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+
+		JLabel lbl = new JLabel(text);
+		lbl.setFont(new Font(null, Font.PLAIN, 12));
+		lbl.setToolTipText(tip);
+		lbl.setAlignmentX(0);
+		jp.add(lbl);
+		
+		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
+		jcb.setToolTipText(tip);
+		jcb.setAlignmentX(0);
+		jp.add(jcb);
 
 		return jp;
 	}
