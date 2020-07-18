@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.main;
+package me.catmousedog.fractals.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -92,6 +92,15 @@ public class Logger extends JPanel {
 
 	}
 
+	/**
+	 * logs a message with 'exception' in front of it
+	 * 
+	 * @param e
+	 */
+	public void exception(@NotNull Exception e) {
+		log("exception: " + e.getMessage());
+	}
+	
 	/**
 	 * sets the progress message and the progress bar value
 	 * 

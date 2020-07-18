@@ -3,7 +3,12 @@ package me.catmousedog.fractals.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -14,13 +19,34 @@ import javax.swing.ToolTipManager;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.IterativeMandelbrot;
+import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.Logger;
 
+/**
+ * the main class
+ */
 public class Fractals implements Runnable {
 
-	private final Properties properties = new Properties();
+	/*
+	 * the project.properties containing the name and version
+	 */
+	private final Properties project = new Properties();
+
+	/**
+	 * the properties object pointing to the settings.properties file
+	 */
+	private final Properties settingsobj = new Properties();
+
+	/**
+	 * Settings object for storing all the settings
+	 */
+	private final Settings settings = new Settings();
 
 	private JFrame frame;
 
+	/**
+	 * the Fractal containing the fractal function
+	 */
 	private Fractal fractal;
 
 	/**
@@ -77,7 +103,7 @@ public class Fractals implements Runnable {
 	}
 
 	/**
-	 * intialises the frame, panel and JComponents
+	 * Initialises the frame, panel and JComponents
 	 */
 	public Fractals() {
 		EventQueue.invokeLater(this);
@@ -90,8 +116,35 @@ public class Fractals implements Runnable {
 	public void run() {
 		// load properties
 		try {
-			properties.load(this.getClass().getClassLoader().getResourceAsStream("project.properties"));
+			project.load(this.getClass().getClassLoader().getResourceAsStream("project.properties"));
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// create settings
+		File f = new File("./settings.properties");
+		if (!f.exists()) {
+			try {
+				Files.copy(this.getClass().getClassLoader().getResourceAsStream("default_settings.properties"),
+						Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// load settings
+		try {
+			settingsobj.load(new FileInputStream(f));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// render_on_changes
+		settings.setRender_on_changes(Boolean.parseBoolean(settingsobj.getProperty("render_on_change")));
+		// intial size
+		try {
+			width = Integer.parseInt(settingsobj.getProperty("width"));
+			height = Integer.parseInt(settingsobj.getProperty("height"));
+		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
 
@@ -104,7 +157,7 @@ public class Fractals implements Runnable {
 		fractal = new IterativeMandelbrot();
 
 		// create JFrame
-		frame = new JFrame(properties.getProperty("artifactId") + " - " + properties.getProperty("version"));
+		frame = new JFrame(project.getProperty("artifactId") + " - " + project.getProperty("version"));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 
@@ -118,7 +171,10 @@ public class Fractals implements Runnable {
 		rpanel.setLayout(new BorderLayout());
 
 		// create interface panel
-		jpi = new JPInterface(iwidth, vgap, hgap, this);
+		jpi = new JPInterface(iwidth, vgap, hgap, this, canvas, logger, settings);
+
+		// add jpi to canvas
+		canvas.setJPI(jpi);
 
 		// create scroll panel
 		jsp = new JScrollPane(jpi, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -133,36 +189,22 @@ public class Fractals implements Runnable {
 		frame.getContentPane().add(rpanel, BorderLayout.LINE_END);
 
 		// set size
-		frame.setVisible(true);
 		frame.pack();
 
 		// add components
 		jpi.addComponents();
 
+		// set all visible
+		frame.setVisible(true);
+
 		// make sure all components are displayed
 		frame.validate();
 
-		canvas.setLocation(1, 1, 500, 0);
+		// initial render
+		if (settings.isRender_on_changes())
+			jpi.renderNow();
 	}
 
-	public Canvas getCanvas() {
-		return canvas;
-	}
-
-	public Logger getLogger() {
-		return logger;
-	}
-
-	public JFrame getFrame() {
-		return frame;
-	}
-
-	/**
-	 * sets the size of the panels and frame so the canvas has the given size
-	 * 
-	 * @param w width of the canvas
-	 * @param h height of the canvas
-	 */
 	public void setSize(int w, int h) {
 		rpanel.setPreferredSize(new Dimension(iwidth + 2 * hgap, h));
 		jsp.setPreferredSize(new Dimension(iwidth + 2 * hgap, h - feedbackheight));
@@ -170,5 +212,4 @@ public class Fractals implements Runnable {
 		frame.pack();
 		frame.validate();
 	}
-
 }

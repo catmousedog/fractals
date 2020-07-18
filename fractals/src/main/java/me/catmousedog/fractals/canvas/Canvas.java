@@ -10,10 +10,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.Logger;
 
 /**
  * Represents a 2D plane of processed values by the function
@@ -27,6 +30,11 @@ public class Canvas extends JPanel {
 	 * to
 	 */
 	private final LinearTransform transform = new LinearTransform();
+
+	/**
+	 * the mouse listener
+	 */
+	private final Mouse mouse;
 
 	/**
 	 * iterative fractal function
@@ -53,7 +61,7 @@ public class Canvas extends JPanel {
 	 * this might be different from the actual JPanel width and height
 	 */
 	private int width, height;
-
+	
 	/**
 	 * creates the Canvas
 	 * 
@@ -66,11 +74,12 @@ public class Canvas extends JPanel {
 	public Canvas(int width, int height, Fractal fractal, Logger logger) {
 		this.fractal = fractal;
 		this.logger = logger;
-
+		
 		setPanelSize(width, height);
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
-		addMouseListener(new Mouse(this));
+		mouse = new Mouse(this, logger);
+		addMouseListener(mouse);
 	}
 
 	/**
@@ -88,11 +97,15 @@ public class Canvas extends JPanel {
 
 	/**
 	 * generates the image using a {@link SwingWorker} and paints it
+	 * <p>
+	 * This method does not have a cooldown and should only be used by the
+	 * {@link JPInterface}.
 	 * 
-	 * @param r the runnable executed after the image is done generating and painted
+	 * @param jpi the user interface containing the {@link JPInterface#postRender()}
+	 *            method
 	 */
-	public synchronized void render(Runnable r) {
-		new Generator(this, r, logger).execute();
+	public void render(@NotNull JPInterface jpi) {
+		new Generator(this, jpi, logger).execute();
 	}
 
 	/**
@@ -101,7 +114,7 @@ public class Canvas extends JPanel {
 	 * @param w new width
 	 * @param h new height
 	 */
-	public synchronized void setPanelSize(int w, int h) {
+	public void setPanelSize(int w, int h) {
 		// do nothing if unchanged
 		if (width == w && height == h)
 			return;
@@ -141,14 +154,28 @@ public class Canvas extends JPanel {
 	public void setLocation(double dx, double dy, double z, double t) {
 		transform.setTranslation(dx, dy);
 		transform.setScalar(1 / z, 1 / z);
-		transform.setTheta(t);
+		transform.setRot(t);
 	}
-
+	
+	/**
+	 * sets the instance of the {@link JPInterface} so the Canvas can save and
+	 * update the user input
+	 * 
+	 * @param jpi the instance of {@link JPInterface}
+	 */
+	public void setJPI(@NotNull JPInterface jpi) {
+		mouse.setJPI(jpi);
+	}
+	
 	/**
 	 * @return the {@link LinearTransform} corresponding with the current location
 	 */
 	public LinearTransform getTransform() {
 		return transform;
+	}
+
+	public Mouse getMouse() {
+		return mouse;
 	}
 
 	public Fractal getFractal() {

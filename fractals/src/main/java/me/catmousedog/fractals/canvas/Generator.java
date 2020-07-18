@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.SwingWorker;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.Logger;
 
 /**
  * swing worker used for generating the image and updating at the same time
@@ -25,6 +25,11 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 * the canvas instance this generator belongs to
 	 */
 	private final Canvas canvas;
+
+	/**
+	 * the user interface containing the {@link JPInterface#postRender()} method
+	 */
+	private final JPInterface jpi;
 
 	/**
 	 * the linear transformation used to calculate the actual coordinates
@@ -42,27 +47,21 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	private final List<Pixel> field;
 
 	/**
-	 * the runnable executed at the end of the background task, in this case
-	 * calculating the fractal
-	 */
-	private final Runnable runnable;
-
-	/**
 	 * the logger instance
 	 */
 	private final Logger logger;
 
 	/*
-	 * atomic counters
+	 * atomic counters for keeping calculation progress
 	 */
 	private AtomicInteger i, q;
 
-	public Generator(@NotNull Canvas canvas, @Nullable Runnable runnable, @NotNull Logger logger) {
+	public Generator(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
 		this.canvas = canvas;
-		this.transform = canvas.getTransform();
-		this.fractal = canvas.getFractal();
-		this.field = canvas.getField();
-		this.runnable = runnable;
+		transform = canvas.getTransform();
+		fractal = canvas.getFractal();
+		field = canvas.getField();
+		this.jpi = jpi;
 		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
@@ -115,7 +114,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	}
 
 	/**
-	 * Called each percent of completion, updates the progress bar.
+	 * Called each percent of completion, updates the progress bar and runs the
+	 * {@link JPInterface#postRender()} method.
 	 * <p>
 	 * Ran on the EDT
 	 */
@@ -126,8 +126,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 				logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
 			logger.setProgress("done!", 100);
-			if (runnable != null)
-				runnable.run();
+			jpi.postRender();
 		}
 	}
 
