@@ -6,7 +6,6 @@ import java.awt.event.MouseListener;
 import javax.swing.SwingUtilities;
 
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.ui.Configuration;
 import me.catmousedog.fractals.ui.JPInterface;
 
 /**

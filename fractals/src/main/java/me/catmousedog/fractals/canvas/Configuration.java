@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.ui;
+package me.catmousedog.fractals.canvas;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;

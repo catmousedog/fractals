@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui.components.concrete;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -8,6 +8,9 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import me.catmousedog.fractals.ui.components.Data;
+import me.catmousedog.fractals.ui.components.Item;
 
 /**
  * Active {@link Item} representing two buttons side by side.<br>

@@ -16,18 +16,18 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.components.Button;
-import me.catmousedog.fractals.components.Button2;
-import me.catmousedog.fractals.components.ComboBox;
-import me.catmousedog.fractals.components.Data;
-import me.catmousedog.fractals.components.Item;
-import me.catmousedog.fractals.components.Padding;
-import me.catmousedog.fractals.components.TextFieldDouble;
-import me.catmousedog.fractals.components.TextFieldInteger;
-import me.catmousedog.fractals.components.Title;
-import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.main.Fractals;
+import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.ui.components.Data;
+import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.Button;
+import me.catmousedog.fractals.ui.components.concrete.Button2;
+import me.catmousedog.fractals.ui.components.concrete.ComboBox;
+import me.catmousedog.fractals.ui.components.concrete.Padding;
+import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
+import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
+import me.catmousedog.fractals.ui.components.concrete.Title;
 
 /**
  * class containing all the data entered by the user through the interface panel

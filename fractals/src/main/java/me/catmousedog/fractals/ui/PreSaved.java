@@ -5,7 +5,7 @@ import javax.swing.JComboBox;
 import me.catmousedog.fractals.fractals.LinearTransform;
 
 /**
- * PreSaved positions for use in a {@link JComboBox}
+ * PreSaved positions for use in a {@link JComboBox} to select from
  */
 public enum PreSaved {
 

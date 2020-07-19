@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui.components.concrete;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,6 +9,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import me.catmousedog.fractals.ui.components.Data;
 
 /**
  * An active {@link Data} container. The {@link ComboBox} can be updated using

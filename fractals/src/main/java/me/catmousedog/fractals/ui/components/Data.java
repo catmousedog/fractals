@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui.components;
 
 import java.awt.event.ActionListener;
 

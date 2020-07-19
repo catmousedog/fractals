@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui.components.concrete;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,6 +9,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import me.catmousedog.fractals.ui.components.Data;
 
 /**
  * Active {@link Data} storing a {@link Boolean}. <br>

@@ -15,9 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
-import me.catmousedog.fractals.ui.Configuration;
+import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.ui.Logger;
 
 /**
  * Represents a 2D plane of processed values by the function

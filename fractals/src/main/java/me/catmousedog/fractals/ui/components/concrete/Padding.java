@@ -1,9 +1,11 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui.components.concrete;
 
 import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.Box;
+
+import me.catmousedog.fractals.ui.components.Item;
 
 public class Padding extends Item {
 

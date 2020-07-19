@@ -11,9 +11,8 @@ import javax.swing.ToolTipManager;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.IterativeMandelbrot;
+import me.catmousedog.fractals.fractals.concrete.IterativeMandelbrot;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.ui.Logger;
 
 /**
  * the main class

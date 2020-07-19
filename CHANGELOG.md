@@ -92,6 +92,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - Moved iterations, fractal and zoomFactor to **Configuration** class
 - Rewrote all graphics components in **JPInterface.AllData** class. 
 - Moved all *.properties* fields to **Settings** class.
+- Redid packages
 
 ### Removed
-
+- **ComponentFactory** class

@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.components;
+package me.catmousedog.fractals.ui.components.concrete;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import me.catmousedog.fractals.ui.components.Data;
 
 /**
  * Passive {@link Data} representing a {@link JTextField} that stores a

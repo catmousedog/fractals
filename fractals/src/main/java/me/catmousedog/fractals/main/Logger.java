@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.ui;
+package me.catmousedog.fractals.main;
 
 import java.awt.Color;
 import java.awt.Dimension;
