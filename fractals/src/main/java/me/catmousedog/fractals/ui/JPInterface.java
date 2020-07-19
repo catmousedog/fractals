@@ -16,10 +16,14 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import me.catmousedog.fractals.canvas.Canvas;
+import me.catmousedog.fractals.components.Item;
+import me.catmousedog.fractals.components.Label;
+import me.catmousedog.fractals.components.TextFieldDouble;
+import me.catmousedog.fractals.components.AllData;
+import me.catmousedog.fractals.components.Button;
+import me.catmousedog.fractals.components.Data;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.main.Fractals;
 import me.catmousedog.fractals.main.Settings;
@@ -117,116 +121,122 @@ public class JPInterface extends JPanel {
 	 * create and add all the JComponents
 	 */
 	public void addComponents() {
-		/* Window */
-		add((ComponentFactory.title("Window")));
-		add(ComponentFactory.padding(10));
-
-		// width textfield
-		widthjtf = new JTextField(Integer.toString(canvas.getWidth()));
-		add(ComponentFactory.textField(widthjtf, "width", "width of the canvas"));
-		add(ComponentFactory.padding(5));
-		// height textfield
-		heightjtf = new JTextField(Integer.toString(canvas.getWidth()));
-		add(ComponentFactory.textField(heightjtf, "height", "height of the canvas"));
-		add(ComponentFactory.padding(20));
-
-		/* Location */
-		add((ComponentFactory.title("Location")));
-		add(ComponentFactory.padding(10));
-		// position textfield
-		xjtf = new JTextField();
-		add(ComponentFactory.textField(xjtf, "x coordinate"));
-		add(ComponentFactory.padding(5));
-		yjtf = new JTextField();
-		add(ComponentFactory.textField(yjtf, "y coordinate"));
-		add(ComponentFactory.padding(5));
-		mjtf = new JTextField();
-		add(ComponentFactory.textField(mjtf, "x zoom"));
-		add(ComponentFactory.padding(5));
-		njtf = new JTextField();
-		add(ComponentFactory.textField(njtf, "y zoom"));
-		add(ComponentFactory.padding(5));
-		rotjtf = new JTextField();
-		add(ComponentFactory.textField(rotjtf, "rotation"));
-		add(ComponentFactory.padding(5));
-		// copy
-		copyjb = new JButton("Copy");
-		copyjb.addActionListener(a -> copy());
-		add(ComponentFactory.button(copyjb, "copy location to clipboard"));
-		add(ComponentFactory.padding(5));
-		// paste
-		pastejb = new JButton("Paste");
-		pastejb.addActionListener(a -> paste());
-		add(ComponentFactory.button(pastejb, "paste location from clipboard"));
-		add(ComponentFactory.padding(5));
-		// dropdown locations
-		jcbpos = new JComboBox<Position>(Position.preSaved);
-		jcbpos.addActionListener(a -> {
-			Position pos = (Position) (jcbpos.getSelectedItem());
-			LinearTransform transform = pos.getTransform();
-			canvas.getTransform().set(transform);
-			canvas.getFractal().setIterations(pos.getIterations());
-			update();
-			if (settings.isRender_on_changes())
-				renderNow();
-		});
-		add(ComponentFactory.dropDown(jcbpos, "locations", "a set of interesting locations"));
-		add(ComponentFactory.padding(20));
-
-		/* Calculation */
-		add(ComponentFactory.title("Calculation"));
-		add(ComponentFactory.padding(10));
-		// iterations
-		iterationjtf = new JTextField();
-		add(ComponentFactory.textField(iterationjtf, "iterations", "the amount of iterations"));
-		add(ComponentFactory.padding(5));
-		zoomjtf = new JTextField();
-		add(ComponentFactory.textField(zoomjtf, "zoom factor", "the zoom factor increment, when zooming in or out"));
-		add(ComponentFactory.padding(5));
-		// zoom
-		zoominjb = new JButton("Zoom In");
-		zoominjb.addActionListener(a -> {
-			try {
-				canvas.getTransform().zoom(Double.parseDouble(zoomjtf.getText()));
-				renderNow();
-			} catch (NumberFormatException e) {
-				logger.log("zoom factor must be a valid double");
-			}
-		});
-		add(ComponentFactory.button(zoominjb, "zooms in with the current zoom factor"));
-		add(ComponentFactory.padding(5));
-		zoomoutjb = new JButton("Zoom Out");
-		zoomoutjb.addActionListener(a -> {
-			try {
-				canvas.getTransform().zoom(1 / Double.parseDouble(zoomjtf.getText()));
-			} catch (NumberFormatException e) {
-				logger.log("zoom factor must be a valid double");
-			}
-		});
-		add(ComponentFactory.button(zoomoutjb, "zooms out with the current zoom factor"));
-		add(ComponentFactory.padding(10));
-		// render
+//		/* Window */
+//		add((ComponentFactory.title("Window")));
+//		add(ComponentFactory.padding(10));
+//
+//		// width textfield
+//		widthjtf = new JTextField(Integer.toString(canvas.getWidth()));
+//		add(ComponentFactory.textField(widthjtf, "width", "width of the canvas"));
+//		add(ComponentFactory.padding(5));
+//		// height textfield
+//		heightjtf = new JTextField(Integer.toString(canvas.getWidth()));
+//		add(ComponentFactory.textField(heightjtf, "height", "height of the canvas"));
+//		add(ComponentFactory.padding(20));
+//
+//		/* Location */
+//		add((ComponentFactory.title("Location")));
+//		add(ComponentFactory.padding(10));
+//		// position textfield
+//		xjtf = new JTextField();
+//		add(ComponentFactory.textField(xjtf, "x coordinate"));
+//		add(ComponentFactory.padding(5));
+//		yjtf = new JTextField();
+//		add(ComponentFactory.textField(yjtf, "y coordinate"));
+//		add(ComponentFactory.padding(5));
+//		mjtf = new JTextField();
+//		add(ComponentFactory.textField(mjtf, "x zoom"));
+//		add(ComponentFactory.padding(5));
+//		njtf = new JTextField();
+//		add(ComponentFactory.textField(njtf, "y zoom"));
+//		add(ComponentFactory.padding(5));
+//		rotjtf = new JTextField();
+//		add(ComponentFactory.textField(rotjtf, "rotation"));
+//		add(ComponentFactory.padding(5));
+//		// copy
+//		copyjb = new JButton("Copy");
+//		copyjb.addActionListener(a -> copy());
+//		add(ComponentFactory.button(copyjb, "copy location to clipboard"));
+//		add(ComponentFactory.padding(5));
+//		// paste
+//		pastejb = new JButton("Paste");
+//		pastejb.addActionListener(a -> paste());
+//		add(ComponentFactory.button(pastejb, "paste location from clipboard"));
+//		add(ComponentFactory.padding(5));
+//		// dropdown locations
+//		jcbpos = new JComboBox<Position>(Position.preSaved);
+//		jcbpos.addActionListener(a -> {
+//			Position pos = (Position) (jcbpos.getSelectedItem());
+//			LinearTransform transform = pos.getTransform();
+//			canvas.getTransform().set(transform);
+//			canvas.getFractal().setIterations(pos.getIterations());
+//			update();
+//			if (settings.isRender_on_changes())
+//				renderNow();
+//		});
+//		add(ComponentFactory.dropDown(jcbpos, "locations", "a set of interesting locations"));
+//		add(ComponentFactory.padding(20));
+//
+//		/* Calculation */
+//		add(ComponentFactory.title("Calculation"));
+//		add(ComponentFactory.padding(10));
+//		// iterations
+//		iterationjtf = new JTextField();
+//		add(ComponentFactory.textField(iterationjtf, "iterations", "the amount of iterations"));
+//		add(ComponentFactory.padding(5));
+//		zoomjtf = new JTextField();
+//		add(ComponentFactory.textField(zoomjtf, "zoom factor", "the zoom factor increment, when zooming in or out"));
+//		add(ComponentFactory.padding(5));
+//		// zoom
+//		zoominjb = new JButton("Zoom In");
+//		zoominjb.addActionListener(a -> {
+//			try {
+//				canvas.getTransform().zoom(Double.parseDouble(zoomjtf.getText()));
+//				renderNow();
+//			} catch (NumberFormatException e) {
+//				logger.log("zoom factor must be a valid double");
+//			}
+//		});
+//		add(ComponentFactory.button(zoominjb, "zooms in with the current zoom factor"));
+//		add(ComponentFactory.padding(5));
+//		zoomoutjb = new JButton("Zoom Out");
+//		zoomoutjb.addActionListener(a -> {
+//			try {
+//				canvas.getTransform().zoom(1 / Double.parseDouble(zoomjtf.getText()));
+//			} catch (NumberFormatException e) {
+//				logger.log("zoom factor must be a valid double");
+//			}
+//		});
+//		add(ComponentFactory.button(zoomoutjb, "zooms out with the current zoom factor"));
+//		add(ComponentFactory.padding(10));
+//		// render
 		renderjb = new JButton("Render");
-		renderjb.addActionListener(a -> render());
-		add(ComponentFactory.button(renderjb, "saves user input and renders the image"));
-		add(ComponentFactory.padding(20));
+//		renderjb.addActionListener(a -> render());
+//		add(ComponentFactory.button(renderjb, "saves user input and renders the image"));
+//		add(ComponentFactory.padding(20));
+//
+//		/* Colour */
+//		add((ComponentFactory.title("Colour")));
+//		add(ComponentFactory.padding(20));
+//
+//		/* Picture */
+//		add((ComponentFactory.title("Picture")));
+//		add(ComponentFactory.padding(20));
+//
+//		/* Other */
+//		add((ComponentFactory.title("Other")));
+//		add(ComponentFactory.padding(20));
+//		
+//		// set position labels
+//		update();
+//
+//		init = true;
 
-		/* Colour */
-		add((ComponentFactory.title("Colour")));
-		add(ComponentFactory.padding(20));
+		AllData components = new AllData();
 
-		/* Picture */
-		add((ComponentFactory.title("Picture")));
-		add(ComponentFactory.padding(20));
+		for (Item c : components.getAll())
+			add(c.panel());
 
-		/* Other */
-		add((ComponentFactory.title("Other")));
-		add(ComponentFactory.padding(20));
-
-		// set position labels
-		update();
-
-		init = true;
 	}
 
 	/**
@@ -421,4 +431,39 @@ public class JPInterface extends JPanel {
 	public JTextField getZoomJTF() {
 		return zoomjtf;
 	}
+	
+	private final AllData data = new AllData();
+	
+	/**
+	 * Concrete class containing all the actual {@link Data} containers displayed in
+	 * the user interface. This class can be passed around to retrieve the data
+	 * needed.
+	 */
+	public class AllData {
+
+		private Button jb1 = new Button.ButtonBuilder("jb1").setLabel("button").setTip("tiip").setAction(a -> {
+			render();
+		}).build();
+
+		private TextFieldDouble x = new TextFieldDouble.TextFieldBuilder().setText("0").setTip("tiptip")
+				.setLabel("cord").build();
+
+		public Data<Double> getX() {
+			return x;
+		}
+
+		private Label test = new Label.LabelBuilder().setText("test").setTip("tip").build();
+
+		public Data<Void> getTest() {
+			return test;
+		}
+
+		private Item[] all = new Item[] { jb1, x, test };
+
+		public Item[] getAll() {
+			return all;
+		}
+
+	}
+
 }

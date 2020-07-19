@@ -70,4 +70,11 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Removed
 - **ComponentFactory.create()** as the JPanel is now created in each factory method
 
+## [0.1.0]
+
+### Added
+
+### Changed
+
+### Removed
 
