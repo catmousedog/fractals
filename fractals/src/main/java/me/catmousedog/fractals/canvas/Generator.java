@@ -11,8 +11,8 @@ import javax.swing.SwingWorker;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
+import me.catmousedog.fractals.ui.Configuration;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Logger;
 
@@ -31,10 +31,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	private final JPInterface jpi;
 
-	/**
-	 * the linear transformation used to calculate the actual coordinates
-	 */
-	private final LinearTransform transform;
+	private final Configuration config;
 
 	/**
 	 * the fractal instance containg the fractal function
@@ -58,8 +55,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 	public Generator(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
 		this.canvas = canvas;
-		transform = canvas.getTransform();
-		fractal = canvas.getFractal();
+		config = canvas.getConfig();
+		fractal = config.getFractal();
 		field = canvas.getField();
 		this.jpi = jpi;
 		this.logger = logger;
@@ -79,7 +76,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 		// linear transformation to determine actual coordinates
 		field.parallelStream().forEach(p -> {
-			double[] t = transform.apply(p.x, p.y);
+			double[] t = config.getTransform().apply(p.x, p.y);
 			p.tx = t[0];
 			p.ty = t[1];
 		});

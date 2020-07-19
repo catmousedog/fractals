@@ -11,52 +11,53 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * Active {@link Data} representing a button
+ * Active {@link Data} storing a {@link Boolean}. <br>
+ * The {@link Data#data} is the {@link JButton#isEnabled()}.
  */
-public class Button extends Data<Void> {
+public class Button extends Data<Boolean> {
 
 	private JButton jb;
 	private JLabel jl;
-	
-	public static class ButtonBuilder {
-		
+
+	public static class Builder {
+
 		private String text, lbl, tip;
 		private ActionListener e;
-		
-		public ButtonBuilder(String text) {
+
+		public Builder(String text) {
 			this.text = text;
 		}
-		
-		public ButtonBuilder setLabel(String lbl) {
+
+		public Builder setLabel(String lbl) {
 			this.lbl = lbl;
 			return this;
 		}
-		
-		public ButtonBuilder setTip(String tip) {
+
+		public Builder setTip(String tip) {
 			this.tip = tip;
 			return this;
 		}
-		
-		public ButtonBuilder setAction(ActionListener e) {
+
+		public Builder setAction(ActionListener e) {
 			this.e = e;
 			return this;
 		}
-		
+
 		public Button build() {
 			return new Button(text, lbl, tip, e);
 		}
-		
+
 	}
-	
+
 	public Button(String text, String lbl, String tip, ActionListener e) {
 		jb = new JButton(text);
 		jb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jb.getPreferredSize().height));
 		jb.addActionListener(e);
-		jb.setAlignmentX(0);
+		jb.setAlignmentX(JButton.LEFT_ALIGNMENT);
 		jb.setToolTipText(tip);
-		
+
 		jl = new JLabel(lbl);
-		jl.setAlignmentX(0);
+		jl.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 		jl.setFont(new Font(null, Font.PLAIN, 12));
 		jl.setToolTipText(tip);
 	}
@@ -65,20 +66,21 @@ public class Button extends Data<Void> {
 	public Component panel() {
 		JPanel jp = new JPanel();
 		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
-		
+		jp.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+
 		jp.add(jl);
 		jp.add(jb);
-		
+
 		return jp;
 	}
 
 	@Override
 	public void save() {
-
+		data = jb.isEnabled();
 	}
 
 	@Override
 	public void update() {
-
+		jb.setEnabled(data);
 	}
 }

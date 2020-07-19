@@ -70,11 +70,28 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Removed
 - **ComponentFactory.create()** as the JPanel is now created in each factory method
 
-## [0.1.0]
+## [0.0.3] - DataContainer_Graphics
 
 ### Added
+- Created **Item** and **Data<T>** abstract classes to represent the graphics components containing data.
+- Created **AllData** inner class of **JPInterface** which contains all the **Data<T>** and **Items**.
+- Created **Configuration** class for passing around the current canvas Configuration.
+- **JPInterface** methods: *renderWithout*, *preRender*
+- Data (active) (passive)
+	- Button (a)
+	- Button2 (a)
+	- ComboBox (a)
+	- Label (p)
+	- TextFieldDouble (p)
+	- TextFieldInteger (p)
+- Items
+	- Title
+	- Padding
 
 ### Changed
+- Moved iterations, fractal and zoomFactor to **Configuration** class
+- Rewrote all graphics components in **JPInterface.AllData** class. 
+- Moved all *.properties* fields to **Settings** class.
 
 ### Removed
 

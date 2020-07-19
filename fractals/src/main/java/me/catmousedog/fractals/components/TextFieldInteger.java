@@ -12,21 +12,21 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
- * Passive {@link Data} representing a {@link JTextField} that stores a
- * {@link Double}
+ * Passive {@link Data} representing a {@link JTextField} that stores an
+ * {@link Integer}
  */
-public class TextFieldDouble extends Data<Double> implements DocumentListener {
+public class TextFieldInteger extends Data<Integer> implements DocumentListener {
 
-	private JTextField jtf;
-	private JLabel jl;
-
+	private final JTextField jtf;
+	private final JLabel jl;
+	
 	public static class Builder {
 
 		private String lbl, tip;
-		private double d;
+		private int i;
 
-		public Builder setDefault(double d) {
-			this.d = d;
+		public Builder setDefault(int i) {
+			this.i = i;
 			return this;
 		}
 
@@ -40,14 +40,14 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 			return this;
 		}
 
-		public TextFieldDouble build() {
-			return new TextFieldDouble(d, lbl, tip);
+		public TextFieldInteger build() {
+			return new TextFieldInteger(i, lbl, tip);
 		}
 
 	}
 
-	private TextFieldDouble(double d, String lbl, String tip) {
-		jtf = new JTextField(Double.toString(d));
+	private TextFieldInteger(int i, String lbl, String tip) {
+		jtf = new JTextField(Integer.toString(i));
 		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
 		jtf.getDocument().addDocumentListener(this);
 		jtf.setAlignmentX(JTextField.LEFT_ALIGNMENT);
@@ -58,7 +58,7 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 		jl.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 		jl.setToolTipText(tip);
 		
-		data = d;
+		data = i;
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 		JPanel jp = new JPanel();
 		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
 		jp.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-
+		
 		jp.add(jl);
 		jp.add(jtf);
 
@@ -76,14 +76,14 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 	@Override
 	public void save() {
 		try {
-			data = Double.parseDouble(jtf.getText());
+			data = Integer.parseInt(jtf.getText());
 		} catch (Exception e) {
 		}
 	}
 
 	@Override
 	public void update() {
-		jtf.setText(Double.toString(data));
+		jtf.setText(Integer.toString(data));
 	}
 
 	@Override

@@ -6,23 +6,16 @@ import java.awt.Font;
 import javax.swing.JLabel;
 
 /**
- * A passive {@link Data} container with a variable text.
+ * An immutable JLabel
  */
-public class Label extends Data<Object> {
+public class Title extends Item {
 
 	private final JLabel jl;
-	private final String text;
 
-	public Label(String text, String tip) {
-		this.text = text;
+	public Title(String text) {
 		jl = new JLabel(text);
-		jl.setFont(new Font(null, Font.PLAIN, 12));
-		jl.setToolTipText(tip);
+		jl.setFont(new Font(null, Font.BOLD, 15));
 		jl.setAlignmentX(0);
-	}
-	
-	public Label(String text) {
-		this(text, null);
 	}
 
 	@Override
@@ -36,7 +29,6 @@ public class Label extends Data<Object> {
 
 	@Override
 	public void update() {
-		jl.setText(text + data.toString());
 	}
 
 }

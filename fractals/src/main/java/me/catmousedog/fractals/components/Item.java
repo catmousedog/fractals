@@ -1,12 +1,18 @@
 package me.catmousedog.fractals.components;
 
 import java.awt.Component;
+import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 /**
  * Represents a group of {@link JComponent}s in the user interface.
+ * <p>
+ * <b>Active</b> {@link Item}s have an {@link ActionListener} and perform an
+ * action themselves.
+ * <p>
+ * <b>Passive</b> {@link Item}s don't perform an action.
  */
 public abstract class Item {
 
@@ -20,15 +26,18 @@ public abstract class Item {
 	public abstract Component panel();
 
 	/**
-	 * Takes the user entered data from the {@link Item#comp} and saves it to
-	 * {@link Item#data}
+	 * Takes the user entered data from this Item and saves it to {@link Data#data}
+	 * <p>
+	 * If the concrete class extends {@link Item} and not {@link Data}, this method
+	 * is obsolete and should be left empty.
 	 */
 	public abstract void save();
 
 	/**
-	 * Takes the {@link Item#data} and saves it to the {@link Item#comp}.
+	 * Takes the {@link Data#data} and saves it to this Item.
+	 * <p>
+	 * If the concrete class extends {@link Item} and not {@link Data}, this method
+	 * is obsolete and should be left empty.
 	 */
 	public abstract void update();
-
-
 }

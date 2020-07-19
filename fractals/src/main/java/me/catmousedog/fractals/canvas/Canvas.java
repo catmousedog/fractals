@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
+import me.catmousedog.fractals.ui.Configuration;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Logger;
 
@@ -25,21 +26,12 @@ import me.catmousedog.fractals.ui.Logger;
 @SuppressWarnings("serial")
 public class Canvas extends JPanel {
 
-	/**
-	 * the linear transformation used to get the actual coordinates the pixels point
-	 * to
-	 */
-	private final LinearTransform transform = new LinearTransform();
+	private final Configuration config;
 
 	/**
 	 * the mouse listener
 	 */
 	private final Mouse mouse;
-
-	/**
-	 * iterative fractal function
-	 */
-	private final Fractal fractal;
 
 	/**
 	 * used to log progress to the user
@@ -61,7 +53,7 @@ public class Canvas extends JPanel {
 	 * this might be different from the actual JPanel width and height
 	 */
 	private int width, height;
-	
+
 	/**
 	 * creates the Canvas
 	 * 
@@ -72,14 +64,14 @@ public class Canvas extends JPanel {
 	 * @param logger  the logger instance
 	 */
 	public Canvas(int width, int height, Fractal fractal, Logger logger) {
-		this.fractal = fractal;
 		this.logger = logger;
-		
-		setPanelSize(width, height);
+		config = new Configuration(new LinearTransform(), fractal, 2);
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
-		mouse = new Mouse(this, logger);
+		mouse = new Mouse(this);
 		addMouseListener(mouse);
+
+		setPanelSize(width, height);
 	}
 
 	/**
@@ -133,8 +125,8 @@ public class Canvas extends JPanel {
 		// set image size
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-		// set transform
-		transform.setOrigin(width / 2, height / 2);
+		// set config.getTransform()
+		config.getTransform().setOrigin(width / 2, height / 2);
 
 		// set panel size
 		setPreferredSize(new Dimension(width, height));
@@ -152,11 +144,11 @@ public class Canvas extends JPanel {
 	 */
 	@Deprecated
 	public void setLocation(double dx, double dy, double z, double t) {
-		transform.setTranslation(dx, dy);
-		transform.setScalar(1 / z, 1 / z);
-		transform.setRot(t);
+		config.getTransform().setTranslation(dx, dy);
+		config.getTransform().setScalar(1 / z, 1 / z);
+		config.getTransform().setRot(t);
 	}
-	
+
 	/**
 	 * sets the instance of the {@link JPInterface} so the Canvas can save and
 	 * update the user input
@@ -166,23 +158,16 @@ public class Canvas extends JPanel {
 	public void setJPI(@NotNull JPInterface jpi) {
 		mouse.setJPI(jpi);
 	}
-	
-	/**
-	 * @return the {@link LinearTransform} corresponding with the current location
-	 */
-	public LinearTransform getTransform() {
-		return transform;
-	}
 
 	public Mouse getMouse() {
 		return mouse;
 	}
 
-	public Fractal getFractal() {
-		return fractal;
-	}
-
 	public List<Pixel> getField() {
 		return field;
+	}
+
+	public Configuration getConfig() {
+		return config;
 	}
 }

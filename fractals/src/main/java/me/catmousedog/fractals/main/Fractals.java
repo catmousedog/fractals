@@ -3,13 +3,6 @@ package me.catmousedog.fractals.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,20 +20,10 @@ import me.catmousedog.fractals.ui.Logger;
  */
 public class Fractals implements Runnable {
 
-	/*
-	 * the project.properties containing the name and version
-	 */
-	private final Properties project = new Properties();
-
-	/**
-	 * the properties object pointing to the settings.properties file
-	 */
-	private final Properties settingsobj = new Properties();
-
 	/**
 	 * Settings object for storing all the settings
 	 */
-	private final Settings settings = new Settings();
+	private final Settings settings = new Settings(this);
 
 	private JFrame frame;
 
@@ -76,9 +59,11 @@ public class Fractals implements Runnable {
 	private JScrollPane jsp;
 
 	/**
-	 * default width and height of the {@link Fractals#canvas}
+	 * Width and height of the canvas.
+	 * <p>
+	 * The default size is set in the {@code settings.properties} file
 	 */
-	private int width = 1000, height = 1000;
+	private int width = settings.getWidth(), height = settings.getHeight();
 
 	/**
 	 * The interface width, this remains constant unless the frame is smaller than
@@ -114,39 +99,6 @@ public class Fractals implements Runnable {
 	 */
 	@Override
 	public void run() {
-		// load properties
-		try {
-			project.load(this.getClass().getClassLoader().getResourceAsStream("project.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// create settings
-		File f = new File("./settings.properties");
-		if (!f.exists()) {
-			try {
-				Files.copy(this.getClass().getClassLoader().getResourceAsStream("default_settings.properties"),
-						Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		// load settings
-		try {
-			settingsobj.load(new FileInputStream(f));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		// render_on_changes
-		settings.setRender_on_changes(Boolean.parseBoolean(settingsobj.getProperty("render_on_change")));
-		// intial size
-		try {
-			width = Integer.parseInt(settingsobj.getProperty("width"));
-			height = Integer.parseInt(settingsobj.getProperty("height"));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
 
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 
@@ -157,7 +109,7 @@ public class Fractals implements Runnable {
 		fractal = new IterativeMandelbrot();
 
 		// create JFrame
-		frame = new JFrame(project.getProperty("artifactId") + " - " + project.getProperty("version"));
+		frame = new JFrame(settings.getArtifact_id() + "-" + settings.getVersion());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 
