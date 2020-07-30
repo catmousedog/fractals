@@ -1,7 +1,8 @@
 package me.catmousedog.fractals.fractals;
 
 /**
- * represents a 2x2 matrix with a scalar stretch, a rotation and a translation.
+ * Represents a position on the 2D plane through a coordinate, stretch and
+ * rotation.
  */
 public class LinearTransform {
 
@@ -21,12 +22,12 @@ public class LinearTransform {
 	 * translation coordinates from the origin determined by
 	 * {@link LinearTransform#ox} and {@link LinearTransform#oy}
 	 */
-	private double dx, dy;
+	private double dx = 0, dy = 0;
 
 	/**
 	 * rotation angle in radians
 	 */
-	private double rot;
+	private double rot = 0;
 
 	/**
 	 * Translation coordinates in pixels. <br>
@@ -116,6 +117,13 @@ public class LinearTransform {
 		setScalar(transform.m, transform.n);
 	}
 
+	@Override
+	public LinearTransform clone() {
+		LinearTransform transform = new LinearTransform(dx, dy, m, n, rot);
+		transform.setOrigin(ox, oy);
+		return transform;
+	}
+	
 	public void zoom(double f) {
 		m *= f;
 		n *= f;

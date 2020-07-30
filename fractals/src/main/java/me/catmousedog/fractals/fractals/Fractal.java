@@ -7,6 +7,13 @@ public abstract class Fractal {
 
 	protected int iterations = 100;
 
+	public Fractal() {
+	}
+
+	public Fractal(int iterations) {
+		this.iterations = iterations;
+	}
+
 	/**
 	 * calculates the fractal function for a given point in space
 	 * 
@@ -23,5 +30,4 @@ public abstract class Fractal {
 	public int getIterations() {
 		return iterations;
 	}
-
 }

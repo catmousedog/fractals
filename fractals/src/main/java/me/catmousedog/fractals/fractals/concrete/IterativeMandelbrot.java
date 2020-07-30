@@ -1,4 +1,6 @@
-package me.catmousedog.fractals.fractals;
+package me.catmousedog.fractals.fractals.concrete;
+
+import me.catmousedog.fractals.fractals.Fractal;
 
 public final class IterativeMandelbrot extends Fractal {
 	

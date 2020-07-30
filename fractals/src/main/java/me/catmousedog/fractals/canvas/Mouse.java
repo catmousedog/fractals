@@ -7,7 +7,6 @@ import javax.swing.SwingUtilities;
 
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.ui.Logger;
 
 /**
  * the mouse listener for interacting with the canvas
@@ -20,45 +19,35 @@ public class Mouse implements MouseListener {
 	private final Canvas canvas;
 
 	/**
-	 * the logger instance
-	 */
-	private final Logger logger;
-
-	/**
 	 * the user interface, used to {@link JPInterface#render()} and retrieve user
 	 * data
 	 */
 	private JPInterface jpi;
 
-	private double zoomFactor = 1.5;
-
-	public Mouse(Canvas canvas, Logger logger) {
+	public Mouse(Canvas canvas) {
 		this.canvas = canvas;
-		this.logger = logger;
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
 
-		LinearTransform transform = canvas.getTransform();
+		// JPInterface#renderWithout(Runnable r) couldn't be used because of the
+		// MouseEvent here which isn't effectively final
+
+		jpi.save();
+
+		LinearTransform transform = canvas.getConfig().getTransform();
 		double[] t = transform.apply(me.getX(), me.getY());
 		transform.setTranslation(t[0], t[1]);
 
-		// manually save zoomFactor as it is needed for the transformation
-		try {
-			zoomFactor = Double.parseDouble(jpi.getZoomJTF().getText());
-		} catch (NumberFormatException e) {
-			logger.log("zoom factor must be a valid double");
-		}
-
 		// lmb (zoom in)
 		if (me.getButton() == MouseEvent.BUTTON1)
-			transform.zoom(1 / zoomFactor);
+			transform.zoom(1 / canvas.getConfig().getZoomFactor());
 
 		// rmb (zoom out)
 		if (me.getButton() == MouseEvent.BUTTON3)
-			transform.zoom(zoomFactor);
+			transform.zoom(canvas.getConfig().getZoomFactor());
 
 		jpi.update();
 		jpi.renderNow();

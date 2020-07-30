@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.ui;
+package me.catmousedog.fractals.main;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,7 +22,7 @@ public class Logger extends JPanel {
 	/**
 	 * amount of logged messages displayed
 	 */
-	private int m = 5;
+	private int m = 6;
 
 	/**
 	 * array of JLabels representing the logged messages
@@ -77,9 +77,9 @@ public class Logger extends JPanel {
 	 * @param message to be logged
 	 */
 	public void log(@NotNull String message) {
-		
+
 		System.out.println("logger: " + message);
-		
+
 		logMessages.add(message);
 
 		if (logMessages.size() > m)
@@ -89,7 +89,6 @@ public class Logger extends JPanel {
 			logs[m - j - 1].setText(logMessages.get(j));
 			logs[m - j - 1].setToolTipText(logMessages.get(j));
 		}
-
 	}
 
 	/**
@@ -100,7 +99,7 @@ public class Logger extends JPanel {
 	public void exception(@NotNull Exception e) {
 		log("exception: " + e.getMessage());
 	}
-	
+
 	/**
 	 * sets the progress message and the progress bar value
 	 * 
@@ -112,4 +111,5 @@ public class Logger extends JPanel {
 		jpb.setValue(p);
 		progress.setText(String.format("%s - %d%s", progressMessage, p, "%"));
 	}
+
 }
