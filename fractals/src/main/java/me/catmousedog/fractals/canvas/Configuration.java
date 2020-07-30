@@ -1,11 +1,13 @@
 package me.catmousedog.fractals.canvas;
 
+import java.awt.Dimension;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 
 /**
- * A class to store the configuration of the canvas, such as the position or the
- * iteration count
+ * A class to store the configuration of the canvas, such as the position and
+ * the iteration count.
  */
 public class Configuration {
 
@@ -14,6 +16,8 @@ public class Configuration {
 	private final Fractal fractal;
 
 	private double zoomFactor;
+	
+	private Dimension dimension;
 
 	public Configuration(LinearTransform transform, Fractal fractal, double zoomFactor) {
 		this.transform = transform;
@@ -62,7 +66,7 @@ public class Configuration {
 	 * Changes this {@link Configuration} to match the given String.
 	 * <p>
 	 * Doing {@code Configuration.fromID(config.getID())} will result in the same
-	 * {@link Configuration}, {@code config}.
+	 * {@link Configuration}.
 	 * 
 	 * @param id String representing this {@link Configuration} of the form:<br>
 	 *           {@code dx:dy:m:n:rot:iter:zoom}
@@ -85,7 +89,14 @@ public class Configuration {
 			setIterations(Integer.parseInt(args[5]));
 		if (args.length > 6)
 			zoomFactor = Double.parseDouble(args[6]);
+	}
 
+	/**
+	 * @return a copy of this {@link Configuration}
+	 */
+	@Override
+	public Configuration clone() {
+		return new Configuration(transform.clone(), fractal, zoomFactor);
 	}
 
 }

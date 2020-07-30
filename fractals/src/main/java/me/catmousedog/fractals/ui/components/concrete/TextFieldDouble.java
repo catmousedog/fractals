@@ -43,13 +43,15 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 		}
 
 		public TextFieldDouble build() {
-			return new TextFieldDouble(d, lbl, tip);
+			TextFieldDouble tfd = new TextFieldDouble(lbl, tip);
+			tfd.setData(d);
+			return tfd;
 		}
 
 	}
 
-	private TextFieldDouble(double d, String lbl, String tip) {
-		jtf = new JTextField(Double.toString(d));
+	private TextFieldDouble(String lbl, String tip) {
+		jtf = new JTextField();
 		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
 		jtf.getDocument().addDocumentListener(this);
 		jtf.setAlignmentX(JTextField.LEFT_ALIGNMENT);
@@ -59,8 +61,6 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 		jl.setFont(new Font(null, Font.PLAIN, 12));
 		jl.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 		jl.setToolTipText(tip);
-		
-		data = d;
 	}
 
 	@Override

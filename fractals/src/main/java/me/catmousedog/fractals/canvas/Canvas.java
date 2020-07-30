@@ -25,7 +25,24 @@ import me.catmousedog.fractals.ui.JPInterface;
 @SuppressWarnings("serial")
 public class Canvas extends JPanel {
 
-	private final Configuration config;
+	/**
+	 * The current {@link Configuration} of the canvas.
+	 * <p>
+	 * Not final as this can change when using {@link Canvas#undo()}
+	 */
+	private Configuration config;
+
+	/**
+	 * The previous {@link Configuration} of the canvas. <br>
+	 * Not final as this gets set to {@link Canvas#config} every
+	 * {@link Canvas#render(JPInterface)}
+	 */
+	private Configuration prevConfig;
+
+	/**
+	 * The latest {@link SwingWorker} responsible for generating the fractal.
+	 */
+	private SwingWorker<Void, Void> generator;
 
 	/**
 	 * the mouse listener
@@ -46,6 +63,11 @@ public class Canvas extends JPanel {
 	 * image displayed on this instance of {@link JPanel}
 	 */
 	private BufferedImage img;
+
+	/**
+	 * the instance of the {@link JPInterface}
+	 */
+	private JPInterface jpi;
 
 	/**
 	 * the current known width and height<br>
@@ -71,32 +93,35 @@ public class Canvas extends JPanel {
 		addMouseListener(mouse);
 
 		setPanelSize(width, height);
+		savePrevConfig();
 	}
 
 	/**
-	 * takes the {@link Canvas#field} and passes it through a color filter
+	 * Displays the current {@link Canvas#img}
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		field.parallelStream().forEach(p -> {
-			img.setRGB(p.x, p.y, (int) (p.v * 100000));
-		});
-
 		g.drawImage(img, 0, 0, null);
 	}
 
 	/**
-	 * generates the image using a {@link SwingWorker} and paints it
+	 * generates the image using a {@link SwingWorker} and calls the
+	 * {@link Canvas#colourAndPaint()}.
 	 * <p>
-	 * This method does not have a cooldown and should only be used by the
+	 * This method does not have a cool down and should only be used by the
 	 * {@link JPInterface}.
-	 * 
-	 * @param jpi the user interface containing the {@link JPInterface#postRender()}
-	 *            method
 	 */
-	public void render(@NotNull JPInterface jpi) {
-		new Generator(this, jpi, logger).execute();
+	public void render() {
+		generator = new Generator(this, jpi, logger);
+		generator.execute();
+	}
+
+	/**
+	 * Colours the image and paints it using a {@link SwingWorker}.
+	 */
+	public void colourAndPaint() {
+		new Painter(this, jpi, logger).execute();
 	}
 
 	/**
@@ -149,13 +174,35 @@ public class Canvas extends JPanel {
 	}
 
 	/**
+	 * Essentially the opposite of {@link Canvas#undo()}. This should be called
+	 * right before saving changes to the {@link Canvas#config}.
+	 */
+	public void savePrevConfig() {
+		prevConfig = config.clone();
+	}
+
+	/**
+	 * Sets the {@link Canvas#config} to the {@link Canvas#prevConfig}, reverting
+	 * any changes saved to it after the last time {@link Canvas#savePrevConfig()}
+	 * was called.
+	 */
+	public void undo() {
+		config = prevConfig.clone();
+	}
+
+	/**
 	 * sets the instance of the {@link JPInterface} so the Canvas can save and
 	 * update the user input
 	 * 
 	 * @param jpi the instance of {@link JPInterface}
 	 */
 	public void setJPI(@NotNull JPInterface jpi) {
+		this.jpi = jpi;
 		mouse.setJPI(jpi);
+	}
+
+	public SwingWorker<Void, Void> getWorker() {
+		return generator;
 	}
 
 	public Mouse getMouse() {
@@ -166,7 +213,15 @@ public class Canvas extends JPanel {
 		return field;
 	}
 
+	/**
+	 * @return the current {@link Configuration}
+	 */
 	public Configuration getConfig() {
 		return config;
 	}
+
+	public void setImg(BufferedImage img) {
+		this.img = img;
+	}
+
 }

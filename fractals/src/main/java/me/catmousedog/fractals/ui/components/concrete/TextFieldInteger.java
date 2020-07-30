@@ -43,13 +43,15 @@ public class TextFieldInteger extends Data<Integer> implements DocumentListener 
 		}
 
 		public TextFieldInteger build() {
-			return new TextFieldInteger(i, lbl, tip);
+			TextFieldInteger tfi = new TextFieldInteger(lbl, tip);
+			tfi.setData(i);
+			return tfi;
 		}
 
 	}
 
-	private TextFieldInteger(int i, String lbl, String tip) {
-		jtf = new JTextField(Integer.toString(i));
+	private TextFieldInteger(String lbl, String tip) {
+		jtf = new JTextField();
 		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
 		jtf.getDocument().addDocumentListener(this);
 		jtf.setAlignmentX(JTextField.LEFT_ALIGNMENT);
@@ -59,8 +61,6 @@ public class TextFieldInteger extends Data<Integer> implements DocumentListener 
 		jl.setFont(new Font(null, Font.PLAIN, 12));
 		jl.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 		jl.setToolTipText(tip);
-		
-		data = i;
 	}
 
 	@Override

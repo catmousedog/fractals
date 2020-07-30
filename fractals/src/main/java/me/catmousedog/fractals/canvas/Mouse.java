@@ -19,11 +19,6 @@ public class Mouse implements MouseListener {
 	private final Canvas canvas;
 
 	/**
-	 * the configuration of the canvas
-	 */
-	private final Configuration config;
-
-	/**
 	 * the user interface, used to {@link JPInterface#render()} and retrieve user
 	 * data
 	 */
@@ -31,7 +26,6 @@ public class Mouse implements MouseListener {
 
 	public Mouse(Canvas canvas) {
 		this.canvas = canvas;
-		this.config = canvas.getConfig();
 	}
 
 	@Override
@@ -39,20 +33,21 @@ public class Mouse implements MouseListener {
 		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
 
 		// JPInterface#renderWithout(Runnable r) couldn't be used because of the
-		// MouseEvent here
+		// MouseEvent here which isn't effectively final
+
 		jpi.save();
 
-		LinearTransform transform = config.getTransform();
+		LinearTransform transform = canvas.getConfig().getTransform();
 		double[] t = transform.apply(me.getX(), me.getY());
 		transform.setTranslation(t[0], t[1]);
 
 		// lmb (zoom in)
 		if (me.getButton() == MouseEvent.BUTTON1)
-			transform.zoom(1 / config.getZoomFactor());
+			transform.zoom(1 / canvas.getConfig().getZoomFactor());
 
 		// rmb (zoom out)
 		if (me.getButton() == MouseEvent.BUTTON3)
-			transform.zoom(config.getZoomFactor());
+			transform.zoom(canvas.getConfig().getZoomFactor());
 
 		jpi.update();
 		jpi.renderNow();

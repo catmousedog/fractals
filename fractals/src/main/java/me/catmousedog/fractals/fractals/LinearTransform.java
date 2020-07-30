@@ -117,6 +117,13 @@ public class LinearTransform {
 		setScalar(transform.m, transform.n);
 	}
 
+	@Override
+	public LinearTransform clone() {
+		LinearTransform transform = new LinearTransform(dx, dy, m, n, rot);
+		transform.setOrigin(ox, oy);
+		return transform;
+	}
+	
 	public void zoom(double f) {
 		m *= f;
 		n *= f;

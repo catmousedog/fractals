@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.main.Fractals;
@@ -25,6 +26,7 @@ import me.catmousedog.fractals.ui.components.concrete.Button;
 import me.catmousedog.fractals.ui.components.concrete.Button2;
 import me.catmousedog.fractals.ui.components.concrete.ComboBox;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
+import me.catmousedog.fractals.ui.components.concrete.SliderInteger;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
@@ -124,20 +126,20 @@ public class JPInterface extends JPanel {
 		preRender();
 
 		// save & update
-		boolean s = save();
+		save();
 		update();
 
-		if (!s) {
-			logger.log("Illegal data, not rendering");
-			postRender();
-		} else {
-			// render
-			canvas.render(this);
-		}
+//		if (!s) {
+//			logger.log("Illegal data, not rendering");
+//			postRender();
+//		} else {
+		// render
+		canvas.render();
+//		}
 	}
 
 	/**
-	 * Renders the image without calling {@link JPInterface#save()} pr
+	 * Renders the image without calling {@link JPInterface#save()} or
 	 * {@link JPInterface#update()}.
 	 * <p>
 	 * This method still calls the {@link JPInterface#postRender()} method.
@@ -151,7 +153,7 @@ public class JPInterface extends JPanel {
 
 		preRender();
 
-		canvas.render(this);
+		canvas.render();
 	}
 
 	/**
@@ -188,14 +190,22 @@ public class JPInterface extends JPanel {
 
 		// disable copy paste button
 		data.getCopypastejb().setData(false);
+
+		// disable undo button
+		data.getUndojb().setData(false);
+
+		// enable cancel button
+		data.getCanceljb().setData(true);
 	}
+
+	private boolean allowUndo = false;
 
 	/**
 	 * This method is run after the image is done rendering. It shouldn't be
 	 * possible for this to occur concurrently or in the wrong order of calling
 	 * {@link JPInterface#render}.
 	 * <p>
-	 * Must be run on the EDT.
+	 * Will be run on the EDT.
 	 */
 	public void postRender() {
 		// enable render button
@@ -206,6 +216,14 @@ public class JPInterface extends JPanel {
 
 		// enable copy paste button
 		data.getCopypastejb().setData(true);
+
+		// enable undo button
+		if (allowUndo)
+			data.getUndojb().setData(true);
+		allowUndo = true;
+
+		// disable cancel button
+		data.getCanceljb().setData(false);
 	}
 
 	/**
@@ -216,11 +234,10 @@ public class JPInterface extends JPanel {
 	 * This method performs an action upon finding the values the user entered. <br>
 	 * {@link Data#save()} Just takes the user entered data and saves it to the
 	 * field {@link Data#data}, but doesn't do anything with it.
-	 * 
-	 * @return true if successful, false otherwise
 	 */
-	public boolean save() {
-		boolean b = true;
+	public void save() {
+		canvas.savePrevConfig();
+
 		/* Window */
 		fractals.setSize(data.getWidthjtf().saveAndGet(), data.getHeightjtf().saveAndGet());
 
@@ -232,8 +249,6 @@ public class JPInterface extends JPanel {
 		/* Calculation */
 		canvas.getConfig().setIterations(data.getIterjtf().saveAndGet());
 		canvas.getConfig().setZoomFactor(data.getZoomjtf().saveAndGet());
-
-		return b;
 	}
 
 	/**
@@ -272,25 +287,25 @@ public class JPInterface extends JPanel {
 	 */
 	public class AllData {
 
-		private Padding p5 = new Padding(5);
+		private final Padding p5 = new Padding(5);
 
-		private Padding p10 = new Padding(10);
+		private final Padding p10 = new Padding(10);
 
-		private Padding p20 = new Padding(20);
+		private final Padding p20 = new Padding(20);
 
 		/**
 		 * Window
 		 */
-		private Title window = new Title("Window");
+		private final Title window = new Title("Window");
 
-		private TextFieldInteger widthjtf = new TextFieldInteger.Builder().setLabel("width")
+		private final TextFieldInteger widthjtf = new TextFieldInteger.Builder().setLabel("width")
 				.setTip("the width of the canvas").build();
 
 		public Data<Integer> getWidthjtf() {
 			return widthjtf;
 		}
 
-		private TextFieldInteger heightjtf = new TextFieldInteger.Builder().setLabel("height")
+		private final TextFieldInteger heightjtf = new TextFieldInteger.Builder().setLabel("height")
 				.setTip("the height of the canvas").build();
 
 		public Data<Integer> getHeightjtf() {
@@ -302,42 +317,42 @@ public class JPInterface extends JPanel {
 		 */
 		public Title location = new Title("Location");
 
-		private TextFieldDouble xjtf = new TextFieldDouble.Builder().setLabel("x coordinate")
+		private final TextFieldDouble xjtf = new TextFieldDouble.Builder().setLabel("x coordinate")
 				.setTip("the x coordinate of the center of the screen").build();
 
 		public Data<Double> getXjtf() {
 			return xjtf;
 		}
 
-		private TextFieldDouble yjtf = new TextFieldDouble.Builder().setLabel("y coordinate")
+		private final TextFieldDouble yjtf = new TextFieldDouble.Builder().setLabel("y coordinate")
 				.setTip("the y coordinate of the center of the screen").build();
 
 		public Data<Double> getYjtf() {
 			return yjtf;
 		}
 
-		private TextFieldDouble mjtf = new TextFieldDouble.Builder().setLabel("x zoom").setTip("the x scaling factor")
-				.build();
+		private final TextFieldDouble mjtf = new TextFieldDouble.Builder().setLabel("x zoom")
+				.setTip("the x scaling factor").build();
 
 		public Data<Double> getMjtf() {
 			return mjtf;
 		}
 
-		private TextFieldDouble njtf = new TextFieldDouble.Builder().setLabel("y zoom").setTip("the y scaling factor")
-				.build();
+		private final TextFieldDouble njtf = new TextFieldDouble.Builder().setLabel("y zoom")
+				.setTip("the y scaling factor").build();
 
 		public Data<Double> getNjtf() {
 			return njtf;
 		}
 
-		public TextFieldDouble rjtf = new TextFieldDouble.Builder().setLabel("rotation")
+		private final TextFieldDouble rjtf = new TextFieldDouble.Builder().setLabel("rotation")
 				.setTip("the rotation in radians").build();
 
 		public Data<Double> getRjtf() {
 			return rjtf;
 		}
 
-		public Button2 copypastejb = new Button2.Builder("Copy", "Paste").setAction(a -> copy(), a -> paste())
+		private final Button2 copypastejb = new Button2.Builder("Copy", "Paste").setAction(a -> copy(), a -> paste())
 				.setTip("copy location to clipboard", "paste location from clipboard").build();
 
 		public Data<Boolean> getCopypastejb() {
@@ -362,57 +377,73 @@ public class JPInterface extends JPanel {
 			return locations;
 		}
 
+		private final Button undojb = new Button.Builder("Undo").setAction(a -> undo())
+				.setTip("go back to the previous location").setDefault(false).build();
+
+		public Data<Boolean> getUndojb() {
+			return undojb;
+		}
+
 		/**
 		 * Calculation
 		 */
 		public Title calculations = new Title("Calculation");
 
-		public TextFieldInteger iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
+		private final TextFieldInteger iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
 				.setTip("the amount of iterations when rednering").build();
 
 		public Data<Integer> getIterjtf() {
 			return iterjtf;
 		}
 
-		public TextFieldDouble zoomjtf = new TextFieldDouble.Builder().setLabel("zoom factor").setDefault(-1)
+		private final TextFieldDouble zoomjtf = new TextFieldDouble.Builder().setLabel("zoom factor").setDefault(-1)
 				.setTip("the zoom factor to multiply with on click").build();
 
 		public Data<Double> getZoomjtf() {
 			return zoomjtf;
 		}
 
-		public Button2 zoomjb = new Button2.Builder("Zoom In", "Zoom Out").setAction(a -> {
-			renderWithout(() -> {
-				canvas.getConfig().getTransform().zoom(1 / canvas.getConfig().getZoomFactor());
-			});
-		}, a -> {
-			renderWithout(() -> {
-				canvas.getConfig().getTransform().zoom(canvas.getConfig().getZoomFactor());
-			});
-		}).setTip("zoom in without moving", "zoom out without moving").build();
+		private final Button2 zoomjb = new Button2.Builder("Zoom In", "Zoom Out")
+				.setAction(a -> zoomIn(), a -> zoomOut()).setTip("zoom in without moving", "zoom out without moving")
+				.build();
 
 		public Data<Boolean> getZoomjb() {
 			return zoomjb;
 		}
 
-		public Button renderjb = new Button.Builder("Render").setAction(a -> render()).setTip("render the image")
+		private final Button renderjb = new Button.Builder("Render").setAction(a -> render()).setTip("render the image")
 				.build();
 
 		public Data<Boolean> getRenderjb() {
 			return renderjb;
 		}
 
+		private final Button canceljb = new Button.Builder("Cancel").setAction(a -> cancel())
+				.setTip("cancel the current render incase it is taking too long").build();
+
+		public Data<Boolean> getCanceljb() {
+			return canceljb;
+		}
+
+		/**
+		 * Colour
+		 */
+		private final Title colour = new Title("Colour");
+
 		/**
 		 * Array of all {@link Item}s in order of addition.
 		 */
 		private Item[] all = new Item[] { window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5,
-				mjtf, p5, njtf, p5, rjtf, p10, copypastejb, p5, locations, p20, calculations, p10, iterjtf, p5, zoomjtf,
-				p10, zoomjb, p10, renderjb, p20 };
+				mjtf, p5, njtf, p5, rjtf, p10, copypastejb, p5, locations, p5, undojb, p20, calculations, p10, iterjtf,
+				p5, zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, colour, p10 };
 
 		public Item[] getAll() {
 			return all;
 		}
 
+		/**
+		 * copy button
+		 */
 		private void copy() {
 			// update?
 			String clip = canvas.getConfig().getID();
@@ -426,28 +457,82 @@ public class JPInterface extends JPanel {
 			}
 		}
 
+		/**
+		 * paste button
+		 */
 		private void paste() {
 			try {
-				try {
-					String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard()
-							.getData(DataFlavor.stringFlavor);
+				String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard()
+						.getData(DataFlavor.stringFlavor);
 
-					canvas.getConfig().fromID(clip);
-				} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
-					e.printStackTrace();
-					logger.log("unable to paste from clipboard");
-					logger.exception(e);
+				canvas.savePrevConfig();
+				canvas.getConfig().fromID(clip);
+
+				if (settings.isRender_on_changes()) {
+					update();
+					renderNow();
 				}
-			} catch (NumberFormatException e) {
-				logger.log("unable to parse from clipboard");
-			}
 
-			if (settings.isRender_on_changes()) {
-				update();
-				renderNow();
+			} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
+				e.printStackTrace();
+				logger.log("unable to paste from clipboard");
+				logger.exception(e);
+			} catch (NumberFormatException n) {
+				logger.log("clipboard does not contain a valid configuration");
 			}
 		}
 
+		/**
+		 * undo button
+		 */
+		private void undo() {
+			allowUndo = false;
+			canvas.undo();
+			update();
+			renderNow();
+		}
+
+		/**
+		 * zoom in button
+		 */
+		private void zoomIn() {
+			renderWithout(() -> {
+				canvas.getConfig().getTransform().zoom(1 / canvas.getConfig().getZoomFactor());
+			});
+		}
+
+		/**
+		 * zoom out button
+		 */
+		private void zoomOut() {
+			renderWithout(() -> {
+				canvas.getConfig().getTransform().zoom(canvas.getConfig().getZoomFactor());
+			});
+		}
+
+		/**
+		 * cancel button
+		 */
+		private void cancel() {
+			allowUndo = false;
+			if (canvas.getWorker().cancel(true)) {
+				canvas.undo();
+				update();
+				logger.log("successfully stopped current render");
+			} else {
+				logger.log("could not stop current render");
+			}
+		}
+
+	}
+
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public AllData getData() {
+		return data;
 	}
 
 }

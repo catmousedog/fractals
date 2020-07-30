@@ -24,6 +24,7 @@ public class Button extends Data<Boolean> {
 	public static class Builder {
 
 		private String text, lbl, tip;
+		private boolean b = true;
 		private ActionListener e;
 
 		public Builder(String text) {
@@ -45,8 +46,15 @@ public class Button extends Data<Boolean> {
 			return this;
 		}
 
+		public Builder setDefault(Boolean b) {
+			this.b = b;
+			return this;
+		}
+		
 		public Button build() {
-			return new Button(text, lbl, tip, e);
+			Button button = new Button(text, lbl, tip, e);
+			button.setData(b);
+			return button;
 		}
 
 	}

@@ -1,6 +1,5 @@
 package me.catmousedog.fractals.canvas;
 
-import java.awt.EventQueue;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -11,6 +10,7 @@ import javax.swing.SwingWorker;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -30,7 +30,12 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	private final JPInterface jpi;
 
+	/**
+	 * the current known {@link Configuration} of the canvas
+	 */
 	private final Configuration config;
+
+	private final LinearTransform transform;
 
 	/**
 	 * the fractal instance containg the fractal function
@@ -56,6 +61,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		this.canvas = canvas;
 		config = canvas.getConfig();
 		fractal = config.getFractal();
+		transform = config.getTransform();
 		field = canvas.getField();
 		this.jpi = jpi;
 		this.logger = logger;
@@ -67,6 +73,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 * update the progress bar. This method will then proceed to paint the image.
 	 * <br>
 	 * The final time is logged to the user.
+	 * <p>
+	 * This is not run on the EDT but on a worker thread.
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
@@ -75,9 +83,11 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 		// linear transformation to determine actual coordinates
 		field.parallelStream().forEach(p -> {
-			double[] t = config.getTransform().apply(p.x, p.y);
-			p.tx = t[0];
-			p.ty = t[1];
+			if (!super.isCancelled()) {
+				double[] t = transform.apply(p.x, p.y);
+				p.tx = t[0];
+				p.ty = t[1];
+			}
 		});
 
 		// atomic counters
@@ -86,20 +96,24 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 		// for each in field, calculate fractal value 'v'
 		field.parallelStream().forEach(p -> {
-			p.v = fractal.get(p.tx, p.ty);
+
+			if (!super.isCancelled())
+				p.v = fractal.get(p.tx, p.ty);
 
 			// each 100th of all pixels the progress bar updates
 			if (i.incrementAndGet() % (field.size() / 100) == 0)
 				setProgress(q.incrementAndGet());
 
-		});
-
-		// repaint the image
-		EventQueue.invokeAndWait(() -> {
-			logger.setProgress("painting image", 100);
-			canvas.repaint();
-		});
-
+		}); 
+		
+		if (!super.isCancelled())
+			canvas.colourAndPaint();
+		else {
+			logger.setProgress("cancelled!", 0);
+			jpi.postRender();
+		}
+			
+		
 		// end time
 		long e = System.nanoTime();
 
@@ -118,11 +132,9 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getNewValue() instanceof Integer) {
-			if ((Integer) evt.getNewValue() != 100)
-				logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
+			logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
-			logger.setProgress("done!", 100);
-			jpi.postRender();
+			logger.setProgress("colouring fractal", 100);
 		}
 	}
 

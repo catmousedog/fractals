@@ -84,15 +84,23 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 	- Label (p)
 	- TextFieldDouble (p)
 	- TextFieldInteger (p)
+	- SliderDouble (a)
+	- SliderInteger (a)
 - Items
 	- Title
 	- Padding
+- Components
+	- Undo button
+	- Cancel button
+- Cancel and Undo buttons disabling when necessary. 
+- Painter **SwingWorker** to separate the colouring and calculating (*Generator*).
 
 ### Changed
 - Moved iterations, fractal and zoomFactor to **Configuration** class
 - Rewrote all graphics components in **JPInterface.AllData** class. 
 - Moved all *.properties* fields to **Settings** class.
 - Redid packages
+- Made **Canvas.config** no longer final, use the getter to retrieve it.
 
 ### Removed
 - **ComponentFactory** class
