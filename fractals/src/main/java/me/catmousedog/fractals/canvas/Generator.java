@@ -104,16 +104,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 			if (i.incrementAndGet() % (field.size() / 100) == 0)
 				setProgress(q.incrementAndGet());
 
-		}); 
-		
-		if (!super.isCancelled())
-			canvas.colourAndPaint();
-		else {
-			logger.setProgress("cancelled!", 0);
-			jpi.postRender();
-		}
-			
-		
+		});
+
 		// end time
 		long e = System.nanoTime();
 
@@ -134,7 +126,12 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		if (evt.getNewValue() instanceof Integer) {
 			logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
-			logger.setProgress("colouring fractal", 100);
+			if (!super.isCancelled())
+				canvas.colourAndPaint();
+			else {
+				logger.setProgress("cancelled!", 0);
+				jpi.postRender();
+			}
 		}
 	}
 

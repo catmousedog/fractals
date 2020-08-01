@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class Settings {
 
-	public Settings(Fractals main) {
+	public Settings(Main main) {
 		// load properties
 		Properties project = new Properties();
 		try {

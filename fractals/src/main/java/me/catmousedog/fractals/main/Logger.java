@@ -13,6 +13,8 @@ import javax.swing.JProgressBar;
 
 import org.jetbrains.annotations.NotNull;
 
+import me.catmousedog.fractals.main.Main.InitialSize;
+
 /**
  * This class is used to log messages to the user and show any outputs
  */
@@ -44,9 +46,9 @@ public class Logger extends JPanel {
 	 */
 	private final JProgressBar jpb;
 
-	public Logger(int w, int h) {
+	public Logger(InitialSize size) {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setPreferredSize(new Dimension(w, h));
+		setPreferredSize(new Dimension(size.getIwidth()+ 2 * size.getHgap(), size.getFeedbackheight()));
 		setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
 		// log labels

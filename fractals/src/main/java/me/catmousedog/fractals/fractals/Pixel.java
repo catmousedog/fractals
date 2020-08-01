@@ -18,6 +18,6 @@ public class Pixel {
 	public double tx, ty;
 
 	// output
-	public double v;
+	public Number v;
 
 }

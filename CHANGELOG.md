@@ -89,7 +89,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - Items
 	- Title
 	- Padding
-- Components
+- Concrete Data
 	- Undo button
 	- Cancel button
 - Cancel and Undo buttons disabling when necessary. 
@@ -104,3 +104,28 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 
 ### Removed
 - **ComponentFactory** class
+
+## [0.1.0]
+
+### Added
+- *Fractal.filter(Number v)* to colour the fractal after generation.
+- *Fractal.addFilter(JPanel jp)* for creating its own user interface to change the colour settings.
+- **Savable** interface for user interactable interaces such as **JPInterface** and now **Fractal**
+- *Fractal.clone()* so undo will also undo a change in fractal
+- Concrete Data
+	- fractal ComboBox
+- **InitialSize** inner class of **Main** for cleaner code
+- fractalsjcb for selecting fractal
+- *cancel* allows for cancelling of colouring stage
+
+### Changed
+- *Fractal.get()* and *Fractal.filter()* use the abstract **Number** class instead of double.
+- **ComboBox** Data is now Object, being the selected Object.
+- Feedback panel progress bar now shows *calculating* and *colouring*.
+
+### Removed
+- *Fractal.clone()* as all **Fractals** are created in **Main** and only references are passed around.
+
+### Fixed
+- rotation maintain after *undo*
+- iteration maintain after *undo*

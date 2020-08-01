@@ -43,7 +43,7 @@ public class LinearTransform {
 		this.dy = dy;
 		this.m = m;
 		this.n = n;
-		this.rot = rot;
+		setRot(rot);
 	}
 
 	/**
