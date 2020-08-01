@@ -16,6 +16,7 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.JPInterface;
 
 /**
@@ -24,6 +25,26 @@ import me.catmousedog.fractals.ui.JPInterface;
  */
 @SuppressWarnings("serial")
 public class Canvas extends JPanel {
+
+	/**
+	 * Array containing all usable fractals.
+	 */
+	private final Fractal[] fractals;
+
+	/**
+	 * the mouse listener
+	 */
+	private final Mouse mouse;
+
+	/**
+	 * used to log progress to the user
+	 */
+	private final Logger logger;
+
+	/**
+	 * The effectively final instance of the {@link JPInterface}.
+	 */
+	private JPInterface jpi;
 
 	/**
 	 * The current {@link Configuration} of the canvas.
@@ -45,16 +66,6 @@ public class Canvas extends JPanel {
 	private SwingWorker<Void, Void> generator;
 
 	/**
-	 * the mouse listener
-	 */
-	private final Mouse mouse;
-
-	/**
-	 * used to log progress to the user
-	 */
-	private final Logger logger;
-
-	/**
 	 * a list of all pixels
 	 */
 	private List<Pixel> field;
@@ -63,11 +74,6 @@ public class Canvas extends JPanel {
 	 * image displayed on this instance of {@link JPanel}
 	 */
 	private BufferedImage img;
-
-	/**
-	 * the instance of the {@link JPInterface}
-	 */
-	private JPInterface jpi;
 
 	/**
 	 * the current known width and height<br>
@@ -84,15 +90,16 @@ public class Canvas extends JPanel {
 	 * @param jpi     the user interface, used for saving and updating
 	 * @param logger  the logger instance
 	 */
-	public Canvas(int width, int height, Fractal fractal, Logger logger) {
+	public Canvas(InitialSize size, Fractal[] fractals, Logger logger) {
+		this.fractals = fractals;
 		this.logger = logger;
-		config = new Configuration(new LinearTransform(), fractal, 2);
+		config = new Configuration(new LinearTransform(), fractals[0], 100, 2);
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
 		mouse = new Mouse(this);
 		addMouseListener(mouse);
 
-		setPanelSize(width, height);
+		setPanelSize(size.getWidth(), size.getHeight());
 		savePrevConfig();
 	}
 
@@ -157,25 +164,11 @@ public class Canvas extends JPanel {
 	}
 
 	/**
-	 * set the location variables
-	 * <p>
-	 * <b>shouldn't need to be called from outside of this class</b>
-	 * 
-	 * @param dx real displacement from origin
-	 * @param dy imaginary displacement from origin
-	 * @param z  zoom factor
-	 * @param t  counter clockwise angle
-	 */
-	@Deprecated
-	public void setLocation(double dx, double dy, double z, double t) {
-		config.getTransform().setTranslation(dx, dy);
-		config.getTransform().setScalar(1 / z, 1 / z);
-		config.getTransform().setRot(t);
-	}
-
-	/**
 	 * Essentially the opposite of {@link Canvas#undo()}. This should be called
 	 * right before saving changes to the {@link Canvas#config}.
+	 * <p>
+	 * Assigns the {@link Canvas#prevConfig} by value through
+	 * {@link Configuration#clone()}.
 	 */
 	public void savePrevConfig() {
 		prevConfig = config.clone();
@@ -185,6 +178,8 @@ public class Canvas extends JPanel {
 	 * Sets the {@link Canvas#config} to the {@link Canvas#prevConfig}, reverting
 	 * any changes saved to it after the last time {@link Canvas#savePrevConfig()}
 	 * was called.
+	 * <p>
+	 * Assigns the by value through {@link Configuration#clone()}
 	 */
 	public void undo() {
 		config = prevConfig.clone();
@@ -201,16 +196,12 @@ public class Canvas extends JPanel {
 		mouse.setJPI(jpi);
 	}
 
-	public SwingWorker<Void, Void> getWorker() {
-		return generator;
+	public Fractal[] getFractals() {
+		return fractals;
 	}
 
 	public Mouse getMouse() {
 		return mouse;
-	}
-
-	public List<Pixel> getField() {
-		return field;
 	}
 
 	/**
@@ -218,6 +209,20 @@ public class Canvas extends JPanel {
 	 */
 	public Configuration getConfig() {
 		return config;
+	}
+
+	/**
+	 * @return the current {@link Generator}
+	 */
+	public SwingWorker<Void, Void> getWorker() {
+		return generator;
+	}
+
+	/**
+	 * @return the List of all {@link Pixel}s
+	 */
+	public List<Pixel> getField() {
+		return field;
 	}
 
 	public void setImg(BufferedImage img) {

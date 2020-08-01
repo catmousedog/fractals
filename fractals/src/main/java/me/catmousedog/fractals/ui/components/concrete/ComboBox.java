@@ -17,7 +17,7 @@ import me.catmousedog.fractals.ui.components.Data;
  * {@link Data#setData(Object[])} but not saved as there is not way for the user
  * to enter anything.
  */
-public class ComboBox extends Data<Object[]> {
+public class ComboBox extends Data<Object> {
 
 	private final JLabel jl;
 	private final JComboBox<Object> jcb;
@@ -68,13 +68,12 @@ public class ComboBox extends Data<Object[]> {
 
 	@Override
 	public void save() {
+		data = jcb.getSelectedItem();
 	}
 
 	@Override
 	public void update() {
-		jcb.removeAllItems();
-		for (Object o : data)
-			jcb.addItem(o);
+		jcb.setSelectedItem(data);
 	}
 
 	@Override
@@ -82,7 +81,7 @@ public class ComboBox extends Data<Object[]> {
 		JPanel jp = new JPanel();
 		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
 		jp.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-		
+
 		jp.add(jl);
 		jp.add(jcb);
 

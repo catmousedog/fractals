@@ -9,7 +9,7 @@ import me.catmousedog.fractals.fractals.LinearTransform;
  */
 public enum PreSaved {
 
-	islands(new LinearTransform(-.743643887037151, .131825904205330, 0.001, 0.001, 0), 100),
+	islands(new LinearTransform(-.743643887037151, .131825904205330, 1.2000000000000002E-13, 1.2000000000000002E-13, 0), 4000),
 	stove(new LinearTransform(-1, 0, 0.0005, 0.0005, 4), 100);
 	private LinearTransform transform;
 

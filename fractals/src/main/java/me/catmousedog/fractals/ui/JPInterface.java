@@ -1,11 +1,13 @@
 package me.catmousedog.fractals.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.IOException;
@@ -14,11 +16,14 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
+
+import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.main.Fractals;
+import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.main.Main;
+import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
@@ -26,7 +31,7 @@ import me.catmousedog.fractals.ui.components.concrete.Button;
 import me.catmousedog.fractals.ui.components.concrete.Button2;
 import me.catmousedog.fractals.ui.components.concrete.ComboBox;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
-import me.catmousedog.fractals.ui.components.concrete.SliderInteger;
+import me.catmousedog.fractals.ui.components.concrete.Panel;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
@@ -38,13 +43,13 @@ import me.catmousedog.fractals.ui.components.concrete.Title;
  * JComponents it needs to change after rendering.
  */
 @SuppressWarnings("serial")
-public class JPInterface extends JPanel {
+public class JPInterface extends JPanel implements Savable {
 
 	/**
 	 * the main instance, used for resizing the frame by calling
-	 * {@link Fractals#setSize(int, int)}
+	 * {@link Main#setSize(int, int)}
 	 */
-	private final Fractals fractals;
+	private final Main main;
 
 	/**
 	 * the Canvas instance used to render the image
@@ -66,17 +71,16 @@ public class JPInterface extends JPanel {
 	 */
 	private final AllData data;
 
-	public JPInterface(int iwidth, int vgap, int hgap, Fractals fractals, Canvas canvas, Logger logger,
-			Settings settings) {
-		this.fractals = fractals;
+	public JPInterface(InitialSize size, Main main, Canvas canvas, Logger logger, Settings settings) {
+		this.main = main;
 		this.canvas = canvas;
 		this.logger = logger;
 		this.settings = settings;
 		data = new AllData();
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setMaximumSize(new Dimension(iwidth, Integer.MAX_VALUE));
-		setBorder(BorderFactory.createEmptyBorder(vgap, hgap, vgap, hgap));
+		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));
+		setBorder(BorderFactory.createEmptyBorder(size.getVgap(), size.getHgap(), size.getVgap(), size.getHgap()));
 		canvas.addComponentListener(new ComponentListener() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -98,7 +102,7 @@ public class JPInterface extends JPanel {
 		});
 
 		// set all values inside the user interface
-		update();
+//		update();
 	}
 
 	/**
@@ -129,13 +133,7 @@ public class JPInterface extends JPanel {
 		save();
 		update();
 
-//		if (!s) {
-//			logger.log("Illegal data, not rendering");
-//			postRender();
-//		} else {
-		// render
 		canvas.render();
-//		}
 	}
 
 	/**
@@ -163,7 +161,7 @@ public class JPInterface extends JPanel {
 	 * This method will
 	 * <ul>
 	 * <li>{@link JPInterface#save()}</li> save all the user entered data
-	 * <li>{@link Runnable#run()}</li> change data that wasn't entered by the user
+	 * <li>{@link r#run()}</li> change data that shouldn't be saved
 	 * <li>{@link JPInterface#update()}</li> update this data to the user interface
 	 * <li>{@link JPInterface#renderNow()}</li> render the image without saving or
 	 * updating
@@ -171,7 +169,7 @@ public class JPInterface extends JPanel {
 	 * 
 	 * @param r the runnable to change any data not entered by the user.
 	 */
-	public void renderWithout(Runnable r) {
+	public void renderWithout(@NotNull Runnable r) {
 		save();
 		r.run();
 		update();
@@ -181,6 +179,7 @@ public class JPInterface extends JPanel {
 	/**
 	 * Called before the image is rendered.
 	 */
+	@Override
 	public void preRender() {
 		// disable render button
 		data.getRenderjb().setData(false);
@@ -207,6 +206,7 @@ public class JPInterface extends JPanel {
 	 * <p>
 	 * Will be run on the EDT.
 	 */
+	@Override
 	public void postRender() {
 		// enable render button
 		data.getRenderjb().setData(true);
@@ -220,7 +220,8 @@ public class JPInterface extends JPanel {
 		// enable undo button
 		if (allowUndo)
 			data.getUndojb().setData(true);
-		allowUndo = true;
+		else
+			allowUndo = true;
 
 		// disable cancel button
 		data.getCanceljb().setData(false);
@@ -235,11 +236,12 @@ public class JPInterface extends JPanel {
 	 * {@link Data#save()} Just takes the user entered data and saves it to the
 	 * field {@link Data#data}, but doesn't do anything with it.
 	 */
+	@Override
 	public void save() {
 		canvas.savePrevConfig();
 
 		/* Window */
-		fractals.setSize(data.getWidthjtf().saveAndGet(), data.getHeightjtf().saveAndGet());
+		main.setSize(data.getWidthjtf().saveAndGet(), data.getHeightjtf().saveAndGet());
 
 		/* Location */
 		canvas.getConfig().getTransform().setTranslation(data.getXjtf().saveAndGet(), data.getYjtf().saveAndGet());
@@ -249,13 +251,22 @@ public class JPInterface extends JPanel {
 		/* Calculation */
 		canvas.getConfig().setIterations(data.getIterjtf().saveAndGet());
 		canvas.getConfig().setZoomFactor(data.getZoomjtf().saveAndGet());
+
+		/* Fractal */
 	}
+
+	/**
+	 * Used to disable the {@link ActionListener} on the {@link ComboBox}
+	 * {@link AllData#fractaljcb}.
+	 */
+	private boolean allowFractaljcbAction;
 
 	/**
 	 * Will update all values inside the user interface.<br>
 	 * This is done by calling {@link Data#setData(Object)} for each {@link Data}
 	 * inside the user interface.
 	 */
+	@Override
 	public void update() {
 		/* Window */
 		data.getWidthjtf().setData(canvas.getWidth());
@@ -267,11 +278,15 @@ public class JPInterface extends JPanel {
 		data.getMjtf().setData(canvas.getConfig().getTransform().getm());
 		data.getNjtf().setData(canvas.getConfig().getTransform().getn());
 		data.getRjtf().setData(canvas.getConfig().getTransform().getrot());
-		// update ComboBox
 
 		/* Calculation */
 		data.getIterjtf().setData(canvas.getConfig().getIterations());
 		data.getZoomjtf().setData(canvas.getConfig().getZoomFactor());
+
+		/* Fractal */
+		allowFractaljcbAction = false;
+		data.getFractaljcb().setData(canvas.getConfig().getFractal());
+		allowFractaljcbAction = true;
 	}
 
 	/**
@@ -359,22 +374,19 @@ public class JPInterface extends JPanel {
 			return copypastejb;
 		}
 
-		public ComboBox locations = new ComboBox.Builder(PreSaved.values()).setLabel("locations").setAction(a -> {
-			try {
+		public ComboBox locationjcb = new ComboBox.Builder(PreSaved.values()).setLabel("locations").setAction(a -> {
+			if (settings.isRender_on_changes()) {
 				renderWithout(() -> {
 					@SuppressWarnings("unchecked")
 					JComboBox<PreSaved> jcb = (JComboBox<PreSaved>) a.getSource();
 					canvas.getConfig().getTransform().set(((PreSaved) jcb.getSelectedItem()).getTransform());
 					canvas.getConfig().setIterations(((PreSaved) jcb.getSelectedItem()).getIterations());
 				});
-			} catch (ClassCastException e) {
-				e.printStackTrace();
 			}
-
 		}).setTip("a set of interesting locations").build();
 
-		public Data<Object[]> getLocations() {
-			return locations;
+		public Data<Object> getLocations() {
+			return locationjcb;
 		}
 
 		private final Button undojb = new Button.Builder("Undo").setAction(a -> undo())
@@ -419,23 +431,48 @@ public class JPInterface extends JPanel {
 		}
 
 		private final Button canceljb = new Button.Builder("Cancel").setAction(a -> cancel())
-				.setTip("cancel the current render incase it is taking too long").build();
+				.setTip("cancel the current render").build();
 
 		public Data<Boolean> getCanceljb() {
 			return canceljb;
 		}
 
 		/**
-		 * Colour
+		 * Fractal
 		 */
-		private final Title colour = new Title("Colour");
+		private final Title fractal = new Title("Fractal");
+
+		private final ComboBox fractaljcb = new ComboBox.Builder(canvas.getFractals()).setAction(a -> {
+			if (settings.isRender_on_changes() && allowFractaljcbAction) {
+				renderWithout(() -> {
+					@SuppressWarnings("unchecked")
+					JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
+					canvas.getConfig().setFractal((Fractal) jcb.getSelectedItem());
+				});
+			}
+		}).build();
+
+		public Data<Object> getFractaljcb() {
+			return fractaljcb;
+		}
+
+		private final Panel fractaljp = new Panel();
+
+		{
+			fractaljp.getPanel().setBackground(Color.GRAY);
+		}
+
+		public Panel getFractaljp() {
+			return fractaljp;
+		}
 
 		/**
 		 * Array of all {@link Item}s in order of addition.
 		 */
 		private Item[] all = new Item[] { window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5,
-				mjtf, p5, njtf, p5, rjtf, p10, copypastejb, p5, locations, p5, undojb, p20, calculations, p10, iterjtf,
-				p5, zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, colour, p10 };
+				mjtf, p5, njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10,
+				iterjtf, p5, zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljcb, p5,
+				fractaljp, p5 };
 
 		public Item[] getAll() {
 			return all;

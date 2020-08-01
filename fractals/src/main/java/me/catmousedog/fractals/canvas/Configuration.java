@@ -1,7 +1,5 @@
 package me.catmousedog.fractals.canvas;
 
-import java.awt.Dimension;
-
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 
@@ -11,17 +9,34 @@ import me.catmousedog.fractals.fractals.LinearTransform;
  */
 public class Configuration {
 
+	/**
+	 * The linear transform used to get to the current location, including:
+	 * translation, scaling and rotation.
+	 */
 	private final LinearTransform transform;
 
-	private final Fractal fractal;
+	/**
+	 * The {@link Fractal} containing the fractal function
+	 * {@link Fractal#get(double, double)} and the colour filter
+	 * {@link Fractal#filter}.
+	 */
+	private Fractal fractal;
 
+	/**
+	 * The iteration count for the fractal, this is also stored in this class for
+	 * when {@link Configuration#setFractal(Fractal)} is used.
+	 */
+	private int iterations;
+
+	/**
+	 * The zoom factor used when zooming in or out.
+	 */
 	private double zoomFactor;
-	
-	private Dimension dimension;
 
-	public Configuration(LinearTransform transform, Fractal fractal, double zoomFactor) {
+	public Configuration(LinearTransform transform, Fractal fractal, int iterations, double zoomFactor) {
 		this.transform = transform;
-		this.fractal = fractal;
+		setFractal(fractal);
+		setIterations(iterations);
 		this.zoomFactor = zoomFactor;
 	}
 
@@ -29,24 +44,30 @@ public class Configuration {
 		return transform;
 	}
 
+	public void setFractal(Fractal fractal) {
+		fractal.setIterations(iterations);
+		this.fractal = fractal;
+	}
+
 	public Fractal getFractal() {
 		return fractal;
 	}
 
-	public int getIterations() {
-		return fractal.getIterations();
-	}
-
-	public double getZoomFactor() {
-		return zoomFactor;
-	}
-
 	public void setIterations(int iterations) {
+		this.iterations = iterations;
 		fractal.setIterations(iterations);
+	}
+
+	public int getIterations() {
+		return iterations;
 	}
 
 	public void setZoomFactor(double zoomFactor) {
 		this.zoomFactor = zoomFactor;
+	}
+
+	public double getZoomFactor() {
+		return zoomFactor;
 	}
 
 	/**
@@ -96,7 +117,7 @@ public class Configuration {
 	 */
 	@Override
 	public Configuration clone() {
-		return new Configuration(transform.clone(), fractal, zoomFactor);
+		return new Configuration(transform.clone(), fractal, iterations, zoomFactor);
 	}
 
 }
