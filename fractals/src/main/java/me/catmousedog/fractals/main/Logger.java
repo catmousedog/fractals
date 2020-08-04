@@ -37,6 +37,16 @@ public class Logger extends JPanel {
 	private final Vector<String> logMessages = new Vector<String>();
 
 	/**
+	 * {@link JLabel} displaying the last render's generating time
+	 */
+	private final JLabel generateTime;
+	
+	/**
+	 * {@link JLabel} displaying the last render's colouring time
+	 */
+	private final JLabel colourTime;
+	
+	/**
 	 * label above the progress bar
 	 */
 	private final JLabel progress;
@@ -48,21 +58,32 @@ public class Logger extends JPanel {
 
 	public Logger(InitialSize size) {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setPreferredSize(new Dimension(size.getIwidth()+ 2 * size.getHgap(), size.getFeedbackheight()));
+		setPreferredSize(new Dimension(size.getIwidth() + 2 * size.getHgap(), size.getFeedbackheight()));
 		setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
 		// log labels
 		for (int j = 0; j < m; j++) {
 			logs[j] = new JLabel();
-			logs[j].setAlignmentX(0.5F);
+			logs[j].setAlignmentX(JLabel.CENTER_ALIGNMENT);
 			add(logs[j]);
 		}
 
 		add(Box.createVerticalGlue());
 
+		// time labels
+		generateTime = new JLabel("not yet generated");
+		generateTime.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		add(generateTime);
+		
+		colourTime = new JLabel("not yet coloured");
+		colourTime.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		add(colourTime);
+
+		add(Box.createVerticalStrut(5));
+
 		// progress label
 		progress = new JLabel();
-		progress.setAlignmentX(0.5F);
+		progress.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		add(progress);
 
 		add(Box.createVerticalStrut(2));
@@ -114,4 +135,22 @@ public class Logger extends JPanel {
 		progress.setText(String.format("%s - %d%s", progressMessage, p, "%"));
 	}
 
+	/**
+	 * Display the time it took to generate
+	 * 
+	 * @param ms time in milliseconds
+	 */
+	public void setGenerated(long ms) {
+		generateTime.setText(String.format("generated in %d ms!", ms));
+	}
+	
+	/**
+	 * Display the time it took to colour
+	 * 
+	 * @param ms time in milliseconds 
+	 */
+	public void setColoured(long ms) {
+		colourTime.setText(String.format("coloured in %d ms!", ms));
+	}
+	
 }

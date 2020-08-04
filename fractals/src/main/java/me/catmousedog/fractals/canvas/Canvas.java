@@ -2,6 +2,8 @@ package me.catmousedog.fractals.canvas;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.JPInterface.AllData;
 
 /**
  * Represents a 2D plane of processed values by the function
@@ -66,6 +69,11 @@ public class Canvas extends JPanel {
 	private SwingWorker<Void, Void> generator;
 
 	/**
+	 * The latest {@link SwingWorker} responsible for colouring the fractal.
+	 */
+	private Painter painter;
+
+	/**
 	 * a list of all pixels
 	 */
 	private List<Pixel> field;
@@ -93,6 +101,10 @@ public class Canvas extends JPanel {
 	public Canvas(InitialSize size, Fractal[] fractals, Logger logger) {
 		this.fractals = fractals;
 		this.logger = logger;
+
+		for (Fractal f : fractals)
+			f.setCanvas(this);
+
 		config = new Configuration(new LinearTransform(), fractals[0], 100, 2);
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
@@ -126,9 +138,16 @@ public class Canvas extends JPanel {
 
 	/**
 	 * Colours the image and paints it using a {@link SwingWorker}.
+	 * <p>
+	 * This can be called whilst the {@link Painter} {@link SwingWorker} is still
+	 * colouring. Only if {@link Painter#isRepainted()} returns true can you call
+	 * this method safely.
 	 */
 	public void colourAndPaint() {
-		new Painter(this, jpi, logger).execute();
+		if (painter == null || painter.isRepainted()) {
+			painter = new Painter(this, jpi, logger);
+			painter.execute();
+		}
 	}
 
 	/**
@@ -194,6 +213,26 @@ public class Canvas extends JPanel {
 	public void setJPI(@NotNull JPInterface jpi) {
 		this.jpi = jpi;
 		mouse.setJPI(jpi);
+		AllData data = jpi.getData();
+		addComponentListener(new ComponentListener() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				data.getWidthjtf().setData(getWidth());
+				data.getHeightjtf().setData(getHeight());
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+			}
+		});
 	}
 
 	public Fractal[] getFractals() {
@@ -214,8 +253,15 @@ public class Canvas extends JPanel {
 	/**
 	 * @return the current {@link Generator}
 	 */
-	public SwingWorker<Void, Void> getWorker() {
+	public SwingWorker<Void, Void> getGenerator() {
 		return generator;
+	}
+
+	/**
+	 * @return the current {@link Painter}
+	 */
+	public Painter getPainter() {
+		return painter;
 	}
 
 	/**

@@ -23,6 +23,7 @@ public abstract class Data<T> extends Item {
 	 * 
 	 * @return the current {@link Data#data}
 	 */
+	@Deprecated
 	public T getData() {
 		return data;
 	}
@@ -38,9 +39,9 @@ public abstract class Data<T> extends Item {
 	}
 
 	/**
-	 * sets the data
+	 * Sets the data and calls {@link Data#update()}.
 	 * 
-	 * @param data sets the {@link Data#data} field and calls {@link Data#update()}
+	 * @param data the new data
 	 */
 	public void setData(T data) {
 		this.data = data;

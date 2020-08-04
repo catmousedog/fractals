@@ -37,18 +37,24 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 * the logger instance
 	 */
 	private final Logger logger;
-	
+
 	private AtomicInteger i, q;
+
+	private boolean repainted = false;
 
 	public Painter(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
 		this.canvas = canvas;
 		field = canvas.getField();
-		fractal = canvas.getConfig().getFractal();
+		fractal = canvas.getConfig().getFractal().clone();
 		this.jpi = jpi;
 		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
 
+	/**
+	 * Will apply the {@link Fractal#filter(Number)} to each {@link Pixel} in
+	 * {@link Canvas#field} to colour the image.
+	 */
 	@Override
 	protected Void doInBackground() throws Exception {
 		// begin time
@@ -58,7 +64,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 
 		i = new AtomicInteger();
 		q = new AtomicInteger();
-		
+
 		field.parallelStream().forEach(p -> {
 			if (!super.isCancelled())
 				img.setRGB(p.x, p.y, fractal.filter(p.v));
@@ -75,11 +81,17 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 		long e = System.nanoTime();
 
 		// log time
-		logger.log("coloured in " + (e - b) / 1000000 + " ms!");
+		logger.setColoured((e - b) / 1000000);
 
 		return null;
 	}
 
+	/**
+	 * Called each percent of completion, updates the progress bar and runs the
+	 * {@link JPInterface#postRender()} method when done.
+	 * <p>
+	 * Ran on the EDT
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getNewValue() instanceof Integer) {
@@ -88,7 +100,15 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 			canvas.repaint();
 			jpi.postRender();
 			logger.setProgress("done!", 100);
+			repainted = true;
 		}
+	}
+
+	/**
+	 * @return true if the image has been coloured and repainted.
+	 */
+	public boolean isRepainted() {
+		return repainted;
 	}
 
 }

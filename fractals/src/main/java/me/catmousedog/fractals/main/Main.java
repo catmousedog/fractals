@@ -34,7 +34,7 @@ public class Main implements Runnable {
 	 * An array of all the fractals, each containing their own fractal function and
 	 * filter
 	 */
-	private final Fractal[] fractals = new Fractal[] { new IterativeMandelbrot(), new TestFractal() };
+	private Fractal[] fractals = new Fractal[] { new IterativeMandelbrot(), new TestFractal() };
 
 	private JFrame frame;
 

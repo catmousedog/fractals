@@ -69,12 +69,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	}
 
 	/**
-	 * Will generate the image by applying the fractal function and at the same time
-	 * update the progress bar. This method will then proceed to paint the image.
-	 * <br>
-	 * The final time is logged to the user.
-	 * <p>
-	 * This is not run on the EDT but on a worker thread.
+	 * Will generate the image by applying the fractal function
+	 * {@link Fractal#get(double, double)} and save to the {@link Canvas#field}.
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
@@ -110,14 +106,14 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		long e = System.nanoTime();
 
 		// log time
-		logger.log("rendered in " + (e - b) / 1000000 + " ms!");
+		logger.setGenerated((e - b) / 1000000);
 
 		return null;
 	}
 
 	/**
 	 * Called each percent of completion, updates the progress bar and runs the
-	 * {@link JPInterface#postRender()} method.
+	 * {@link Canvas#colourAndPaint()} when done.
 	 * <p>
 	 * Ran on the EDT
 	 */

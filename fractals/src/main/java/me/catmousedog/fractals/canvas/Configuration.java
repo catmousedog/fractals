@@ -93,23 +93,32 @@ public class Configuration {
 	 *           {@code dx:dy:m:n:rot:iter:zoom}
 	 *           <p>
 	 *           If any of the latter variables are left out, they will not be
-	 *           changed.
+	 *           changed. <br>
+	 *           But at least 4 must be given.
 	 * 
-	 * @throws NumberFormatException if any of the values could not be parsed
+	 * @return True if successful, false otherwise. <br>
+	 *         If the String doesn't contain at least 4 items, false is returned.
 	 */
-	public void fromID(String id) throws NumberFormatException {
+	public boolean fromID(String id) {
 		String[] args = id.split(":");
 
-		if (args.length > 1)
+		if (args.length < 4)
+			return false;
+
+		try {
 			transform.setTranslation(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
-		if (args.length > 3)
 			transform.setScalar(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
-		if (args.length > 4)
-			transform.setRot(Double.parseDouble(args[4]));
-		if (args.length > 5)
-			setIterations(Integer.parseInt(args[5]));
-		if (args.length > 6)
-			zoomFactor = Double.parseDouble(args[6]);
+			if (args.length > 4)
+				transform.setRot(Double.parseDouble(args[4]));
+			if (args.length > 5)
+				setIterations(Integer.parseInt(args[5]));
+			if (args.length > 6)
+				zoomFactor = Double.parseDouble(args[6]);
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

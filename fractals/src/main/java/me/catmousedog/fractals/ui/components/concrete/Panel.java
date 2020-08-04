@@ -3,7 +3,6 @@ package me.catmousedog.fractals.ui.components.concrete;
 import java.awt.Component;
 
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import me.catmousedog.fractals.ui.components.Item;
@@ -20,8 +19,6 @@ public class Panel extends Item {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-		
-		panel.add(new JLabel("test"));
 	}
 	
 	public JPanel getPanel() {

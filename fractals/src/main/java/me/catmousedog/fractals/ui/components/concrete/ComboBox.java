@@ -55,6 +55,7 @@ public class ComboBox extends Data<Object> {
 
 	private ComboBox(Object[] initial, String lbl, String tip, ActionListener e) {
 		jcb = new JComboBox<Object>(initial);
+		jcb.setSelectedItem(null);
 		jcb.addActionListener(e);
 		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
 		jcb.setToolTipText(tip);

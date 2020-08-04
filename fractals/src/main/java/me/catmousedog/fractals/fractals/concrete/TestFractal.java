@@ -1,55 +1,65 @@
 package me.catmousedog.fractals.fractals.concrete;
 
-import javax.swing.JPanel;
-
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.ui.Savable;
+import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.SliderInteger;
 
 public class TestFractal extends Fractal implements Savable {
 
-	@Override
-	public void save() {
-		// XXX Auto-generated method stub
-
+	public TestFractal() {
 	}
-
-	@Override
-	public void update() {
-		// XXX Auto-generated method stub
-
+	
+	private TestFractal(int colour) {
+		this.colour = colour;
 	}
-
-	@Override
-	public void preRender() {
-		// XXX Auto-generated method stub
-
-	}
-
-	@Override
-	public void postRender() {
-		// XXX Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public Number get(double x, double y) {
 		return 0;
 	}
 
+	private int colour;
+
 	@Override
 	public int filter(Number v) {
-		return 100000000;
+		return colour;
 	}
 
 	@Override
-	public void addFilter(JPanel jp) {
-		// XXX Auto-generated method stub
+	public void save() {
+		colour = slider.saveAndGet();
+	}
 
+	@Override
+	public void update() {
+		slider.setData(colour);
+	}
+
+	@Override
+	public void preRender() {
+	}
+
+	@Override
+	public void postRender() {
 	}
 
 	@Override
 	public String toString() {
-		return "TestFractal";
+		return "Test Fractal";
+	}
+
+	@Override
+	public Fractal clone() {
+		return new TestFractal(colour);
+	}
+
+	private final SliderInteger slider = new SliderInteger.Builder().setLabel("colour").setChange(c -> {
+		saveAndColour();
+	}).setMin(0).setMax(Integer.MAX_VALUE).build();
+
+	{
+		items = new Item[] { slider };
 	}
 
 }
