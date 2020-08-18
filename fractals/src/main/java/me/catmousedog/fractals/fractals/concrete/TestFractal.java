@@ -1,16 +1,19 @@
 package me.catmousedog.fractals.fractals.concrete;
 
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.SliderInteger;
 
 public class TestFractal extends Fractal implements Savable {
 
-	public TestFractal() {
+	public TestFractal(Settings settings) {
+		super(settings);
 	}
 	
-	private TestFractal(int colour) {
+	private TestFractal(Settings settings, int colour) {
+		this(settings);
 		this.colour = colour;
 	}
 	
@@ -51,7 +54,7 @@ public class TestFractal extends Fractal implements Savable {
 
 	@Override
 	public Fractal clone() {
-		return new TestFractal(colour);
+		return new TestFractal(settings, colour);
 	}
 
 	private final SliderInteger slider = new SliderInteger.Builder().setLabel("colour").setChange(c -> {

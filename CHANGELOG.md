@@ -112,7 +112,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - *Fractal.addFilter(JPanel jp)* for creating its own user interface to change the colour settings.
 - **Savable** interface for user interactable interaces such as **JPInterface** and now **Fractal**
 - *Fractal.clone()* so undo will also undo a change in fractal
-- Concrete Data
+- Concrete Item
 	- fractal ComboBox
 - **InitialSize** inner class of **Main** for cleaner code
 - fractalsjcb for selecting fractal
@@ -123,9 +123,24 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - **ComboBox** Data is now Object, being the selected Object.
 - Feedback panel progress bar now shows *calculating* and *colouring*.
 
-### Removed
-- *Fractal.clone()* as all **Fractals** are created in **Main** and only references are passed around.
-
 ### Fixed
 - rotation maintain after *undo*
 - iteration maintain after *undo*
+
+## [0.1.1]
+
+### Added
+- *Fractal.saveAndColour()* and *Fractal.safeUpdate()* for respectively saving user input and colouring and to update without triggering listeners.
+- Concrete colouring **Data** for the **IterativeMandelbrot**
+	- r, g, b slider
+	- invert button
+- **settings** instance added to **Fractal** 
+- Items
+	- SubTitle
+- Concrete Items
+	- Repaint Button
+- **Normalized Mandelbrot** concrete fractal *n + 1 - ln(ln(|z|²))/ln(2)*
+
+### Changed
+- Made **Logger** only display one generate and colour time
+- *Fractal.addFilter(JPanel)* is no longer abstract, it adds items like the **JPInterface** using an array of ordered **Items**

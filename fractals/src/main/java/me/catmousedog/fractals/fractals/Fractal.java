@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
+import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Data;
@@ -35,11 +36,15 @@ public abstract class Fractal implements Savable {
 	protected Canvas canvas;
 
 	protected int iterations = 100;
+	
+	protected Settings settings;
 
-	public Fractal() {
+	public Fractal(Settings settings) {
+		this.settings = settings;
 	}
 
-	public Fractal(int iterations) {
+	public Fractal(Settings settings, int iterations) {
+		this.settings = settings;
 		this.iterations = iterations;
 	}
 
@@ -62,7 +67,7 @@ public abstract class Fractal implements Savable {
 	public abstract int filter(Number v);
 
 	/**
-	 * Adds all the necessary components to a {@link JPanel} on the
+	 * Adds all the necessary components to a given {@link JPanel} on the
 	 * {@link JPInterface}.
 	 * 
 	 * @param jp the JPanel to add the {@link Item}s to
@@ -86,12 +91,17 @@ public abstract class Fractal implements Savable {
 	 * This can only be called if {@link Fractal#allowListener} is true as this
 	 * should only be called through a listener triggered by the user. Not the
 	 * {@link Savable#update()} method.
+	 * 
+	 * @return true if the canvas successfully called
+	 *         {@link Canvas#colourAndPaint()}, false otherwise
 	 */
-	public void saveAndColour() {
+	public boolean saveAndColour() {
 		if (allowListener) {
 			save();
-			canvas.colourAndPaint();
+			if (settings.isRender_on_changes())
+				return canvas.colourAndPaint();
 		}
+		return false;
 	}
 
 	/**
@@ -112,7 +122,8 @@ public abstract class Fractal implements Savable {
 	public abstract String toString();
 
 	/**
-	 * Return a copy of this {@link Fractal}
+	 * Return a copy of this {@link Fractal}. This should not be used to re-assign
+	 * the original fractals but only to make a copy for painting / generating.
 	 */
 	@Override
 	public abstract Fractal clone();

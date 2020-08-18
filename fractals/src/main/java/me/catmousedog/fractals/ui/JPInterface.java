@@ -1,5 +1,6 @@
 package me.catmousedog.fractals.ui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
@@ -29,6 +30,7 @@ import me.catmousedog.fractals.ui.components.concrete.Button2;
 import me.catmousedog.fractals.ui.components.concrete.ComboBox;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.Panel;
+import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
@@ -78,7 +80,7 @@ public class JPInterface extends JPanel implements Savable {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));
 		setBorder(BorderFactory.createEmptyBorder(size.getVgap(), size.getHgap(), size.getVgap(), size.getHgap()));
-		canvas.getConfig().getFractal().addFilter(data.fractaljp.getPanel());
+		canvas.getConfig().getFractal().addFilter(data.getFractaljp().getPanel());
 	}
 
 	/**
@@ -139,8 +141,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * <li>{@link JPInterface#save()}</li> save all the user entered data
 	 * <li>{@link r#run()}</li> change data that shouldn't be saved
 	 * <li>{@link JPInterface#update()}</li> update this data to the user interface
-	 * <li>{@link JPInterface#renderNow()}</li> if <i>render</i> is true:
-	 * render the image without saving or updating
+	 * <li>{@link JPInterface#renderNow()}</li> if <i>render</i> is true: render the
+	 * image without saving or updating
 	 * </ul>
 	 * 
 	 * @param render if true it will also render the image.
@@ -236,7 +238,7 @@ public class JPInterface extends JPanel implements Savable {
 
 	/**
 	 * Used to disable the {@link ActionListener} on the {@link ComboBox}
-	 * {@link AllData#fractaljcb}.
+	 * {@link AllData#fractaljcb} when calling {@link JPInterface#update()}.
 	 */
 	private boolean allowFractaljcbAction;
 
@@ -266,7 +268,7 @@ public class JPInterface extends JPanel implements Savable {
 		allowFractaljcbAction = false;
 		data.getFractaljcb().setData(canvas.getConfig().getFractal());
 		allowFractaljcbAction = true;
-		
+
 		canvas.getConfig().getFractal().safeUpdate();
 	}
 
@@ -284,6 +286,10 @@ public class JPInterface extends JPanel implements Savable {
 	public class AllData {
 
 		private final Padding p5 = new Padding(5);
+
+		public Component getP5() {
+			return p5.panel();
+		}
 
 		private final Padding p10 = new Padding(10);
 
@@ -381,7 +387,9 @@ public class JPInterface extends JPanel implements Savable {
 		public Title calculations = new Title("Calculation");
 
 		private final TextFieldInteger iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
-				.setTip("the amount of iterations when rednering").build();
+				.setTip("<html>The iteration count. Each fractal can use this differently."
+						+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
+				.build();
 
 		public Data<Integer> getIterjtf() {
 			return iterjtf;
@@ -402,8 +410,8 @@ public class JPInterface extends JPanel implements Savable {
 			return zoomjb;
 		}
 
-		private final Button renderjb = new Button.Builder("Render").setAction(a -> render()).setTip("render the image")
-				.build();
+		private final Button renderjb = new Button.Builder("Render").setAction(a -> render())
+				.setTip("Render the image by generating it and painting it.").build();
 
 		public Data<Boolean> getRenderjb() {
 			return renderjb;
@@ -427,8 +435,8 @@ public class JPInterface extends JPanel implements Savable {
 					@SuppressWarnings("unchecked")
 					JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
 					Fractal fractal = (Fractal) jcb.getSelectedItem();
+					fractal.addFilter(data.getFractaljp().getPanel());
 					canvas.getConfig().setFractal(fractal);
-					fractal.addFilter(getFractaljp().getPanel());
 				});
 			}
 		}).build();
@@ -437,12 +445,15 @@ public class JPInterface extends JPanel implements Savable {
 			return fractaljcb;
 		}
 
-		/**
-		 * Colour
-		 */
-		
-		private final Title colour = new Title("Colour");
-		
+
+
+		private final Button repaintjb = new Button.Builder("Repaint").setTip(
+				"<html>Repaint the image without generating it again. <br>Usefull for just changing colour settings</html>")
+				.setAction(a -> {
+					canvas.getConfig().getFractal().saveAndColour();
+					update();
+				}).build();
+
 		private final Panel fractaljp = new Panel();
 
 		public Panel getFractaljp() {
@@ -455,7 +466,7 @@ public class JPInterface extends JPanel implements Savable {
 		private Item[] all = new Item[] { window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5,
 				mjtf, p5, njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10,
 				iterjtf, p5, zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljcb, p5,
-				colour, p5, fractaljp, p5 };
+				repaintjb, p5, fractaljp, p5 };
 
 		public Item[] getAll() {
 			return all;

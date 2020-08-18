@@ -142,12 +142,17 @@ public class Canvas extends JPanel {
 	 * This can be called whilst the {@link Painter} {@link SwingWorker} is still
 	 * colouring. Only if {@link Painter#isRepainted()} returns true can you call
 	 * this method safely.
+	 * 
+	 * @return true if a new {@link Painter} was successfully executed.
 	 */
-	public void colourAndPaint() {
+	public boolean colourAndPaint() {
+		//prePaint
 		if (painter == null || painter.isRepainted()) {
 			painter = new Painter(this, jpi, logger);
 			painter.execute();
+			return true;
 		}
+		return false;
 	}
 
 	/**

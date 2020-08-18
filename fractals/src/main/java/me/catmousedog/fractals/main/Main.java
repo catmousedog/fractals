@@ -11,6 +11,7 @@ import javax.swing.ToolTipManager;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.concrete.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.concrete.IterativeMandelbrot;
 import me.catmousedog.fractals.fractals.concrete.TestFractal;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -21,7 +22,7 @@ import me.catmousedog.fractals.ui.JPInterface;
 public class Main implements Runnable {
 
 	/**
-	 * Settings object for storing all the settings
+	 * Settings object for storing all the settings stored outside the application.
 	 */
 	private final Settings settings = new Settings(this);
 
@@ -34,7 +35,8 @@ public class Main implements Runnable {
 	 * An array of all the fractals, each containing their own fractal function and
 	 * filter
 	 */
-	private Fractal[] fractals = new Fractal[] { new IterativeMandelbrot(), new TestFractal() };
+	private Fractal[] fractals = new Fractal[] { new IterativeMandelbrot(settings), new NormalizedMandelbrot(settings),
+			new TestFractal(settings) };
 
 	private JFrame frame;
 
@@ -75,6 +77,7 @@ public class Main implements Runnable {
 	public void run() {
 
 		ToolTipManager.sharedInstance().setInitialDelay(200);
+		ToolTipManager.sharedInstance().setDismissDelay(20000);
 
 		// create logger
 		logger = new Logger(size);
