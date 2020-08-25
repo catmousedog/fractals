@@ -11,9 +11,6 @@ import javax.swing.ToolTipManager;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.concrete.NormalizedMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.IterativeMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.TestFractal;
 import me.catmousedog.fractals.ui.JPInterface;
 
 /**
@@ -27,16 +24,19 @@ public class Main implements Runnable {
 	private final Settings settings = new Settings(this);
 
 	/**
+	 * Array of all enabled fractals
+	 */
+	private final Fractal[] fractals = settings.getFractals();
+
+	/**
 	 * Object for storing all the initial dimensions
 	 */
 	private final InitialSize size = new InitialSize();
 
 	/**
-	 * An array of all the fractals, each containing their own fractal function and
-	 * filter
+	 * Logger containing a JPanel to display any feedback such as progress bars
 	 */
-	private Fractal[] fractals = new Fractal[] { new IterativeMandelbrot(settings), new NormalizedMandelbrot(settings),
-			new TestFractal(settings) };
+	private final Logger logger = new Logger(size);
 
 	private JFrame frame;
 
@@ -52,11 +52,6 @@ public class Main implements Runnable {
 	private JPanel rpanel;
 
 	/**
-	 * Logger containing a JPanel to display any feedback such as progress bars
-	 */
-	private Logger logger;
-
-	/**
 	 * JPanel interface for the user
 	 */
 	private JPInterface jpi;
@@ -70,6 +65,9 @@ public class Main implements Runnable {
 		EventQueue.invokeLater(new Main());
 	}
 
+	private Main() {
+	}
+
 	/**
 	 * ran on the EDT, creates all the swing components
 	 */
@@ -79,16 +77,15 @@ public class Main implements Runnable {
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 		ToolTipManager.sharedInstance().setDismissDelay(20000);
 
-		// create logger
-		logger = new Logger(size);
-
 		// create JFrame
 		frame = new JFrame(settings.getArtifact_id() + "-" + settings.getVersion());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 
 		// create canvas
-		canvas = new Canvas(size, fractals, logger);
+		canvas = new Canvas(size, fractals[0], logger);
+		for (Fractal f : fractals)
+			f.setCanvas(canvas);
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 
 		// create right panel (containing logger and jpi)
@@ -221,6 +218,13 @@ public class Main implements Runnable {
 			return iwidth + 2 * hgap;
 		}
 
+	}
+
+	/**
+	 * @return Get an array of the active {@link Fractal}s
+	 */
+	public Fractal[] getFractals() {
+		return fractals;
 	}
 
 }

@@ -15,7 +15,6 @@ import javax.swing.SwingWorker;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main.InitialSize;
@@ -28,11 +27,6 @@ import me.catmousedog.fractals.ui.JPInterface.AllData;
  */
 @SuppressWarnings("serial")
 public class Canvas extends JPanel {
-
-	/**
-	 * Array containing all usable fractals.
-	 */
-	private final Fractal[] fractals;
 
 	/**
 	 * the mouse listener
@@ -50,18 +44,22 @@ public class Canvas extends JPanel {
 	private JPInterface jpi;
 
 	/**
-	 * The current {@link Configuration} of the canvas.
-	 * <p>
+	 * The current {@link Fractal} of the {@link Canvas}.<br>
 	 * Not final as this can change when using {@link Canvas#undo()}
 	 */
-	private Configuration config;
+	private Fractal fractal;
 
 	/**
-	 * The previous {@link Configuration} of the canvas. <br>
-	 * Not final as this gets set to {@link Canvas#config} every
-	 * {@link Canvas#render(JPInterface)}
+	 * The previous {@link Fractal} of the {@link Canvas}.<br>
+	 * Not final as this gets set to {@link Canvas#fractal} every time
+	 * {@link Canvas#savePrevConfig()} gets called.
 	 */
-	private Configuration prevConfig;
+	private Fractal prevFractal;
+
+	/**
+	 * The zoomFactor to use when zooming in or out.
+	 */
+	private double zoomFactor = 2;
 
 	/**
 	 * The latest {@link SwingWorker} responsible for generating the fractal.
@@ -98,14 +96,10 @@ public class Canvas extends JPanel {
 	 * @param jpi     the user interface, used for saving and updating
 	 * @param logger  the logger instance
 	 */
-	public Canvas(InitialSize size, Fractal[] fractals, Logger logger) {
-		this.fractals = fractals;
+	public Canvas(InitialSize size, Fractal fractal, Logger logger) {
 		this.logger = logger;
 
-		for (Fractal f : fractals)
-			f.setCanvas(this);
-
-		config = new Configuration(new LinearTransform(), fractals[0], 100, 2);
+		this.fractal = fractal;
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
 		mouse = new Mouse(this);
@@ -146,7 +140,7 @@ public class Canvas extends JPanel {
 	 * @return true if a new {@link Painter} was successfully executed.
 	 */
 	public boolean colourAndPaint() {
-		//prePaint
+		// prePaint
 		if (painter == null || painter.isRepainted()) {
 			painter = new Painter(this, jpi, logger);
 			painter.execute();
@@ -181,7 +175,7 @@ public class Canvas extends JPanel {
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		// set config.getTransform()
-		config.getTransform().setOrigin(width / 2, height / 2);
+		fractal.getTransform().setOrigin(width / 2, height / 2);
 
 		// set panel size
 		setPreferredSize(new Dimension(width, height));
@@ -189,24 +183,24 @@ public class Canvas extends JPanel {
 
 	/**
 	 * Essentially the opposite of {@link Canvas#undo()}. This should be called
-	 * right before saving changes to the {@link Canvas#config}.
+	 * right before saving changes to the {@link Canvas#fractal}.
 	 * <p>
-	 * Assigns the {@link Canvas#prevConfig} by value through
-	 * {@link Configuration#clone()}.
+	 * Assigns the {@link Canvas#prevFractal} by value through
+	 * {@link Fractal#clone()}.
 	 */
 	public void savePrevConfig() {
-		prevConfig = config.clone();
+		prevFractal = fractal.clone();
 	}
 
 	/**
-	 * Sets the {@link Canvas#config} to the {@link Canvas#prevConfig}, reverting
+	 * Sets the {@link Canvas#fractal} to the {@link Canvas#prevFractal}, reverting
 	 * any changes saved to it after the last time {@link Canvas#savePrevConfig()}
 	 * was called.
 	 * <p>
-	 * Assigns the by value through {@link Configuration#clone()}
+	 * Assigns the by value through {@link Fractal#clone()}
 	 */
 	public void undo() {
-		config = prevConfig.clone();
+		fractal = prevFractal.clone();
 	}
 
 	/**
@@ -240,19 +234,42 @@ public class Canvas extends JPanel {
 		});
 	}
 
-	public Fractal[] getFractals() {
-		return fractals;
+	/**
+	 * @return The {@link Fractal} currently being used by the {@link Canvas}.
+	 */
+	@NotNull
+	public Fractal getFractal() {
+		return fractal;
+	}
+
+	/**
+	 * Changes the {@link Fractal} of the {@link Canvas}.
+	 * 
+	 * @param fractal
+	 */
+	public void setFractal(@NotNull Fractal fractal) {
+		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
+		this.fractal = fractal;
+	}
+
+	/**
+	 * @return The {@link Canvas#zoomFactor}
+	 */
+	public double getZoomFactor() {
+		return zoomFactor;
+	}
+
+	/**
+	 * Changes the {@link Canvas#zoomFactor}
+	 * 
+	 * @param zoomFactor
+	 */
+	public void setZoomFactor(double zoomFactor) {
+		this.zoomFactor = zoomFactor;
 	}
 
 	public Mouse getMouse() {
 		return mouse;
-	}
-
-	/**
-	 * @return the current {@link Configuration}
-	 */
-	public Configuration getConfig() {
-		return config;
 	}
 
 	/**
@@ -279,5 +296,4 @@ public class Canvas extends JPanel {
 	public void setImg(BufferedImage img) {
 		this.img = img;
 	}
-
 }

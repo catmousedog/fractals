@@ -3,22 +3,25 @@ package me.catmousedog.fractals.ui.components.concrete;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.EventObject;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import me.catmousedog.fractals.ui.components.Data;
+import me.catmousedog.fractals.ui.components.ActiveData;
 
 /**
  * Represents a {@link JSlider} that goes from 0 to 1.
  */
-public class SliderDouble extends Data<Double> {
+public class SliderDouble extends ActiveData<Double> {
 
-	private JSlider js;
-	private JLabel jl;
+	private final JSlider js;
+	private final JLabel jl;
+	private final ChangeListener change;
 
 	public static class Builder {
 
@@ -65,11 +68,12 @@ public class SliderDouble extends Data<Double> {
 	}
 
 	private SliderDouble(String lbl, String tip, ChangeListener c, int m, int M) {
+		change = c;
 		js = new JSlider();
 		js.setMaximum(M);
 		js.setMajorTickSpacing(m);
 		js.setPreferredSize(new Dimension(100, js.getPreferredSize().height));
-		js.addChangeListener(c);
+		js.addChangeListener(e -> event(e));
 		js.setAlignmentX(JSlider.LEFT_ALIGNMENT);
 		js.setToolTipText(tip);
 
@@ -99,5 +103,18 @@ public class SliderDouble extends Data<Double> {
 	@Override
 	public void update() {
 		js.setValue((int) (data * js.getMaximum()));
+	}
+
+	@Override
+	public void preRender() {
+	}
+
+	@Override
+	public void postRender() {
+	}
+
+	@Override
+	protected void concreteEvent(EventObject e) {
+		change.stateChanged((ChangeEvent) e);
 	}
 }

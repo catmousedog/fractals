@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
@@ -19,18 +18,20 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Button;
 import me.catmousedog.fractals.ui.components.concrete.Button2;
-import me.catmousedog.fractals.ui.components.concrete.ComboBox;
+import me.catmousedog.fractals.ui.components.concrete.ComboBoxItem;
+import me.catmousedog.fractals.ui.components.concrete.ComboBoxList;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.Panel;
-import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
@@ -80,7 +81,7 @@ public class JPInterface extends JPanel implements Savable {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));
 		setBorder(BorderFactory.createEmptyBorder(size.getVgap(), size.getHgap(), size.getVgap(), size.getHgap()));
-		canvas.getConfig().getFractal().addFilter(data.getFractaljp().getPanel());
+		canvas.getFractal().addFilter(data.getFractaljp().getPanel());
 	}
 
 	/**
@@ -224,23 +225,18 @@ public class JPInterface extends JPanel implements Savable {
 		main.setSize(data.getWidthjtf().saveAndGet(), data.getHeightjtf().saveAndGet());
 
 		/* Location */
-		canvas.getConfig().getTransform().setTranslation(data.getXjtf().saveAndGet(), data.getYjtf().saveAndGet());
-		canvas.getConfig().getTransform().setScalar(data.getMjtf().saveAndGet(), data.getNjtf().saveAndGet());
-		canvas.getConfig().getTransform().setRot(data.getRjtf().saveAndGet());
+		canvas.getFractal().getTransform().setTranslation(data.getXjtf().saveAndGet(), data.getYjtf().saveAndGet());
+		canvas.getFractal().getTransform().setScalar(data.getMjtf().saveAndGet(), data.getNjtf().saveAndGet());
+		canvas.getFractal().getTransform().setRot(data.getRjtf().saveAndGet());
 
 		/* Calculation */
-		canvas.getConfig().setIterations(data.getIterjtf().saveAndGet());
-		canvas.getConfig().setZoomFactor(data.getZoomjtf().saveAndGet());
+		canvas.getFractal().setIterations(data.getIterjtf().saveAndGet());
+		canvas.setZoomFactor(data.getZoomjtf().saveAndGet());
 
 		/* Fractal */
-		canvas.getConfig().getFractal().save();
+		/* colour */
+		canvas.getFractal().save();
 	}
-
-	/**
-	 * Used to disable the {@link ActionListener} on the {@link ComboBox}
-	 * {@link AllData#fractaljcb} when calling {@link JPInterface#update()}.
-	 */
-	private boolean allowFractaljcbAction;
 
 	/**
 	 * Will update all values inside the user interface.<br>
@@ -254,22 +250,21 @@ public class JPInterface extends JPanel implements Savable {
 		data.getHeightjtf().setData(canvas.getHeight());
 
 		/* Location */
-		data.getXjtf().setData(canvas.getConfig().getTransform().getdx());
-		data.getYjtf().setData(canvas.getConfig().getTransform().getdy());
-		data.getMjtf().setData(canvas.getConfig().getTransform().getm());
-		data.getNjtf().setData(canvas.getConfig().getTransform().getn());
-		data.getRjtf().setData(canvas.getConfig().getTransform().getrot());
+		data.getXjtf().setData(canvas.getFractal().getTransform().getdx());
+		data.getYjtf().setData(canvas.getFractal().getTransform().getdy());
+		data.getMjtf().setData(canvas.getFractal().getTransform().getm());
+		data.getNjtf().setData(canvas.getFractal().getTransform().getn());
+		data.getRjtf().setData(canvas.getFractal().getTransform().getrot());
+		data.getLocationjcb().setDataSafe(canvas.getFractal().getLocations());
 
 		/* Calculation */
-		data.getIterjtf().setData(canvas.getConfig().getIterations());
-		data.getZoomjtf().setData(canvas.getConfig().getZoomFactor());
+		data.getIterjtf().setData(canvas.getFractal().getIterations());
+		data.getZoomjtf().setData(canvas.getZoomFactor());
 
 		/* Fractal */
-		allowFractaljcbAction = false;
-		data.getFractaljcb().setData(canvas.getConfig().getFractal());
-		allowFractaljcbAction = true;
-
-		canvas.getConfig().getFractal().safeUpdate();
+		data.getFractaljcb().setDataSafe(canvas.getFractal());
+		/* colour */
+		canvas.getFractal().safeUpdate();
 	}
 
 	/**
@@ -361,16 +356,17 @@ public class JPInterface extends JPanel implements Savable {
 			return copypastejb;
 		}
 
-		public ComboBox locationjcb = new ComboBox.Builder(PreSaved.values()).setLabel("locations").setAction(a -> {
-			renderWithout(settings.isRender_on_changes(), () -> {
-				@SuppressWarnings("unchecked")
-				JComboBox<PreSaved> jcb = (JComboBox<PreSaved>) a.getSource();
-				canvas.getConfig().getTransform().set(((PreSaved) jcb.getSelectedItem()).getTransform());
-				canvas.getConfig().setIterations(((PreSaved) jcb.getSelectedItem()).getIterations());
-			});
-		}).setTip("a set of interesting locations").build();
+		public ComboBoxList locationjcb = new ComboBoxList.Builder(canvas.getFractal().getLocations())
+				.setLabel("locations").setAction(a -> {
+					renderWithout(settings.isRender_on_changes(), () -> {
+						@SuppressWarnings("unchecked")
+						JComboBox<Location> jcb = (JComboBox<Location>) a.getSource();
+						canvas.getFractal().getTransform().set(((Location) jcb.getSelectedItem()).getTransform());
+						canvas.getFractal().setIterations(((Location) jcb.getSelectedItem()).getIterations());
+					});
+				}).setTip("a set of interesting locations").build();
 
-		public Data<Object> getLocations() {
+		public ActiveData<Object[]> getLocationjcb() {
 			return locationjcb;
 		}
 
@@ -429,28 +425,25 @@ public class JPInterface extends JPanel implements Savable {
 		 */
 		private final Title fractal = new Title("Fractal");
 
-		private final ComboBox fractaljcb = new ComboBox.Builder(canvas.getFractals()).setAction(a -> {
-			if (allowFractaljcbAction) {
-				renderWithout(settings.isRender_on_changes(), () -> {
-					@SuppressWarnings("unchecked")
-					JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
-					Fractal fractal = (Fractal) jcb.getSelectedItem();
-					fractal.addFilter(data.getFractaljp().getPanel());
-					canvas.getConfig().setFractal(fractal);
-				});
-			}
+		private final ComboBoxItem fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> {
+			@SuppressWarnings("unchecked")
+			JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
+			Fractal fractal = (Fractal) jcb.getSelectedItem();
+			jcb.setToolTipText(fractal.getTip());
+			renderWithout(settings.isRender_on_changes(), () -> {
+				fractal.addFilter(data.getFractaljp().getPanel());
+				canvas.setFractal(fractal);
+			});
 		}).build();
 
-		public Data<Object> getFractaljcb() {
+		public ActiveData<Object> getFractaljcb() {
 			return fractaljcb;
 		}
-
-
 
 		private final Button repaintjb = new Button.Builder("Repaint").setTip(
 				"<html>Repaint the image without generating it again. <br>Usefull for just changing colour settings</html>")
 				.setAction(a -> {
-					canvas.getConfig().getFractal().saveAndColour();
+					canvas.getFractal().saveAndColour();
 					update();
 				}).build();
 
@@ -477,7 +470,7 @@ public class JPInterface extends JPanel implements Savable {
 		 */
 		private void copy() {
 			// update?
-			String clip = canvas.getConfig().getID();
+			String clip = canvas.getFractal().getID();
 
 			try {
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
@@ -497,7 +490,12 @@ public class JPInterface extends JPanel implements Savable {
 						.getData(DataFlavor.stringFlavor);
 
 				canvas.savePrevConfig();
-				canvas.getConfig().fromID(clip);
+				try {
+					canvas.getFractal().fromID(clip);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					logger.exception(e);
+				}
 
 				if (settings.isRender_on_changes()) {
 					update();
@@ -526,7 +524,7 @@ public class JPInterface extends JPanel implements Savable {
 		 */
 		private void zoomIn() {
 			renderWithout(true, () -> {
-				canvas.getConfig().getTransform().zoom(1 / canvas.getConfig().getZoomFactor());
+				canvas.getFractal().getTransform().zoom(1 / canvas.getZoomFactor());
 			});
 		}
 
@@ -535,7 +533,7 @@ public class JPInterface extends JPanel implements Savable {
 		 */
 		private void zoomOut() {
 			renderWithout(true, () -> {
-				canvas.getConfig().getTransform().zoom(canvas.getConfig().getZoomFactor());
+				canvas.getFractal().getTransform().zoom(canvas.getZoomFactor());
 			});
 		}
 

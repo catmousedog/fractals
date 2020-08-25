@@ -3,24 +3,27 @@ package me.catmousedog.fractals.ui.components.concrete;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.EventObject;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import me.catmousedog.fractals.ui.components.Data;
+import me.catmousedog.fractals.ui.components.ActiveData;
 
 /**
  * Represents a {@link JSlider} that goes from a given minimum to a given
  * maximum through {@link Builder#setMin(int)} and {@link Builder#setMax(int)}.
  * The default extrema is [0, 100].
  */
-public class SliderInteger extends Data<Integer> {
+public class SliderInteger extends ActiveData<Integer> {
 
-	private JSlider js;
-	private JLabel jl;
+	private final JSlider js;
+	private final JLabel jl;
+	private final ChangeListener change;
 
 	public static class Builder {
 
@@ -72,6 +75,7 @@ public class SliderInteger extends Data<Integer> {
 	}
 
 	private SliderInteger(String lbl, String tip, ChangeListener c, int major, int m, int M) {
+		change = c;
 		js = new JSlider();
 		js.setMinimum(m);
 		js.setMaximum(M);
@@ -107,5 +111,18 @@ public class SliderInteger extends Data<Integer> {
 	@Override
 	public void update() {
 		js.setValue(data);
+	}
+
+	@Override
+	public void preRender() {
+	}
+
+	@Override
+	public void postRender() {
+	}
+
+	@Override
+	protected void concreteEvent(EventObject e) {
+		change.stateChanged((ChangeEvent) e);
 	}
 }

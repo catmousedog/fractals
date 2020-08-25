@@ -21,47 +21,48 @@ import me.catmousedog.fractals.ui.JPInterface;
 public class Generator extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
 	/**
-	 * the canvas instance this generator belongs to
+	 * The canvas instance this generator belongs to.
+	 * <p>
+	 * Also used to call {@link Canvas#colourAndPaint()}.
 	 */
 	private final Canvas canvas;
 
 	/**
-	 * the user interface containing the {@link JPInterface#postRender()} method
+	 * The user interface containing the {@link JPInterface#postRender()} method.
 	 */
 	private final JPInterface jpi;
 
 	/**
-	 * the current known {@link Configuration} of the canvas
+	 * The {@link LinearTransform} used to describe the current location on the
+	 * {@link Canvas}.
 	 */
-	private final Configuration config;
-
 	private final LinearTransform transform;
 
 	/**
-	 * the fractal instance containg the fractal function
+	 * The {@link Fractal} instance containing the fractal function,
+	 * {@link Fractal#get(double, double)}.
 	 */
 	private final Fractal fractal;
 
 	/**
-	 * the list of pixels
+	 * The list of {@link Pixel}s.
 	 */
 	private final List<Pixel> field;
 
 	/**
-	 * the logger instance
+	 * The {@link Logger} instance.
 	 */
 	private final Logger logger;
 
 	/*
-	 * atomic counters for keeping calculation progress
+	 * Atomic counters for keeping calculation progress when using parallel streams.
 	 */
 	private AtomicInteger i, q;
 
 	public Generator(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
 		this.canvas = canvas;
-		config = canvas.getConfig();
-		fractal = config.getFractal();
-		transform = config.getTransform();
+		fractal = canvas.getFractal().clone();
+		transform = canvas.getFractal().getTransform();
 		field = canvas.getField();
 		this.jpi = jpi;
 		this.logger = logger;

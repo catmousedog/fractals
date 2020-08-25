@@ -127,7 +127,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - rotation maintain after *undo*
 - iteration maintain after *undo*
 
-## [0.1.1]
+## [0.1.1] - colours
 
 ### Added
 - *Fractal.saveAndColour()* and *Fractal.safeUpdate()* for respectively saving user input and colouring and to update without triggering listeners.
@@ -139,8 +139,30 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 	- SubTitle
 - Concrete Items
 	- Repaint Button
-- **Normalized Mandelbrot** concrete fractal *n + 1 - ln(ln(|z|²))/ln(2)*
+- **Normalized Mandelbrot** concrete fractal: *n + 1 - ln(ln(|z|²))/ln(2)*
 
 ### Changed
 - Made **Logger** only display one generate and colour time
 - *Fractal.addFilter(JPanel)* is no longer abstract, it adds items like the **JPInterface** using an array of ordered **Items**
+
+## [0.1.2] - resources and files
+
+### Added
+- **Potential Mandelbrot** concrete fractal: *ln(|z|) / 2^n*
+- booleans to enable/disable each fractal inside *settings.properties*
+- *concrete_fractals* folder
+	- *IterativeMandelbrot.properties* resource
+	- *NormalizedMandelbrot.properties* resource
+- *locations* resource
+- **Settings** init methods to load the new and old resources 
+- *Fractal.getTip()* for getting a description of each fractal (displayed on combo box)
+- **Fractal** minor overhaul to replace **Configuration** 
+- **ActiveData** which implements the use of an active listener and *safeUpdate()* method to not trigger those listeners
+
+### Changed
+- Moved all **Configuration** necessities to **Canvas**
+- *Configuration.copy()* replaced by *Fractal.copy()* as the **LinearTransform** is stored inside **Fractal**.
+- all the **Data** to **ActiveData** if needed
+
+### Removed
+- **Configuration** class

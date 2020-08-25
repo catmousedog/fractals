@@ -13,8 +13,6 @@ import javax.swing.JPanel;
 import me.catmousedog.fractals.ui.components.Data;
 
 /**
- * Active {@link Data} storing a {@link Boolean}. <br>
- * The {@link Data#data} is the {@link JButton#isEnabled()}.
  */
 public class Button extends Data<Boolean> {
 

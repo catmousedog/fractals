@@ -45,7 +45,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	public Painter(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
 		this.canvas = canvas;
 		field = canvas.getField();
-		fractal = canvas.getConfig().getFractal().clone();
+		fractal = canvas.getFractal().clone();
 		this.jpi = jpi;
 		this.logger = logger;
 		addPropertyChangeListener(this);

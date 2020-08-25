@@ -37,17 +37,17 @@ public class Mouse implements MouseListener {
 
 		jpi.save();
 
-		LinearTransform transform = canvas.getConfig().getTransform();
+		LinearTransform transform = canvas.getFractal().getTransform();
 		double[] t = transform.apply(me.getX(), me.getY());
 		transform.setTranslation(t[0], t[1]);
 
 		// lmb (zoom in)
 		if (me.getButton() == MouseEvent.BUTTON1)
-			transform.zoom(1 / canvas.getConfig().getZoomFactor());
+			transform.zoom(1 / canvas.getZoomFactor());
 
 		// rmb (zoom out)
 		if (me.getButton() == MouseEvent.BUTTON3)
-			transform.zoom(canvas.getConfig().getZoomFactor());
+			transform.zoom(canvas.getZoomFactor());
 
 		jpi.update();
 		jpi.renderNow();

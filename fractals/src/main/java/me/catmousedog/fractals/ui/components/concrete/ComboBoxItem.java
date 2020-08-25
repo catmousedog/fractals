@@ -3,24 +3,30 @@ package me.catmousedog.fractals.ui.components.concrete;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EventObject;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
 
 /**
- * An active {@link Data} container. The {@link ComboBox} can be updated using
- * {@link Data#setData(Object[])} but not saved as there is not way for the user
- * to enter anything.
+ * An active {@link Data} container. The {@link ComboBoxItem} can be updated and
+ * saved.
+ * <p>
+ * The {@link Data} of this class is the selected item in the {@link JComboBox},
+ * hence the name <code>item</code>.
  */
-public class ComboBox extends Data<Object> {
+public class ComboBoxItem extends ActiveData<Object> {
 
 	private final JLabel jl;
 	private final JComboBox<Object> jcb;
+	private final ActionListener action;
 
 	public static class Builder {
 
@@ -47,16 +53,17 @@ public class ComboBox extends Data<Object> {
 			return this;
 		}
 
-		public ComboBox build() {
-			return new ComboBox(initial, lbl, tip, e);
+		public ComboBoxItem build() {
+			return new ComboBoxItem(initial, lbl, tip, e);
 		}
 
 	}
 
-	private ComboBox(Object[] initial, String lbl, String tip, ActionListener e) {
+	private ComboBoxItem(Object[] initial, String lbl, String tip, ActionListener e) {
+		action = e;
 		jcb = new JComboBox<Object>(initial);
 		jcb.setSelectedItem(null);
-		jcb.addActionListener(e);
+		jcb.addActionListener(a -> event(a));
 		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
 		jcb.setToolTipText(tip);
 		jcb.setAlignmentX(JComboBox.LEFT_ALIGNMENT);
@@ -87,6 +94,19 @@ public class ComboBox extends Data<Object> {
 		jp.add(jcb);
 
 		return jp;
+	}
+
+	@Override
+	public void preRender() {
+	}
+
+	@Override
+	public void postRender() {
+	}
+
+	@Override
+	protected void concreteEvent(EventObject e) {
+		action.actionPerformed((ActionEvent) e);
 	}
 
 }

@@ -3,7 +3,9 @@ package me.catmousedog.fractals.fractals.concrete;
 import java.awt.Color;
 
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Button;
@@ -17,12 +19,13 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
  */
 public final class IterativeMandelbrot extends Fractal {
 
-	public IterativeMandelbrot(Settings settings) {
-		super(settings);
+	public IterativeMandelbrot(Settings settings, int iterations) {
+		super(settings, iterations);
 	}
 
-	private IterativeMandelbrot(Settings settings, double r, double g, double b, boolean inverted) {
-		this(settings);
+	private IterativeMandelbrot(Settings settings, int iterations, LinearTransform transform, Location[] locations,
+			double r, double g, double b, boolean inverted) {
+		super(settings, iterations, transform, locations);
 		this.r = r;
 		this.g = g;
 		this.b = b;
@@ -49,7 +52,7 @@ public final class IterativeMandelbrot extends Fractal {
 
 			x = t1 - t2 + cx;
 			y = 2 * tx * y + cy;
-			
+
 		}
 		return 0;
 	}
@@ -75,9 +78,12 @@ public final class IterativeMandelbrot extends Fractal {
 
 	@Override
 	public void update() {
-		rjs.setData(r);
-		gjs.setData(g);
-		bjs.setData(b);
+		rjs.setDataSafe(r);
+		gjs.setDataSafe(g);
+		bjs.setDataSafe(b);
+		rjtf.setData(r);
+		gjtf.setData(b);
+		bjtf.setData(b);
 	}
 
 	@Override
@@ -88,16 +94,24 @@ public final class IterativeMandelbrot extends Fractal {
 	public void postRender() {
 	}
 
-	private String name = "Iterative Mandelbrot";
+	@Override
+	public String informalName() {
+		return "Iterative Mandelbrot";
+	}
 
 	@Override
-	public String toString() {
-		return name;
+	public String formalName() {
+		return "IterativeMandelbrot";
+	}
+
+	@Override
+	public String getTip() {
+		return "<html>The mandelbrot generated using an escape time alogorithm. <br>This allows for deep zooms but creates aliasing effects, but has the shortest generating time.</html>";
 	}
 
 	@Override
 	public Fractal clone() {
-		return new IterativeMandelbrot(settings, r, g, b, inverted);
+		return new IterativeMandelbrot(settings, iterations, transform.clone(), locations, r, g, b, inverted);
 	}
 
 	/*
@@ -109,10 +123,9 @@ public final class IterativeMandelbrot extends Fractal {
 	 */
 	private final SubTitle colour = new SubTitle("Colour",
 			"<html>This section contains the fractal specific colour settings.</html>");
-	
+
 	private final Button invertjb = new Button.Builder("Invert").setTip("Inverts the current colours.").setAction(a -> {
 		inverted = !inverted;
-		System.out.println(inverted);
 		saveAndColour();
 	}).build();
 
@@ -127,7 +140,7 @@ public final class IterativeMandelbrot extends Fractal {
 		saveAndColour();
 	}).build();
 
-	private final Data<Double> getRjs() {
+	private final ActiveData<Double> getRjs() {
 		return rjs;
 	}
 
@@ -138,7 +151,7 @@ public final class IterativeMandelbrot extends Fractal {
 		saveAndColour();
 	}).build();
 
-	public Data<Double> getGjs() {
+	public ActiveData<Double> getGjs() {
 		return gjs;
 	}
 
@@ -149,7 +162,7 @@ public final class IterativeMandelbrot extends Fractal {
 		saveAndColour();
 	}).build();
 
-	public Data<Double> getBjs() {
+	public ActiveData<Double> getBjs() {
 		return bjs;
 	}
 

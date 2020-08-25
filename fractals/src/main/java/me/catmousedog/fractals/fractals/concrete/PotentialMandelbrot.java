@@ -13,13 +13,13 @@ import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
-public class NormalizedMandelbrot extends Fractal implements Savable {
+public class PotentialMandelbrot extends Fractal implements Savable {
 
-	public NormalizedMandelbrot(Settings settings, int iterations) {
+	public PotentialMandelbrot(Settings settings, int iterations) {
 		super(settings, iterations);
 	}
 
-	private NormalizedMandelbrot(Settings settings, int iterations, LinearTransform transform, Location[] locations,
+	private PotentialMandelbrot(Settings settings, int iterations, LinearTransform transform, Location[] locations,
 			double K) {
 		super(settings, iterations, transform, locations);
 		this.K = K;
@@ -46,7 +46,7 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 			p = Math.log(t1 + t2);
 
 			if (p > 10) {
-				return i + 1 - Math.log(p) / Math.log(2);
+				return p / Math.pow(2, i);
 			}
 		}
 		return 0;
@@ -54,11 +54,11 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 
 	private double ra = 1;
 	private double ga = 1;
-	private double ba = 1.1;
+	private double ba = 1;
 
-	private double rd = -0.5;
+	private double rd = 0.5;
 	private double gd = 0;
-	private double bd = 0.5;
+	private double bd = -0.5;
 
 	@Override
 	public int filter(Number v) {
@@ -94,22 +94,22 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 
 	@Override
 	public String informalName() {
-		return "Normalized Mandelbrot";
+		return "Potential Mandelbrot";
 	}
 
 	@Override
 	public String formalName() {
-		return "NormalizedMandelbrot";
+		return "PotentialMandelbrot";
 	}
 
 	@Override
 	public String getTip() {
-		return "<html>The mandelbrot generated using 'normalized iteration count'. <br>This allows for deep zooms and smooth pictures but long generating times.</html>";
+		return "<html>The mandelbrot generated using an electrostatic approximation. <br>This allows smooth pictures but longer generating times. <br>Not great for deep zooms.</html>";
 	}
 
 	@Override
 	public Fractal clone() {
-		return new NormalizedMandelbrot(settings, iterations, transform.clone(), locations, K);
+		return new PotentialMandelbrot(settings, iterations, transform.clone(), locations, K);
 	}
 
 	/*

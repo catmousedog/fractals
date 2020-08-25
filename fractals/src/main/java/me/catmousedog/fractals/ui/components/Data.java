@@ -1,32 +1,18 @@
 package me.catmousedog.fractals.ui.components;
 
-import java.awt.event.ActionListener;
+import javax.swing.JTextField;
 
 /**
  * A data container extending the {@link Item} class. This class just represents
  * an {@link Item} that holds data.<br>
- * <p>
- * <b>Active</b> {@link Item}s have an {@link ActionListener} and perform an
- * action themselves.
- * <p>
- * <b>Passive</b> {@link Item}s don't perform an action.
  * 
  * @param <T> The type of the stored data. <br>
- *            For example: a {@link Double} for a textfield.
+ *            <b>For example:</b><br>
+ *            a {@link Double} for a {@link JTextField}.
  */
 public abstract class Data<T> extends Item {
 
 	protected T data;
-
-	/**
-	 * gets the data without saving
-	 * 
-	 * @return the current {@link Data#data}
-	 */
-	@Deprecated
-	public T getData() {
-		return data;
-	}
 
 	/**
 	 * saves and gets the data
