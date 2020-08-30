@@ -12,15 +12,20 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Savable;
+import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 
 /**
- * Represents a fractal including its fractal function and colour filter.
+ * Represents a fractal including its fractal function
+ * {@link Fractal#get(double, double)} and colour filter
+ * {@link Fractal#filter(Number)}.
  * <p>
  * An implementation of this class must define {@link Fractal#items} and any
- * active {@link Data} (listeners) added to it should only call
- * {@link Fractal#saveAndColour()}.
+ * {@link ActiveData} or listeners added to it should call
+ * {@link Fractal#saveAndColour()}.<br>
+ * Also the {@link Fractal#clone()} method should clone the {@link Fractal} and
+ * all of its fields through a private constructor.
  */
 public abstract class Fractal implements Savable {
 
@@ -30,9 +35,9 @@ public abstract class Fractal implements Savable {
 	protected final Settings settings;
 
 	/**
-	 * The transformation, used to represent the location
+	 * The {@link LinearTransform} used to represent the location
 	 */
-	protected final LinearTransform transform;
+	protected LinearTransform transform;
 
 	/**
 	 * Array of all {@link Item}s in order of addition.
@@ -48,8 +53,6 @@ public abstract class Fractal implements Savable {
 	 */
 	protected Canvas canvas;
 
-	protected int iterations = 100;
-
 	/**
 	 * Array of all locations used by this {@link Fractal}.<br>
 	 * This array is created at
@@ -61,9 +64,19 @@ public abstract class Fractal implements Savable {
 	@NotNull
 	protected Location[] locations;
 
-	public Fractal(Settings settings, int iterations) {
+	/**
+	 * The amount of iterations. Each {@link Fractal} might use this differently.
+	 */
+	protected int iterations = 100;
+
+	/**
+	 * The bailout radius, if the fractal value goes beyond this value the iteration
+	 * is stopped. Each {@link Fractal} might use this differently.
+	 */
+	protected double bailout = 100;
+
+	public Fractal(Settings settings) {
 		this.settings = settings;
-		this.iterations = iterations;
 		transform = new LinearTransform();
 	}
 
@@ -75,7 +88,7 @@ public abstract class Fractal implements Savable {
 	}
 
 	/**
-	 * calculates the fractal function for a given point in space
+	 * calculates the fractal value for a given point in space
 	 * 
 	 * @param x the x coordinate of the point
 	 * @param y the y coordinate of the point
@@ -140,40 +153,72 @@ public abstract class Fractal implements Savable {
 	}
 
 	/**
-	 * Changes this {@link Fractal} to match the given <code>id</code>.<br>
 	 * 
-	 * @param id {@link String} of format: <code>dx:dy:m:n:rot:iter</code>
-	 * 
-	 * @throws IllegalArgumentException if the <code>id</code> is not of the correct
-	 *                                  format.
 	 */
-	public void fromID(@NotNull String id) throws IllegalArgumentException {
-		String[] args = id.split(":");
+	protected Properties properties;
 
-		if (args.length < 4)
-			throw new IllegalArgumentException("String not of format 'dx:dy:m:n:rot'");
+	/**
+	 * Imports all the settings from the properties files belonging to this
+	 * {@link Fractal}.
+	 * <p>
+	 * Only called once for each {@link Fractal} upon instantiating the
+	 * {@link Settings} object.
+	 * 
+	 * @param properties {@link Properties} object for
+	 *                   './conrete_fractal/formalName.properties'
+	 * @param locations  {@link Properties} object for
+	 *                   './locations/formalName.properties'
+	 */
+	public void setProperties(@NotNull Properties properties, @NotNull Properties locations)
+			throws IllegalArgumentException {
 
+		List<Location> temp = new ArrayList<Location>();
+
+		// set default settings
 		try {
-			transform.setTranslation(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
-			transform.setScalar(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
-			if (args.length > 4)
-				transform.setRot(Double.parseDouble(args[4]));
-			if (args.length > 5)
-				iterations = Integer.parseInt(args[5]);
+			double dx = Double.parseDouble(properties.getProperty("default_x"));
+			double dy = Double.parseDouble(properties.getProperty("default_y"));
+			transform.setTranslation(dx, dy);
+			double m = Double.parseDouble(properties.getProperty("default_m"));
+			double n = Double.parseDouble(properties.getProperty("default_n"));
+			transform.setScalar(m, n);
+			double rot = Double.parseDouble(properties.getProperty("default_rot"));
+			transform.setRot(rot);
+
+			iterations = Integer.parseInt(properties.getProperty("default_iter"));
+			bailout = Double.parseDouble(properties.getProperty("bailout"));
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
-	}
 
-	/**
-	 * Creates an <code>id</code> to represent the location of this {@link Fractal}.
-	 * 
-	 * @return String of format: "dx:dy:m:n:rot:iter"
-	 */
-	public String getID() {
-		return Double.toString(transform.getdx()) + ":" + Double.toString(transform.getdy()) + ":"
-				+ Double.toString(transform.getm()) + ":" + Double.toString(transform.getn()) + ":"
-				+ Double.toString(transform.getrot()) + ":" + Integer.toString(iterations);
+		// initialise locations
+		// for all keys
+		for (Object o : locations.keySet()) {
+			String key = (String) o;
+			String id = locations.getProperty(key);
+			String[] args = id.split(":");
+
+			// legal format
+			if (args.length > 5) {
+				try {
+					// parse id
+					double dx = Double.parseDouble(args[0]);
+					double dy = Double.parseDouble(args[1]);
+					double m = Double.parseDouble(args[2]);
+					double n = Double.parseDouble(args[3]);
+					double rot = Double.parseDouble(args[4]);
+					int iter = Integer.parseInt(args[5]);
+
+					// add new location
+					temp.add(new Location(key, dx, dy, m, n, rot, iter));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		this.locations = new Location[temp.size()];
+		temp.toArray(this.locations);
 	}
 
 	/**
@@ -226,67 +271,49 @@ public abstract class Fractal implements Savable {
 	public abstract Fractal clone();
 
 	/**
-	 * Imports all the settings from the properties files belonging to this
-	 * {@link Fractal}.
-	 * <p>
-	 * Only called once for each {@link Fractal} upon instantiating the
-	 * {@link Settings} object. Each {@link Fractal} created after that using
-	 * {@link Fractal#clone()} just inherits the fields.
+	 * Changes this {@link Fractal} to match the given <code>id</code>.<br>
 	 * 
-	 * @param properties {@link Properties} object for
-	 *                   './conrete_fractal/formalName.properties'
-	 * @param locations  {@link Properties} object for
-	 *                   './locations/formalName.properties'
+	 * @param id {@link String} of format: <code>dx:dy:m:n:rot:iter</code>
+	 * 
+	 * @throws IllegalArgumentException if the <code>id</code> is not of the correct
+	 *                                  format.
 	 */
-	public void setProperties(@NotNull Properties properties, @NotNull Properties locations)
-			throws IllegalArgumentException {
+	public void fromID(@NotNull String id) throws IllegalArgumentException {
+		String[] args = id.split(":");
 
-		List<Location> temp = new ArrayList<Location>();
+		if (args.length < 4)
+			throw new IllegalArgumentException("String not of format 'dx:dy:m:n:rot'");
 
-		// set default settings
 		try {
-			double dx = Double.parseDouble(properties.getProperty("default_x"));
-			double dy = Double.parseDouble(properties.getProperty("default_y"));
-			transform.setTranslation(dx, dy);
-			double m = Double.parseDouble(properties.getProperty("default_m"));
-			double n = Double.parseDouble(properties.getProperty("default_n"));
-			transform.setScalar(m, n);
-			double rot = Double.parseDouble(properties.getProperty("default_rot"));
-			transform.setRot(rot);
-
-			iterations = Integer.parseInt(properties.getProperty("default_iter"));
+			transform.setTranslation(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
+			transform.setScalar(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+			if (args.length > 4)
+				transform.setRot(Double.parseDouble(args[4]));
+			if (args.length > 5)
+				iterations = Integer.parseInt(args[5]);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
+	}
 
-		// initialise locations
-		// for all keys
-		for (Object o : locations.keySet()) {
-			String key = (String) o;
-			String id = locations.getProperty(key);
-			String[] args = id.split(":");
+	/**
+	 * Creates an <code>id</code> to represent the location of this {@link Fractal}.
+	 * 
+	 * @return String of format: "dx:dy:m:n:rot:iter"
+	 */
+	public String getID() {
+		return Double.toString(transform.getdx()) + ":" + Double.toString(transform.getdy()) + ":"
+				+ Double.toString(transform.getm()) + ":" + Double.toString(transform.getn()) + ":"
+				+ Double.toString(transform.getrot()) + ":" + Integer.toString(iterations);
+	}
 
-			// legal format
-			if (args.length > 5) {
-				try {
-					// parse id
-					double dx = Double.parseDouble(args[0]);
-					double dy = Double.parseDouble(args[1]);
-					double m = Double.parseDouble(args[2]);
-					double n = Double.parseDouble(args[3]);
-					double rot = Double.parseDouble(args[4]);
-					int iter = Integer.parseInt(args[5]);
-
-					// add new location
-					temp.add(new Location(key, dx, dy, m, n, rot, iter));
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		this.locations = new Location[temp.size()];
-		temp.toArray(this.locations);
+	/**
+	 * Changes the {@link LinearTransform} of this {@link Fractal}.
+	 * 
+	 * @param transform
+	 */
+	public void setTransform(@NotNull LinearTransform transform) {
+		this.transform = transform;
 	}
 
 	/**
@@ -310,7 +337,7 @@ public abstract class Fractal implements Savable {
 	}
 
 	/**
-	 * @return the list of {@link Location}s saved by this {@link Fractal}.
+	 * @return the array of {@link Location}s saved by this {@link Fractal}.
 	 */
 	public Location[] getLocations() {
 		return locations;

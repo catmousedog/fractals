@@ -1,11 +1,9 @@
 package me.catmousedog.fractals.main;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -14,9 +12,12 @@ import java.util.List;
 import java.util.Properties;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.concrete.IterativeMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.NormalizedMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.PotentialMandelbrot;
+import me.catmousedog.fractals.fractals.concrete.iterative.IterativeMandelbrot;
+import me.catmousedog.fractals.fractals.concrete.iterative.IterativeShip;
+import me.catmousedog.fractals.fractals.concrete.normalized.NormalizedMandelbrot;
+import me.catmousedog.fractals.fractals.concrete.normalized.NormalizedShip;
+import me.catmousedog.fractals.fractals.concrete.potential.PotentialMandelbrot;
+import me.catmousedog.fractals.fractals.concrete.potential.PotentialShip;
 
 /**
  * Class for managing the {@code .properties} files within the resources.
@@ -24,6 +25,12 @@ import me.catmousedog.fractals.fractals.concrete.PotentialMandelbrot;
 public class Settings {
 
 	private final Main main;
+
+	/**
+	 * An array of all the fractals, even if disabled in the 'settings.properties'.
+	 */
+	private final Fractal[] allFractals = new Fractal[] { new IterativeMandelbrot(this), new NormalizedMandelbrot(this),
+			new PotentialMandelbrot(this), new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this) };
 
 	public Settings(Main main) {
 		this.main = main;
@@ -51,8 +58,6 @@ public class Settings {
 			System.err.println("Settings.initFractals IOException");
 			e.printStackTrace();
 		}
-
-		initLocations();
 	}
 
 	/**
@@ -88,16 +93,12 @@ public class Settings {
 	}
 
 	/**
-	 * An array of all the fractals, even if disabled in the 'settings.properties'.
-	 */
-	private Fractal[] allFractals = new Fractal[] { new IterativeMandelbrot(this, 100),
-			new NormalizedMandelbrot(this, 100), new PotentialMandelbrot(this, 100) };
-
-	/**
-	 * Initialises the 'concrete_fractals' directory. <br>
-	 * This just copies the .properties files from the resources.
+	 * Initialises all the fractal related directories.<br>
+	 * This includes the <code>concrete_fractals</code> and <code>locations</code>
+	 * files.
 	 * 
-	 * @throws IOException if 'concrete_fractals' could not be copied or loaded
+	 * @throws IOException if a directory could not be copied or a
+	 *                     {@link Properties} could not be loaded.
 	 */
 	private void initFractals() throws IOException {
 		// create 'concrete_fractals' directory
@@ -110,67 +111,55 @@ public class Settings {
 			loc.mkdir();
 
 		// scan and copy resources inside 'conrete_fractals' resource
-		try (InputStream in = main.getClass().getClassLoader().getResourceAsStream("concrete_fractals");
-				BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
 
-			String resource;
+		for (Fractal fractal : allFractals) {
+			// filename
+			String filename = fractal.formalName();
 
-			// for all files inside 'concrete_fractals'
-			while ((resource = br.readLine()) != null) {
-				// filename without .properties at the end
-				String filename = resource.substring(0, resource.length() - 11);
+			// filename with .properties at the end
+			String resource = filename + ".properties";
 
-				// path to fractal resource
-				String fractalResourcePath = "concrete_fractals/" + resource;
+			// path to fractal resource
+			String fractalResourcePath = "concrete_fractals/" + resource;
 
-				// path to location resource
-				String locationResourcePath = "locations/" + resource;
+			// path to location resource
+			String locationResourcePath = "locations/" + resource;
 
-				// path to fractal file
-				String fractalFilePath = "./" + fractalResourcePath;
+			// path to fractal file
+			String fractalFilePath = "./" + fractalResourcePath;
 
-				// path to location file
-				String locationFilePath = "./" + locationResourcePath;
+			// path to location file
+			String locationFilePath = "./" + locationResourcePath;
 
-				// "true" if this fractal should be used
-				String enabled = settings.getProperty(filename);
+			// "true" if this fractal should be used
+			String enabled = settings.getProperty(filename);
 
-				if (enabled != null && enabled.equalsIgnoreCase("true")) {
+			InputStream s1 = main.getClass().getClassLoader().getResourceAsStream(fractalResourcePath);
+			File f1 = new File(fractalFilePath);
+			// if 'properties' resource exists and file doesn't copy over
+			if (s1 != null && !f1.exists())
+				Files.copy(s1, Paths.get(fractalFilePath), StandardCopyOption.REPLACE_EXISTING);
 
-					// copy 'concrete_fractals' resources
-					if (!new File(fractalFilePath).exists())
-						Files.copy(main.getClass().getClassLoader().getResourceAsStream(fractalResourcePath),
-								Paths.get(fractalFilePath), StandardCopyOption.REPLACE_EXISTING);
+			InputStream s2 = main.getClass().getClassLoader().getResourceAsStream(locationResourcePath);
+			File f2 = new File(locationFilePath);
+			// if 'location' resource exists and file doesn't copy over
+			if (s2 != null && !f2.exists())
+				Files.copy(s2, Paths.get(locationFilePath), StandardCopyOption.REPLACE_EXISTING);
 
-					// copy 'locations' resources
-					if (!new File(locationFilePath).exists())
-						Files.copy(main.getClass().getClassLoader().getResourceAsStream(locationResourcePath),
-								Paths.get(locationFilePath), StandardCopyOption.REPLACE_EXISTING);
+			if (enabled.equalsIgnoreCase("true")) {
+				// create properties
+				Properties p = new Properties();
+				if (f1.exists())
+					p.load(new FileInputStream(fractalFilePath));
+				// create locations
+				Properties l = new Properties();
+				if (f2.exists())
+					l.load(new FileInputStream(locationFilePath));
 
-					// find corresponding fractal
-					for (Fractal fractal : allFractals) {
-						if (fractal.formalName().equals(filename)) {
-							// create properties
-							Properties p = new Properties();
-							p.load(new FileInputStream(fractalFilePath));
-							// create locations
-							Properties l = new Properties();
-							l.load(new FileInputStream("./locations/" + filename + ".properties"));
-
-							fractal.setProperties(p, l);
-							fractals.add(fractal);
-						}
-					}
-				}
+				fractal.setProperties(p, l);
+				fractals.add(fractal);
 			}
 		}
-	}
-
-	/**
-	 * Initialises the locations
-	 */
-	private void initLocations() {
-
 	}
 
 	private String artifact_id;
@@ -205,6 +194,9 @@ public class Settings {
 
 	private List<Fractal> fractals = new ArrayList<Fractal>();
 
+	/**
+	 * @return An array of the active {@link Fractal}s
+	 */
 	public Fractal[] getFractals() {
 		Fractal[] out = new Fractal[fractals.size()];
 		for (int i = 0; i < fractals.size(); i++)

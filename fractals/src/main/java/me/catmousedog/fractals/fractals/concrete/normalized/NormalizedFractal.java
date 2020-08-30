@@ -1,11 +1,10 @@
-package me.catmousedog.fractals.fractals.concrete;
+package me.catmousedog.fractals.fractals.concrete.normalized;
 
 import java.awt.Color;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
@@ -13,52 +12,34 @@ import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
-public class NormalizedMandelbrot extends Fractal implements Savable {
+/**
+ * Abstract implementation of {@link Fractal} representing a {@link Fractal}
+ * generated using 'normalized iteration count'.
+ * <p>
+ * Any implementation of this class must only override the
+ * {@link Fractal#get(double, double)}, all of the {@link String} methods such
+ * as {@link Fractal#formalName()} and finally the {@link Fractal#clone()}
+ * method and a private constructor to come with the {@link Fractal#clone()}.
+ */
+public abstract class NormalizedFractal extends Fractal {
 
-	public NormalizedMandelbrot(Settings settings, int iterations) {
-		super(settings, iterations);
+	public NormalizedFractal(Settings settings) {
+		super(settings);
 	}
 
-	private NormalizedMandelbrot(Settings settings, int iterations, LinearTransform transform, Location[] locations,
+	protected NormalizedFractal(Settings settings, int iterations, LinearTransform transform, Location[] locations,
 			double K) {
 		super(settings, iterations, transform, locations);
 		this.K = K;
 	}
 
-	@Override
-	public Number get(double cx, double cy) {
+	protected double ra = 1;
+	protected double ga = 1;
+	protected double ba = 1.1;
 
-		double x = 0, y = 0;
-		double tx;
-		double t1, t2;
-
-		double p = 0;
-
-		for (int i = 0; i < iterations; i++) {
-			tx = x;
-
-			t1 = x * x;
-			t2 = y * y;
-
-			x = t1 - t2 + cx;
-			y = 2 * tx * y + cy;
-
-			p = Math.log(t1 + t2);
-
-			if (p > 10) {
-				return i + 1 - Math.log(p) / Math.log(2);
-			}
-		}
-		return 0;
-	}
-
-	private double ra = 1;
-	private double ga = 1;
-	private double ba = 1.1;
-
-	private double rd = -0.5;
-	private double gd = 0;
-	private double bd = 0.5;
+	protected double rd = -0.5;
+	protected double gd = 0;
+	protected double bd = 0.5;
 
 	@Override
 	public int filter(Number v) {
@@ -72,7 +53,7 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 		return (int) (127.5 * (1.0 + (1) * Math.cos(a * Math.log(v) / K - d)));
 	}
 
-	private double K = 1;
+	protected double K = 1;
 
 	@Override
 	public void save() {
@@ -90,26 +71,6 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 
 	@Override
 	public void postRender() {
-	}
-
-	@Override
-	public String informalName() {
-		return "Normalized Mandelbrot";
-	}
-
-	@Override
-	public String formalName() {
-		return "NormalizedMandelbrot";
-	}
-
-	@Override
-	public String getTip() {
-		return "<html>The mandelbrot generated using 'normalized iteration count'. <br>This allows for deep zooms and smooth pictures but long generating times.</html>";
-	}
-
-	@Override
-	public Fractal clone() {
-		return new NormalizedMandelbrot(settings, iterations, transform.clone(), locations, K);
 	}
 
 	/*

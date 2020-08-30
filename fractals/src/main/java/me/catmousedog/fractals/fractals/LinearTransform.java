@@ -124,11 +124,24 @@ public class LinearTransform {
 		return transform;
 	}
 	
+	/**
+	 * Changes the zoom by a factor <code>f</code>.
+	 * 
+	 * @param f
+	 */
 	public void zoom(double f) {
 		m *= f;
 		n *= f;
 	}
 
+	public int getOx() {
+		return ox;
+	}
+	
+	public int getOy() {
+		return oy;
+	}
+	
 	public double getdx() {
 		return dx;
 	}

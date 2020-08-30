@@ -15,6 +15,7 @@ import javax.swing.SwingWorker;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main.InitialSize;
@@ -45,16 +46,15 @@ public class Canvas extends JPanel {
 
 	/**
 	 * The current {@link Fractal} of the {@link Canvas}.<br>
-	 * Not final as this can change when using {@link Canvas#undo()}
+	 * Not final as this can change when using {@link Canvas#undo()}.
 	 */
 	private Fractal fractal;
 
 	/**
-	 * The previous {@link Fractal} of the {@link Canvas}.<br>
-	 * Not final as this gets set to {@link Canvas#fractal} every time
-	 * {@link Canvas#savePrevConfig()} gets called.
+	 * The previous {@link Configuration} of the {@link Canvas}. This is used in the
+	 * {@link Canvas#savePrevConfig()} and {@link Canvas#undo()} methods.
 	 */
-	private Fractal prevFractal;
+	private Configuration prevConfig;
 
 	/**
 	 * The zoomFactor to use when zooming in or out.
@@ -98,7 +98,6 @@ public class Canvas extends JPanel {
 	 */
 	public Canvas(InitialSize size, Fractal fractal, Logger logger) {
 		this.logger = logger;
-
 		this.fractal = fractal;
 
 		setBorder(BorderFactory.createLoweredBevelBorder());
@@ -131,11 +130,11 @@ public class Canvas extends JPanel {
 	}
 
 	/**
-	 * Colours the image and paints it using a {@link SwingWorker}.
+	 * Colours the image and paints it using a the {@link Painter}.
 	 * <p>
-	 * This can be called whilst the {@link Painter} {@link SwingWorker} is still
-	 * colouring. Only if {@link Painter#isRepainted()} returns true can you call
-	 * this method safely.
+	 * This can be called safely whilst the {@link Painter} is still colouring. This
+	 * method will check if {@link Painter#isRepainted()} returns true before
+	 * starting a new {@link Painter}.
 	 * 
 	 * @return true if a new {@link Painter} was successfully executed.
 	 */
@@ -150,7 +149,18 @@ public class Canvas extends JPanel {
 	}
 
 	/**
-	 * Sets the size of the canvas and all of its components reliant on that size.
+	 * Sets the size of the canvas and all of its components reliant on that
+	 * size.<br>
+	 * Components reliant on the size of the {@link Canvas} are:
+	 * <ul>
+	 * <li>{@link Canvas#field} the list of {@link Pixel}.
+	 * <li>{@link Canvas#img} the {@link BufferedImage}.
+	 * <li>The {@link LinearTransform} of the {@link Fractal}. (the origin)
+	 * <li>The {@link JPInterface} extended by the {@link Canvas}.
+	 * </ul>
+	 * <p>
+	 * If the <code>w</code> and <code>h</code> are the same as {@link Canvas#width}
+	 * and {@link Canvas#height} this method will return.
 	 * 
 	 * @param w new width
 	 * @param h new height
@@ -183,24 +193,25 @@ public class Canvas extends JPanel {
 
 	/**
 	 * Essentially the opposite of {@link Canvas#undo()}. This should be called
-	 * right before saving changes to the {@link Canvas#fractal}.
+	 * right before saving changes to the {@link Canvas}.
 	 * <p>
-	 * Assigns the {@link Canvas#prevFractal} by value through
-	 * {@link Fractal#clone()}.
+	 * Creates a new {@link Configuration} by cloning everything except for the
+	 * {@link Fractal} which is kept as a reference.
 	 */
 	public void savePrevConfig() {
-		prevFractal = fractal.clone();
+		prevConfig = new Configuration(fractal, fractal.getTransform().clone(), fractal.getIterations(), zoomFactor);
 	}
 
 	/**
-	 * Sets the {@link Canvas#fractal} to the {@link Canvas#prevFractal}, reverting
-	 * any changes saved to it after the last time {@link Canvas#savePrevConfig()}
-	 * was called.
-	 * <p>
-	 * Assigns the by value through {@link Fractal#clone()}
+	 * Changes the {@link Canvas} to the previous {@link Configuration} through
+	 * {@link Canvas#prevConfig}, reverting any changes saved to it after the last
+	 * time {@link Canvas#savePrevConfig()} was called.
 	 */
 	public void undo() {
-		fractal = prevFractal.clone();
+		setFractal(prevConfig.getFractal());
+		fractal.setTransform(prevConfig.getTransform());
+		fractal.setIterations(prevConfig.getIterations());
+		zoomFactor = prevConfig.getZoomFactor();
 	}
 
 	/**
@@ -234,6 +245,21 @@ public class Canvas extends JPanel {
 		});
 	}
 
+	public void setImg(BufferedImage img) {
+		this.img = img;
+	}
+
+	/**
+	 * Changes the {@link Fractal} of the {@link Canvas}.
+	 * 
+	 * @param fractal
+	 */
+	public void setFractal(@NotNull Fractal fractal) {
+		this.fractal = fractal;
+		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
+		jpi.updateFractal();
+	}
+
 	/**
 	 * @return The {@link Fractal} currently being used by the {@link Canvas}.
 	 */
@@ -243,13 +269,12 @@ public class Canvas extends JPanel {
 	}
 
 	/**
-	 * Changes the {@link Fractal} of the {@link Canvas}.
+	 * Changes the {@link Canvas#zoomFactor}
 	 * 
-	 * @param fractal
+	 * @param zoomFactor
 	 */
-	public void setFractal(@NotNull Fractal fractal) {
-		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
-		this.fractal = fractal;
+	public void setZoomFactor(double zoomFactor) {
+		this.zoomFactor = zoomFactor;
 	}
 
 	/**
@@ -257,15 +282,6 @@ public class Canvas extends JPanel {
 	 */
 	public double getZoomFactor() {
 		return zoomFactor;
-	}
-
-	/**
-	 * Changes the {@link Canvas#zoomFactor}
-	 * 
-	 * @param zoomFactor
-	 */
-	public void setZoomFactor(double zoomFactor) {
-		this.zoomFactor = zoomFactor;
 	}
 
 	public Mouse getMouse() {
@@ -293,7 +309,66 @@ public class Canvas extends JPanel {
 		return field;
 	}
 
-	public void setImg(BufferedImage img) {
-		this.img = img;
+	/**
+	 * A class to store the configuration of the canvas, such as the position and
+	 * the iteration count.<br>
+	 * Used for saving previous {@link Configuration}s and reverting.
+	 */
+	private class Configuration {
+
+		/**
+		 * A reference to the {@link Fractal} of this {@link Configuration}. The fields
+		 * inside this fractal don't matter for this class since the
+		 * {@link LinearTransform} and iterations are stored in this class.
+		 * <p>
+		 * This field is only used to reference which {@link Fractal} was used in
+		 * {@link Canvas#undo()}.
+		 */
+		private Fractal fractal;
+
+		/**
+		 * A clone of a {@link LinearTransform}.
+		 */
+		private LinearTransform transform;
+
+		private int iterations;
+
+		private double zoomFactor;
+
+		public Configuration(Fractal fractal, LinearTransform transform, int iterations, double zoomFactor) {
+			this.fractal = fractal;
+			this.transform = transform;
+			this.iterations = iterations;
+			this.zoomFactor = zoomFactor;
+		}
+
+		public Fractal getFractal() {
+			return fractal;
+		}
+
+		public LinearTransform getTransform() {
+			return transform;
+		}
+
+		public int getIterations() {
+			return iterations;
+		}
+
+		public double getZoomFactor() {
+			return zoomFactor;
+		}
+
+		/**
+		 * @return A copy of this {@link Configuration}.<br>
+		 *         The copy contains the original reference the {@link Fractal} but a
+		 *         clone of the {@link LinearTransform} and other variables.
+		 * 
+		 */
+		@Override
+		public Configuration clone() {
+			return new Configuration(fractal, transform.clone(), iterations, zoomFactor);
+		}
+
 	}
+
 }

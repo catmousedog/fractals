@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.fractals.concrete;
+package me.catmousedog.fractals.fractals.concrete.iterative;
 
 import java.awt.Color;
 
@@ -19,8 +19,8 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
  */
 public final class IterativeMandelbrot extends Fractal {
 
-	public IterativeMandelbrot(Settings settings, int iterations) {
-		super(settings, iterations);
+	public IterativeMandelbrot(Settings settings) {
+		super(settings);
 	}
 
 	private IterativeMandelbrot(Settings settings, int iterations, LinearTransform transform, Location[] locations,
@@ -47,7 +47,7 @@ public final class IterativeMandelbrot extends Fractal {
 			t1 = x * x;
 			t2 = y * y;
 
-			if (t1 + t2 > 100)
+			if (t1 + t2 > bailout)
 				return 255 - (255 * i) / iterations;
 
 			x = t1 - t2 + cx;
@@ -68,7 +68,7 @@ public final class IterativeMandelbrot extends Fractal {
 			v = 255 - v;
 		return new Color((int) (v * r), (int) (v * g), (int) (v * b)).getRGB();
 	}
-
+	
 	@Override
 	public void save() {
 		r = rjtf.saveAndGet();
@@ -106,7 +106,7 @@ public final class IterativeMandelbrot extends Fractal {
 
 	@Override
 	public String getTip() {
-		return "<html>The mandelbrot generated using an escape time alogorithm. <br>This allows for deep zooms but creates aliasing effects, but has the shortest generating time.</html>";
+		return "<html>The mandelbrot generated using an escape time algorithm. <br>This allows for deep zooms but creates aliasing effects, but has the shortest generating time.</html>";
 	}
 
 	@Override

@@ -96,6 +96,10 @@ public class ComboBoxItem extends ActiveData<Object> {
 		return jp;
 	}
 
+	public JComboBox<Object> getComponent() {
+		return jcb;
+	}
+	
 	@Override
 	public void preRender() {
 	}

@@ -105,7 +105,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Removed
 - **ComponentFactory** class
 
-## [0.1.0]
+## [0.1.0] - fractal overhaul
 
 ### Added
 - *Fractal.filter(Number v)* to colour the fractal after generation.
@@ -166,3 +166,24 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 
 ### Removed
 - **Configuration** class
+
+## [0.1.3] - minor fixes and abstract fractals
+
+### Added
+- **Configuration** private class to **Canvas** (only stores the previous config).
+- new fractal: Burning Ship fractal: *iterative*, *normalized* and *potential* variant.
+- **IterativeFractal** abstract class for all iterative fractals.
+- **NormalizedFractal** abstract class
+- **PotentialFractal** abstract class
+
+### Changed
+- *Canvas.undo()* and *Canvas.savePrevConfig()* to use the new **Configuration** class.
+- Moved code from *jcb.setAction* to *JPI.update()* for when Fractal changes as this is a global event not just for the listener. 
+- **Fractal** is no longer copied around every render -> **Configuration** class is used inside **Canvas**.
+- **Fractal** now use *default_iter* and *bailout* properties inside resources.
+- Moved **JPInterface** layout for all **Item**s in the **AllData** class to **AllData** constructor.
+- *Settings.initFractals()* reworked to go over *allFractals* array instead of resources.
+
+### Note
+- After some testing it has become clear that calculating 3 bytes for rgb values and putting them in one integer is not faster than using *new Color(r, g, b).getRGB()*. 
+

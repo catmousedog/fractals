@@ -1,12 +1,12 @@
 package me.catmousedog.fractals.ui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
@@ -81,7 +81,7 @@ public class JPInterface extends JPanel implements Savable {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));
 		setBorder(BorderFactory.createEmptyBorder(size.getVgap(), size.getHgap(), size.getVgap(), size.getHgap()));
-		canvas.getFractal().addFilter(data.getFractaljp().getPanel());
+		updateFractal(); // add colour panel, etc.
 	}
 
 	/**
@@ -268,6 +268,23 @@ public class JPInterface extends JPanel implements Savable {
 	}
 
 	/**
+	 * Should be called when the {@link Canvas}' {@link Fractal} is changed. <br>
+	 * This method does not change the actual {@link Fractal}, but updates any
+	 * components reliant on the {@link Fractal}. This method is independent of
+	 * {@link Canvas#setFractal(Fractal)} as the latter actually changes the
+	 * {@link Fractal}.
+	 * <p>
+	 * This should only be called after the {@link Fractal} changes, not every
+	 * {@link JPInterface#update()} cycle.
+	 */
+	public void updateFractal() {
+		// tooltip for jcombobox
+		data.getFractaljcb().getComponent().setToolTipText(canvas.getFractal().getTip());
+		// colour panel
+		canvas.getFractal().addFilter(data.getFractaljp().getPanel());
+	}
+
+	/**
 	 * Concrete class containing all the actual {@link Data} containers displayed in
 	 * the user interface. This class can be passed around to retrieve the data
 	 * needed.
@@ -280,189 +297,200 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	public class AllData {
 
-		private final Padding p5 = new Padding(5);
-
-		public Component getP5() {
-			return p5.panel();
-		}
-
-		private final Padding p10 = new Padding(10);
-
-		private final Padding p20 = new Padding(20);
-
 		/**
-		 * Window
+		 * Array of all the {@link Item}s in order of addition.
 		 */
-		private final Title window = new Title("Window");
+		private final Item[] all;
 
-		private final TextFieldInteger widthjtf = new TextFieldInteger.Builder().setLabel("width")
-				.setTip("the width of the canvas").build();
+		private final TextFieldInteger widthjtf;
 
 		public Data<Integer> getWidthjtf() {
 			return widthjtf;
 		}
 
-		private final TextFieldInteger heightjtf = new TextFieldInteger.Builder().setLabel("height")
-				.setTip("the height of the canvas").build();
+		private final TextFieldInteger heightjtf;
 
 		public Data<Integer> getHeightjtf() {
 			return heightjtf;
 		}
 
-		/**
-		 * Location
-		 */
-		public Title location = new Title("Location");
-
-		private final TextFieldDouble xjtf = new TextFieldDouble.Builder().setLabel("x coordinate")
-				.setTip("the x coordinate of the center of the screen").build();
+		private final TextFieldDouble xjtf;
 
 		public Data<Double> getXjtf() {
 			return xjtf;
 		}
 
-		private final TextFieldDouble yjtf = new TextFieldDouble.Builder().setLabel("y coordinate")
-				.setTip("the y coordinate of the center of the screen").build();
+		private final TextFieldDouble yjtf;
 
 		public Data<Double> getYjtf() {
 			return yjtf;
 		}
 
-		private final TextFieldDouble mjtf = new TextFieldDouble.Builder().setLabel("x zoom")
-				.setTip("the x scaling factor").build();
+		private final TextFieldDouble mjtf;
 
 		public Data<Double> getMjtf() {
 			return mjtf;
 		}
 
-		private final TextFieldDouble njtf = new TextFieldDouble.Builder().setLabel("y zoom")
-				.setTip("the y scaling factor").build();
+		private final TextFieldDouble njtf;
 
 		public Data<Double> getNjtf() {
 			return njtf;
 		}
 
-		private final TextFieldDouble rjtf = new TextFieldDouble.Builder().setLabel("rotation")
-				.setTip("the rotation in radians").build();
+		private final TextFieldDouble rjtf;
 
 		public Data<Double> getRjtf() {
 			return rjtf;
 		}
 
-		private final Button2 copypastejb = new Button2.Builder("Copy", "Paste").setAction(a -> copy(), a -> paste())
-				.setTip("copy location to clipboard", "paste location from clipboard").build();
+		private final Button2 copypastejb;
 
 		public Data<Boolean> getCopypastejb() {
 			return copypastejb;
 		}
 
-		public ComboBoxList locationjcb = new ComboBoxList.Builder(canvas.getFractal().getLocations())
-				.setLabel("locations").setAction(a -> {
-					renderWithout(settings.isRender_on_changes(), () -> {
-						@SuppressWarnings("unchecked")
-						JComboBox<Location> jcb = (JComboBox<Location>) a.getSource();
-						canvas.getFractal().getTransform().set(((Location) jcb.getSelectedItem()).getTransform());
-						canvas.getFractal().setIterations(((Location) jcb.getSelectedItem()).getIterations());
-					});
-				}).setTip("a set of interesting locations").build();
+		public ComboBoxList locationjcb;
 
 		public ActiveData<Object[]> getLocationjcb() {
 			return locationjcb;
 		}
 
-		private final Button undojb = new Button.Builder("Undo").setAction(a -> undo())
-				.setTip("go back to the previous location").setDefault(false).build();
+		private final Button undojb;
 
 		public Data<Boolean> getUndojb() {
 			return undojb;
 		}
 
-		/**
-		 * Calculation
-		 */
-		public Title calculations = new Title("Calculation");
-
-		private final TextFieldInteger iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
-				.setTip("<html>The iteration count. Each fractal can use this differently."
-						+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
-				.build();
+		private final TextFieldInteger iterjtf;
 
 		public Data<Integer> getIterjtf() {
 			return iterjtf;
 		}
 
-		private final TextFieldDouble zoomjtf = new TextFieldDouble.Builder().setLabel("zoom factor").setDefault(-1)
-				.setTip("the zoom factor to multiply with on click").build();
+		private final TextFieldDouble zoomjtf;
 
 		public Data<Double> getZoomjtf() {
 			return zoomjtf;
 		}
 
-		private final Button2 zoomjb = new Button2.Builder("Zoom In", "Zoom Out")
-				.setAction(a -> zoomIn(), a -> zoomOut()).setTip("zoom in without moving", "zoom out without moving")
-				.build();
+		private final Button2 zoomjb;
 
 		public Data<Boolean> getZoomjb() {
 			return zoomjb;
 		}
 
-		private final Button renderjb = new Button.Builder("Render").setAction(a -> render())
-				.setTip("Render the image by generating it and painting it.").build();
+		private final Button renderjb;
 
 		public Data<Boolean> getRenderjb() {
 			return renderjb;
 		}
 
-		private final Button canceljb = new Button.Builder("Cancel").setAction(a -> cancel())
-				.setTip("cancel the current render").build();
+		private final Button canceljb;
 
 		public Data<Boolean> getCanceljb() {
 			return canceljb;
 		}
 
-		/**
-		 * Fractal
-		 */
-		private final Title fractal = new Title("Fractal");
+		private final ComboBoxItem fractaljcb;
 
-		private final ComboBoxItem fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> {
-			@SuppressWarnings("unchecked")
-			JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
-			Fractal fractal = (Fractal) jcb.getSelectedItem();
-			jcb.setToolTipText(fractal.getTip());
-			renderWithout(settings.isRender_on_changes(), () -> {
-				fractal.addFilter(data.getFractaljp().getPanel());
-				canvas.setFractal(fractal);
-			});
-		}).build();
-
-		public ActiveData<Object> getFractaljcb() {
+		public ComboBoxItem getFractaljcb() {
 			return fractaljcb;
 		}
 
-		private final Button repaintjb = new Button.Builder("Repaint").setTip(
-				"<html>Repaint the image without generating it again. <br>Usefull for just changing colour settings</html>")
-				.setAction(a -> {
-					canvas.getFractal().saveAndColour();
-					update();
-				}).build();
-
-		private final Panel fractaljp = new Panel();
+		private final Panel fractaljp;
 
 		public Panel getFractaljp() {
 			return fractaljp;
 		}
 
-		/**
-		 * Array of all {@link Item}s in order of addition.
-		 */
-		private Item[] all = new Item[] { window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5,
-				mjtf, p5, njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10,
-				iterjtf, p5, zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljcb, p5,
-				repaintjb, p5, fractaljp, p5 };
+		public AllData() {
 
-		public Item[] getAll() {
-			return all;
+			Padding p5 = new Padding(5);
+
+			Padding p10 = new Padding(10);
+
+			Padding p20 = new Padding(20);
+
+			/**
+			 * Window
+			 */
+			Title window = new Title("Window");
+
+			widthjtf = new TextFieldInteger.Builder().setLabel("width").setTip("<html>The width of the canvas</html>")
+					.build();
+
+			heightjtf = new TextFieldInteger.Builder().setLabel("height")
+					.setTip("<html>The height of the canvas</html>").build();
+
+			/**
+			 * Location
+			 */
+			Title location = new Title("Location");
+
+			xjtf = new TextFieldDouble.Builder().setLabel("x coordinate")
+					.setTip("<html>The x coordinate of the center of the screen</html>").build();
+
+			yjtf = new TextFieldDouble.Builder().setLabel("y coordinate")
+					.setTip("<html>The y coordinate of the center of the screen</html>").build();
+
+			mjtf = new TextFieldDouble.Builder().setLabel("x zoom").setTip("<html>The x scaling factor</html>").build();
+
+			njtf = new TextFieldDouble.Builder().setLabel("y zoom").setTip("<html>The y scaling factor</html>").build();
+
+			rjtf = new TextFieldDouble.Builder().setLabel("rotation").setTip("<html>The rotation in radians</html>")
+					.build();
+
+			copypastejb = new Button2.Builder("Copy", "Paste").setAction(a -> copy(), a -> paste())
+					.setTip("<html>Copy current location to clipboard</html>",
+							"<html>Paste a location from clipboard</html>")
+					.build();
+
+			locationjcb = new ComboBoxList.Builder(canvas.getFractal().getLocations()).setLabel("locations")
+					.setAction(a -> location(a)).setTip("<html>A set of interesting locations</html>").build();
+
+			undojb = new Button.Builder("Undo").setAction(a -> undo())
+					.setTip("<html>Go back to the previous location</html>").setDefault(false).build();
+
+			/**
+			 * Calculation
+			 */
+			Title calculations = new Title("Calculation");
+
+			iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
+					.setTip("<html>The iteration count. Each fractal can use this differently."
+							+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
+					.build();
+
+			zoomjtf = new TextFieldDouble.Builder().setLabel("zoom factor").setDefault(-1)
+					.setTip("<html>The zoom factor to multiply with on click</html>").build();
+
+			zoomjb = new Button2.Builder("Zoom In", "Zoom Out").setAction(a -> zoomIn(), a -> zoomOut())
+					.setTip("<html>Zoom in without moving</html>", "<html>Zoom out without moving</html>").build();
+
+			renderjb = new Button.Builder("Render").setAction(a -> render())
+					.setTip("<html>Render the image by generating it and painting it</html>").build();
+
+			canceljb = new Button.Builder("Cancel").setAction(a -> cancel())
+					.setTip("<html>Cancel the current render</html>").build();
+
+			/**
+			 * Fractal
+			 */
+			Title fractal = new Title("Fractal");
+
+			fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> fractal(a)).build();
+
+			Button repaintjb = new Button.Builder("Repaint").setAction(a -> repaint(a)).setTip(
+					"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
+					.build();
+
+			fractaljp = new Panel();
+
+			all = new Item[] { window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
+					njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, iterjtf, p5,
+					zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljcb, p5, repaintjb, p5,
+					fractaljp, p5 };
 		}
 
 		/**
@@ -510,6 +538,18 @@ public class JPInterface extends JPanel implements Savable {
 		}
 
 		/**
+		 * locationjcb
+		 */
+		private void location(ActionEvent a) {
+			renderWithout(settings.isRender_on_changes(), () -> {
+				@SuppressWarnings("unchecked")
+				JComboBox<Location> jcb = (JComboBox<Location>) a.getSource();
+				canvas.getFractal().getTransform().set(((Location) jcb.getSelectedItem()).getTransform());
+				canvas.getFractal().setIterations(((Location) jcb.getSelectedItem()).getIterations());
+			});
+		}
+
+		/**
 		 * undo button
 		 */
 		private void undo() {
@@ -551,15 +591,36 @@ public class JPInterface extends JPanel implements Savable {
 			}
 		}
 
+		/**
+		 * fractaljcb
+		 */
+		private void fractal(ActionEvent a) {
+			@SuppressWarnings("unchecked")
+			JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
+			Fractal f = (Fractal) jcb.getSelectedItem();
+			renderWithout(settings.isRender_on_changes(), () -> {
+				canvas.setFractal(f);
+				updateFractal();
+			});
+		}
+
+		/**
+		 * repaintjb
+		 */
+		private void repaint(ActionEvent a) {
+			canvas.getFractal().saveAndColour();
+			update();
+		}
+
+		public Item[] getAll() {
+			return all;
+		}
 	}
 
 	/**
-	 * 
-	 * 
-	 * @return
+	 * @return the {@link AllData} instance
 	 */
 	public AllData getData() {
 		return data;
 	}
-
 }
