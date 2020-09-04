@@ -100,10 +100,12 @@ public class ComboBoxList extends ActiveData<Object[]> {
 
 	@Override
 	public void preRender() {
+		jcb.setEnabled(false);
 	}
 
 	@Override
 	public void postRender() {
+		jcb.setEnabled(true);
 	}
 
 	@Override

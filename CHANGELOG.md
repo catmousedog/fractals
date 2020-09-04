@@ -187,3 +187,23 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Note
 - After some testing it has become clear that calculating 3 bytes for rgb values and putting them in one integer is not faster than using *new Color(r, g, b).getRGB()*. 
 
+## [0.1.4] - abstract filters
+
+### Added
+- *Fractal.initPanel()* abstract method and implementation for each abstract fractal (*iterative*, *potential*, etc.).
+- abstract **Filter** class allowing for various implementations for each abstract fractal such as *iterative*, *normalized*, etc.
+- **IterativeFilter**, **NormalizedFilter**, **PotentialFilter** abstract classes.
+- filter combo box to choose filter for each fractal.
+- **SafeSavable** interface
+- *postRender* and *preRender* methods to all **Item**s and called them in *JPInterface.pre*- and *postRender()* which in turn makes all **Item**s disable during render.
+
+### Changed
+- Moved a lot of unnecessary code to higher abstract classes inside **Fractal** and **Filter**.
+- Made cloning fractals easier as they only need to return *new TestFractal(settings, this)*.
+- Made **Item** implement **Savable**.
+- Enabled the undo button only after calling *JPInterface.save()*.
+
+### Removed
+- *Fractal.filter()* as each fractal can now have multiple **Filter**s.
+- abstract fractals: **IterativeFractal**, **NormalizedFractal** and **PotentialFractal** as all of their code was moved to **Fractal** or their respective **Filter**.
+- **PreSaved** enum.

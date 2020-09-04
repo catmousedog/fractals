@@ -107,10 +107,12 @@ public class SliderDouble extends ActiveData<Double> {
 
 	@Override
 	public void preRender() {
+		js.setEnabled(false);
 	}
 
 	@Override
 	public void postRender() {
+		js.setEnabled(true);
 	}
 
 	@Override

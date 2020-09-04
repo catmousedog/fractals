@@ -1,21 +1,21 @@
-package me.catmousedog.fractals.fractals.concrete.iterative;
+package me.catmousedog.fractals.fractals.types.iterative;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.main.Settings;
 
 /**
  * Number = Integer
  */
-public final class IterativeShip extends IterativeFractal {
+public final class IterativeShip extends Fractal {
 
 	public IterativeShip(Settings settings) {
 		super(settings);
 	}
 
-	private IterativeShip(Settings settings, int iterations, LinearTransform transform, Location[] locations, double r,
-			double g, double b, boolean inverted) {
-		super(settings, iterations, transform, locations, r, g, b, inverted);
+	private IterativeShip(Settings settings, Fractal fractal) {
+		super(settings, fractal);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public final class IterativeShip extends IterativeFractal {
 	}
 
 	@Override
-	public String formalName() {
+	public String fileName() {
 		return "IterativeShip";
 	}
 
@@ -59,7 +59,13 @@ public final class IterativeShip extends IterativeFractal {
 	}
 
 	@Override
+	protected void initFilters() {
+		filters = new Filter[] { new IterativeLinearFilter(this) };
+		filter = filters[0];
+	}
+
+	@Override
 	public Fractal clone() {
-		return new IterativeShip(settings, iterations, transform.clone(), locations, r, g, b, inverted);
+		return new IterativeShip(settings, this);
 	}
 }

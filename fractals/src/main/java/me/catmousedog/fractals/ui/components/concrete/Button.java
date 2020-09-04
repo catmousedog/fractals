@@ -91,4 +91,14 @@ public class Button extends Data<Boolean> {
 	public void update() {
 		jb.setEnabled(data);
 	}
+
+	@Override
+	public void preRender() {
+		jb.setEnabled(false);
+	}
+
+	@Override
+	public void postRender() {
+		jb.setEnabled(true);
+	}
 }

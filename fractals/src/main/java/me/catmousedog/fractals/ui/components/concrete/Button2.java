@@ -85,4 +85,16 @@ public class Button2 extends Data<Boolean> {
 		jb1.setEnabled(data);
 		jb2.setEnabled(data);
 	}
+
+	@Override
+	public void preRender() {
+		jb1.setEnabled(false);
+		jb2.setEnabled(false);
+	}
+
+	@Override
+	public void postRender() {
+		jb1.setEnabled(true);
+		jb2.setEnabled(true);
+	}
 }

@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Properties;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.concrete.iterative.IterativeMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.iterative.IterativeShip;
-import me.catmousedog.fractals.fractals.concrete.normalized.NormalizedMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.normalized.NormalizedShip;
-import me.catmousedog.fractals.fractals.concrete.potential.PotentialMandelbrot;
-import me.catmousedog.fractals.fractals.concrete.potential.PotentialShip;
+import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
+import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
+import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
+import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
+import me.catmousedog.fractals.fractals.types.potential.PotentialMandelbrot;
+import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
 
 /**
  * Class for managing the {@code .properties} files within the resources.
@@ -114,7 +114,7 @@ public class Settings {
 
 		for (Fractal fractal : allFractals) {
 			// filename
-			String filename = fractal.formalName();
+			String filename = fractal.fileName();
 
 			// filename with .properties at the end
 			String resource = filename + ".properties";

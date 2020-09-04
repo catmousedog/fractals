@@ -41,4 +41,12 @@ public class Label extends Data<Object> {
 		jl.setText(text + data.toString());
 	}
 
+	@Override
+	public void preRender() {
+	}
+
+	@Override
+	public void postRender() {
+	}
+
 }

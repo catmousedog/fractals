@@ -99,18 +99,33 @@ public class ComboBoxItem extends ActiveData<Object> {
 	public JComboBox<Object> getComponent() {
 		return jcb;
 	}
-	
+
 	@Override
 	public void preRender() {
+		jcb.setEnabled(false);
 	}
 
 	@Override
 	public void postRender() {
+		jcb.setEnabled(true);
 	}
 
 	@Override
 	protected void concreteEvent(EventObject e) {
 		action.actionPerformed((ActionEvent) e);
+	}
+	
+	/**
+	 * Clears the {@link JComboBox} and adds all the <code>items</code>.
+	 * 
+	 * @param items array of {@link Object}s to be added.
+	 */
+	public void setItems(Object[] items) {
+		allowListeners = false;
+		jcb.removeAllItems();
+		for (Object item : items)
+			jcb.addItem(item);
+		allowListeners = true;
 	}
 
 }

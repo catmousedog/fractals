@@ -33,4 +33,12 @@ public class Title extends Item {
 	public void update() {
 	}
 
+	@Override
+	public void preRender() {
+	}
+
+	@Override
+	public void postRender() {
+	}
+
 }

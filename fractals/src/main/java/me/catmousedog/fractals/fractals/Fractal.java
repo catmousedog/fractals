@@ -7,27 +7,32 @@ import java.util.Properties;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.canvas.Canvas;
+import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.SafeSavable;
 import me.catmousedog.fractals.ui.Savable;
-import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
-import me.catmousedog.fractals.ui.components.Item;
 
 /**
  * Represents a fractal including its fractal function
- * {@link Fractal#get(double, double)} and colour filter
- * {@link Fractal#filter(Number)}.
+ * {@link Fractal#get(double, double)} and an array of {@link Filter}s to use.
  * <p>
- * An implementation of this class must define {@link Fractal#items} and any
- * {@link ActiveData} or listeners added to it should call
- * {@link Fractal#saveAndColour()}.<br>
- * Also the {@link Fractal#clone()} method should clone the {@link Fractal} and
- * all of its fields through a private constructor.
+ * An implementation of this class must define:
+ * <ul>
+ * <li>A constructor for creating the {@link Fractal}.
+ * <li>A constructor for cloning the {@link Fractal}, taking the {@link Fractal}
+ * itself as a parameter.
+ * <li>The {@link Fractal#get(double, double)} function.
+ * <li>The name methods: {@link Fractal#informalName()},
+ * {@link Fractal#fileName()} and {@link Fractal#getTip()}.
+ * <li>{@link Fractal#initFilters()} method.
+ * <li>{@link Fractal#clone()} method with the cloning constructor.
+ * </ul>
  */
-public abstract class Fractal implements Savable {
+public abstract class Fractal implements SafeSavable {
 
 	/**
 	 * Settings object to access user settings
@@ -35,21 +40,11 @@ public abstract class Fractal implements Savable {
 	protected final Settings settings;
 
 	/**
-	 * The {@link LinearTransform} used to represent the location
-	 */
-	protected LinearTransform transform;
-
-	/**
-	 * Array of all {@link Item}s in order of addition.
-	 * <p>
-	 * Can not be null, hence must be assigned a value.
-	 */
-	@NotNull
-	protected Item[] items;
-
-	/**
 	 * The instance of the canvas, used to call {@link Canvas#colourAndPaint()} when
 	 * {@link Data} changes.
+	 * <p>
+	 * It is effectively final after being assigned its value through
+	 * {@link Fractal#setCanvas(Canvas)}.
 	 */
 	protected Canvas canvas;
 
@@ -59,10 +54,32 @@ public abstract class Fractal implements Savable {
 	 * {@link Fractal#setProperties(Properties, Properties)} or when the
 	 * {@link Fractal} is cloned.
 	 * <p>
-	 * It is effectively final after being assigned its value.
+	 * It is effectively final after being assigned its value through
+	 * {@link Fractal#setProperties(Properties, Properties)}.
 	 */
 	@NotNull
 	protected Location[] locations;
+
+	/**
+	 * The array of {@link Filter}s, only not null for the original {@link Fractal}
+	 * created in the {@link Settings}s.
+	 * <p>
+	 * It is effectively final after being assigned its value through
+	 * {@link Fractal#initFilters()} and it is null for all clones.
+	 */
+	@Nullable
+	protected Filter[] filters;
+
+	/**
+	 * The {@link LinearTransform} used to represent the location
+	 */
+	protected final LinearTransform transform;
+
+	/**
+	 * The current {@link Filter}, an element from {@link Fractal#filters}.
+	 */
+	@NotNull
+	protected Filter filter;
 
 	/**
 	 * The amount of iterations. Each {@link Fractal} might use this differently.
@@ -75,16 +92,34 @@ public abstract class Fractal implements Savable {
 	 */
 	protected double bailout = 100;
 
+	/**
+	 * Constructor used to initialise the {@link Fractal}.<br>
+	 * Only used once for each {@link Fractal} in the {@link Settings}.
+	 * <p>
+	 * This constructor also calls {@link Fractal#initFilters()}.
+	 * 
+	 * @param settings
+	 */
 	public Fractal(Settings settings) {
 		this.settings = settings;
 		transform = new LinearTransform();
+		initFilters();
 	}
 
-	protected Fractal(Settings settings, int iterations, LinearTransform transform, Location[] locations) {
+	/**
+	 * Creates a new {@link Fractal} without calling {@link Fractal#initFilters()}
+	 * that is an exact copy but has no reference (except for
+	 * {@link Fractal#settings}) to the original {@link Fractal}.
+	 * <code>filter</code>.
+	 * 
+	 * @param filter
+	 */
+	protected Fractal(Settings settings, Fractal fractal) {
 		this.settings = settings;
-		this.iterations = iterations;
-		this.transform = transform;
-		this.locations = locations;
+		transform = fractal.getTransform().clone();
+		filter = fractal.getFilter().clone();
+		iterations = fractal.getIterations();
+		bailout = fractal.getBailout();
 	}
 
 	/**
@@ -97,31 +132,49 @@ public abstract class Fractal implements Savable {
 	public abstract Number get(double x, double y);
 
 	/**
-	 * Applies the calculated value 'v' to a colour filter and returns an integer
-	 * rgb value.
-	 * 
-	 * @param v value calculated by the fractal
-	 * @return the rgb value as an integer
+	 * Initialses the {@link Fractal#filters} array and the
+	 * {@link Fractal#filter}.<br>
+	 * Only done once when the {@link Fractal} is created.
 	 */
-	public abstract int filter(Number v);
+	protected abstract void initFilters();
 
 	/**
-	 * Adds all the necessary components to a given {@link JPanel} on the
-	 * {@link JPInterface}.
-	 * 
-	 * @param jp the JPanel to add the {@link Item}s to
-	 */
-	public void addFilter(JPanel jp) {
-		jp.removeAll();
-		for (Item i : items)
-			jp.add(i.panel());
-	}
-
-	/**
-	 * Whether or not the listeners in the {@link Fractal#addFilter(JPanel)}
+	 * Whether or not the listeners in the {@link Fractal#setPanel(JPanel)}
 	 * {@link JPanel} are allowed to fire.
 	 */
 	private boolean allowListener = false;
+
+	/**
+	 * Calls {@link Filter#save()}.
+	 */
+	@Override
+	public void save() {
+		filter.save();
+	}
+
+	/**
+	 * Calls {@link Filter#update()}.
+	 */
+	@Override
+	public void update() {
+		filter.update();
+	}
+
+	/**
+	 * Calls {@link Filter#preRender()}.
+	 */
+	@Override
+	public void preRender() {
+		filter.preRender();
+	}
+
+	/**
+	 * Calls {@link Filter#preRender()}.
+	 */
+	@Override
+	public void postRender() {
+		filter.postRender();
+	}
 
 	/**
 	 * Saves all data through {@link Savable#save()} and colours the image through
@@ -144,8 +197,9 @@ public abstract class Fractal implements Savable {
 	 * listeners to trigger when changing the data inside them. This method should
 	 * always be used when updating the data the user can interact with.
 	 * <p>
-	 * This only works if the listeners contain {@link Fractal#saveAndColour()}
+	 * This only works if the listeners contain {@link Fractal#saveAndColour()}.
 	 */
+	@Override
 	public void safeUpdate() {
 		allowListener = false;
 		update();
@@ -223,7 +277,7 @@ public abstract class Fractal implements Savable {
 
 	/**
 	 * True if the <code>fractal</code> is the same concrete {@link Fractal}.<br>
-	 * The is achieved by checking if the {@link Fractal#formalName()}s are equal.
+	 * The is achieved by checking if the {@link Fractal#fileName()}s are equal.
 	 * <p>
 	 * Keep in mind that this means two {@link Fractal}s of the same type will
 	 * return true even if they represent different locations or iterations.
@@ -231,7 +285,7 @@ public abstract class Fractal implements Savable {
 	@Override
 	public boolean equals(Object fractal) {
 		if (fractal instanceof Fractal)
-			return ((Fractal) fractal).formalName().equals(formalName());
+			return ((Fractal) fractal).fileName().equals(fileName());
 		return false;
 	}
 
@@ -253,7 +307,7 @@ public abstract class Fractal implements Savable {
 	 * @return The file name, usually the informal name without spaces.
 	 */
 	@NotNull
-	public abstract String formalName();
+	public abstract String fileName();
 
 	/**
 	 * A description of the fractal to be displayed as a Tooltip.
@@ -308,15 +362,6 @@ public abstract class Fractal implements Savable {
 	}
 
 	/**
-	 * Changes the {@link LinearTransform} of this {@link Fractal}.
-	 * 
-	 * @param transform
-	 */
-	public void setTransform(@NotNull LinearTransform transform) {
-		this.transform = transform;
-	}
-
-	/**
 	 * @return Get the final {@link LinearTransform} of this {@link Fractal}
 	 */
 	@NotNull
@@ -336,11 +381,39 @@ public abstract class Fractal implements Savable {
 		return iterations;
 	}
 
+	public double getBailout() {
+		return bailout;
+	}
+
 	/**
 	 * @return the array of {@link Location}s saved by this {@link Fractal}.
 	 */
 	public Location[] getLocations() {
 		return locations;
+	}
+
+	public Filter[] getFilters() {
+		return filters;
+	}
+
+	/**
+	 * Sets the {@link Fractal#filter} to the given if and only if the given
+	 * {@link Filter#getClass()} equals a {@link Filter#getClass()} inside
+	 * {@link Fractal#filters}.
+	 * 
+	 * @param filter
+	 */
+	public void pickFilter(Filter filter) {
+		for (Filter f : filters) {
+			if (f.getClass().equals(filter.getClass())) {
+				this.filter = f;
+				return;
+			}
+		}
+	}
+
+	public Filter getFilter() {
+		return filter;
 	}
 
 	/**

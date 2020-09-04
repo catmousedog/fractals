@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.Fractal.Location;
+import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
@@ -30,8 +31,10 @@ import me.catmousedog.fractals.ui.components.concrete.Button;
 import me.catmousedog.fractals.ui.components.concrete.Button2;
 import me.catmousedog.fractals.ui.components.concrete.ComboBoxItem;
 import me.catmousedog.fractals.ui.components.concrete.ComboBoxList;
+import me.catmousedog.fractals.ui.components.concrete.Label;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.Panel;
+import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
@@ -162,22 +165,39 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void preRender() {
-		// disable render button
-		data.getRenderjb().setData(false);
+		/* Window */
+		data.getWidthjtf().preRender();
+		data.getHeightjtf().preRender();
 
-		// disable zoom in / out button
-		data.getZoomjb().setData(false);
+		/* Location */
+		data.getXjtf().preRender();
+		data.getYjtf().preRender();
+		data.getMjtf().preRender();
+		data.getNjtf().preRender();
+		data.getRjtf().preRender();
+		data.getCopypastejb().preRender();
+		data.getLocationjcb().preRender();
+		data.getUndojb().preRender();
 
-		// disable copy paste button
-		data.getCopypastejb().setData(false);
-
-		// disable undo button
-		data.getUndojb().setData(false);
-
-		// enable cancel button
+		/* Calculation */
+		data.getIterjtf().preRender();
+		data.getZoomjtf().preRender();
+		data.getZoomjb().preRender();
+		data.getRenderjb().preRender();
 		data.getCanceljb().setData(true);
+
+		/* Fractal */
+		data.getFractaljcb().preRender();
+		data.getFilterjcb().preRender();
+		data.getRepaintjb().preRender();
+		// colour
+		canvas.getFractal().getFilter().preRender();
 	}
 
+	/**
+	 * True if the undo button should be enabled in
+	 * {@link JPInterface#postRender()}.
+	 */
 	private boolean allowUndo = false;
 
 	/**
@@ -189,23 +209,38 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void postRender() {
-		// enable render button
-		data.getRenderjb().setData(true);
+		/* Window */
+		data.getWidthjtf().postRender();
+		data.getHeightjtf().postRender();
 
-		// enable zoom in / out button
-		data.getZoomjb().setData(true);
-
-		// enable copy paste button
-		data.getCopypastejb().setData(true);
-
-		// enable undo button
-		if (allowUndo)
+		/* Location */
+		data.getXjtf().postRender();
+		data.getYjtf().postRender();
+		data.getMjtf().postRender();
+		data.getNjtf().postRender();
+		data.getRjtf().postRender();
+		data.getCopypastejb().postRender();
+		data.getLocationjcb().postRender();
+		if (allowUndo) {
 			data.getUndojb().setData(true);
-		else
-			allowUndo = true;
+			allowUndo = false;
+		}
 
-		// disable cancel button
+		/* Calculation */
+		data.getIterjtf().postRender();
+		data.getZoomjtf().postRender();
+		data.getZoomjb().postRender();
+		data.getRenderjb().postRender();
 		data.getCanceljb().setData(false);
+
+		/* Fractal */
+		data.getFractaljcb().postRender();
+		data.getFilterjcb().postRender();
+		data.getRepaintjb().postRender();
+		;
+		// colour
+		canvas.getFractal().getFilter().postRender();
+
 	}
 
 	/**
@@ -219,6 +254,8 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void save() {
+		allowUndo = true;
+		
 		canvas.savePrevConfig();
 
 		/* Window */
@@ -234,7 +271,7 @@ public class JPInterface extends JPanel implements Savable {
 		canvas.setZoomFactor(data.getZoomjtf().saveAndGet());
 
 		/* Fractal */
-		/* colour */
+		// colour
 		canvas.getFractal().save();
 	}
 
@@ -263,7 +300,8 @@ public class JPInterface extends JPanel implements Savable {
 
 		/* Fractal */
 		data.getFractaljcb().setDataSafe(canvas.getFractal());
-		/* colour */
+		data.getFilterjcb().setDataSafe(canvas.getFractal().getFilter());
+		// colour
 		canvas.getFractal().safeUpdate();
 	}
 
@@ -272,16 +310,19 @@ public class JPInterface extends JPanel implements Savable {
 	 * This method does not change the actual {@link Fractal}, but updates any
 	 * components reliant on the {@link Fractal}. This method is independent of
 	 * {@link Canvas#setFractal(Fractal)} as the latter actually changes the
-	 * {@link Fractal}.
+	 * {@link Fractal}, but does get called inside
+	 * {@link Canvas#setFractal(Fractal)}.
 	 * <p>
 	 * This should only be called after the {@link Fractal} changes, not every
 	 * {@link JPInterface#update()} cycle.
 	 */
 	public void updateFractal() {
-		// tooltip for jcombobox
+		// tooltip for fractal jcombobox
 		data.getFractaljcb().getComponent().setToolTipText(canvas.getFractal().getTip());
-		// colour panel
-		canvas.getFractal().addFilter(data.getFractaljp().getPanel());
+		// set filters inside jcombobox
+		data.getFilterjcb().setItems(canvas.getFractal().getFilters());
+		// set colour panel from current filter
+		canvas.getFractal().getFilter().setPanel(data.getFractaljp().getPanel());
 	}
 
 	/**
@@ -398,6 +439,18 @@ public class JPInterface extends JPanel implements Savable {
 			return fractaljcb;
 		}
 
+		private final ComboBoxItem filterjcb;
+
+		public ComboBoxItem getFilterjcb() {
+			return filterjcb;
+		}
+
+		private final Button repaintjb;
+
+		public Data<Boolean> getRepaintjb() {
+			return repaintjb;
+		}
+
 		private final Panel fractaljp;
 
 		public Panel getFractaljp() {
@@ -450,7 +503,8 @@ public class JPInterface extends JPanel implements Savable {
 					.setAction(a -> location(a)).setTip("<html>A set of interesting locations</html>").build();
 
 			undojb = new Button.Builder("Undo").setAction(a -> undo())
-					.setTip("<html>Go back to the previous location</html>").setDefault(false).build();
+					.setTip("<html>Go back to the previous location, fractal and filter</html>").setDefault(false)
+					.build();
 
 			/**
 			 * Calculation
@@ -472,25 +526,35 @@ public class JPInterface extends JPanel implements Savable {
 					.setTip("<html>Render the image by generating it and painting it</html>").build();
 
 			canceljb = new Button.Builder("Cancel").setAction(a -> cancel())
-					.setTip("<html>Cancel the current render</html>").build();
+					.setTip("<html>Cancel the current generator.<br>This does not stop the painting process</html>")
+					.build();
 
 			/**
 			 * Fractal
 			 */
 			Title fractal = new Title("Fractal");
 
-			fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> fractal(a)).build();
+			Label fractaljl = new Label("fractals", "List of fractals that were enabled in the 'settings.properties'");
 
-			Button repaintjb = new Button.Builder("Repaint").setAction(a -> repaint(a)).setTip(
+			fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> fractal()).build();
+
+			Label filterjl = new Label("filters", "List of filters to be used with this fractal.");
+
+			filterjcb = new ComboBoxItem.Builder(canvas.getFractal().getFilters()).setAction(a -> filter()).build();
+
+			repaintjb = new Button.Builder("Repaint").setAction(a -> repaint()).setTip(
 					"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
 					.build();
+
+			SubTitle colour = new SubTitle("Colour",
+					"<html>This section contains the fractal specific colour settings.</html>");
 
 			fractaljp = new Panel();
 
 			all = new Item[] { window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
 					njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, iterjtf, p5,
-					zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljcb, p5, repaintjb, p5,
-					fractaljp, p5 };
+					zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljl, fractaljcb, p5,
+					filterjl, filterjcb, p5, repaintjb, p5, colour, p5, fractaljp, p5 };
 		}
 
 		/**
@@ -543,9 +607,11 @@ public class JPInterface extends JPanel implements Savable {
 		private void location(ActionEvent a) {
 			renderWithout(settings.isRender_on_changes(), () -> {
 				@SuppressWarnings("unchecked")
-				JComboBox<Location> jcb = (JComboBox<Location>) a.getSource();
-				canvas.getFractal().getTransform().set(((Location) jcb.getSelectedItem()).getTransform());
-				canvas.getFractal().setIterations(((Location) jcb.getSelectedItem()).getIterations());
+				JComboBox<Object> jcb = (JComboBox<Object>) a.getSource();
+				Location l = (Location) jcb.getSelectedItem();
+				System.out.println(l);
+				canvas.getFractal().getTransform().set(l.getTransform());
+				canvas.getFractal().setIterations(l.getIterations());
 			});
 		}
 
@@ -594,10 +660,10 @@ public class JPInterface extends JPanel implements Savable {
 		/**
 		 * fractaljcb
 		 */
-		private void fractal(ActionEvent a) {
-			@SuppressWarnings("unchecked")
-			JComboBox<Fractal[]> jcb = (JComboBox<Fractal[]>) a.getSource();
-			Fractal f = (Fractal) jcb.getSelectedItem();
+		private void fractal() {
+			Fractal f = (Fractal) getFractaljcb().saveAndGet();
+			if (canvas.getFractal().equals(f))
+				return;
 			renderWithout(settings.isRender_on_changes(), () -> {
 				canvas.setFractal(f);
 				updateFractal();
@@ -605,9 +671,22 @@ public class JPInterface extends JPanel implements Savable {
 		}
 
 		/**
+		 * filterjcb
+		 */
+		private void filter() {
+			Filter f = (Filter) getFilterjcb().saveAndGet();
+			if (f.getClass().equals(canvas.getFractal().getFilter().getClass()))
+				return;
+			renderWithout(settings.isRender_on_changes(), () -> {
+				canvas.getFractal().pickFilter(f);
+				updateFractal();
+			});
+		}
+
+		/**
 		 * repaintjb
 		 */
-		private void repaint(ActionEvent a) {
+		private void repaint() {
 			canvas.getFractal().saveAndColour();
 			update();
 		}

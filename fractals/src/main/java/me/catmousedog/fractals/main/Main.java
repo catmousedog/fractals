@@ -221,7 +221,7 @@ public class Main implements Runnable {
 	}
 
 	/**
-	 * @return Get an array of the active {@link Fractal}s
+	 * @return Get the array of the active {@link Fractal}s
 	 */
 	public Fractal[] getFractals() {
 		return fractals;

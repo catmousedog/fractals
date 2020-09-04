@@ -115,10 +115,12 @@ public class SliderInteger extends ActiveData<Integer> {
 
 	@Override
 	public void preRender() {
+		js.setEnabled(false);
 	}
 
 	@Override
 	public void postRender() {
+		js.setEnabled(true);
 	}
 
 	@Override

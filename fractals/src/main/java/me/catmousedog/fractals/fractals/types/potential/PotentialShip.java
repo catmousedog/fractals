@@ -1,18 +1,18 @@
-package me.catmousedog.fractals.fractals.concrete.potential;
+package me.catmousedog.fractals.fractals.types.potential;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.filters.NormalizedFilter;
 import me.catmousedog.fractals.main.Settings;
 
-public class PotentialShip extends PotentialFractal {
+public class PotentialShip extends Fractal {
 
 	public PotentialShip(Settings settings) {
 		super(settings);
 	}
 
-	private PotentialShip(Settings settings, int iterations, LinearTransform transform, Location[] locations,
-			double K) {
-		super(settings, iterations, transform, locations, K);
+	private PotentialShip(Settings settings, Fractal fractal) {
+		super(settings, fractal);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class PotentialShip extends PotentialFractal {
 	}
 
 	@Override
-	public String formalName() {
+	public String fileName() {
 		return "PotentialShip";
 	}
 
@@ -58,7 +58,13 @@ public class PotentialShip extends PotentialFractal {
 	}
 
 	@Override
+	protected void initFilters() {
+		filters = new Filter[] { new NormalizedFilter(this) };
+		filter = filters[0];
+	}
+
+	@Override
 	public Fractal clone() {
-		return new PotentialShip(settings, iterations, transform.clone(), locations, K);
+		return new PotentialShip(settings, this);
 	}
 }

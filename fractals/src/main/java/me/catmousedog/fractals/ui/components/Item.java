@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import me.catmousedog.fractals.ui.Savable;
+
 /**
  * Represents a group of {@link JComponent}s in the user interface.
  * <p>
@@ -14,7 +16,7 @@ import javax.swing.JLabel;
  * <p>
  * <b>Passive</b> {@link Item}s don't perform an action.
  */
-public abstract class Item {
+public abstract class Item implements Savable {
 
 	/**
 	 * Creates a {@link Component} with this specific {@link Item} inside. <br>
@@ -31,6 +33,7 @@ public abstract class Item {
 	 * If the concrete class extends {@link Item} and not {@link Data}, this method
 	 * is obsolete and should be left empty.
 	 */
+	@Override
 	public abstract void save();
 
 	/**
@@ -39,5 +42,6 @@ public abstract class Item {
 	 * If the concrete class extends {@link Item} and not {@link Data}, this method
 	 * is obsolete and should be left empty.
 	 */
+	@Override
 	public abstract void update();
 }

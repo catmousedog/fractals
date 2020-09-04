@@ -1,19 +1,19 @@
-package me.catmousedog.fractals.fractals.concrete.normalized;
+package me.catmousedog.fractals.fractals.types.normalized;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.filters.NormalizedFilter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 
-public class NormalizedShip extends NormalizedFractal implements Savable {
+public class NormalizedShip extends Fractal implements Savable {
 
 	public NormalizedShip(Settings settings) {
 		super(settings);
 	}
 
-	private NormalizedShip(Settings settings, int iterations, LinearTransform transform, Location[] locations,
-			double K) {
-		super(settings, iterations, transform, locations, K);
+	private NormalizedShip(Settings settings, Fractal fractal) {
+		super(settings, fractal);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class NormalizedShip extends NormalizedFractal implements Savable {
 	}
 
 	@Override
-	public String formalName() {
+	public String fileName() {
 		return "NormalizedShip";
 	}
 
@@ -59,7 +59,13 @@ public class NormalizedShip extends NormalizedFractal implements Savable {
 	}
 
 	@Override
+	protected void initFilters() {
+		filters = new Filter[] { new NormalizedFilter(this) };
+		filter = filters[0];
+	}
+
+	@Override
 	public Fractal clone() {
-		return new NormalizedShip(settings, iterations, transform.clone(), locations, K);
+		return new NormalizedShip(settings, this);
 	}
 }

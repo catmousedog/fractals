@@ -10,8 +10,8 @@ import javax.swing.SwingWorker;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.Pixel;
+import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.ui.JPInterface;
 
@@ -31,7 +31,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 */
 	private final List<Pixel> field;
 
-	private final Fractal fractal;
+	private final Filter filter;
 
 	/**
 	 * the logger instance
@@ -45,18 +45,20 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	public Painter(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
 		this.canvas = canvas;
 		field = canvas.getField();
-		fractal = canvas.getFractal().clone();
+		filter = canvas.getFractal().getFilter().clone();
 		this.jpi = jpi;
 		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
 
 	/**
-	 * Will apply the {@link Fractal#filter(Number)} to each {@link Pixel} in
+	 * Will apply the {@link Filter#get(Number)} to each {@link Pixel} in
 	 * {@link Canvas#field} to colour the image.
+	 * 
+	 * @return null
 	 */
 	@Override
-	protected Void doInBackground() throws Exception {
+	protected Void doInBackground() {
 		// begin time
 		long b = System.nanoTime();
 
@@ -67,7 +69,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 
 		field.parallelStream().forEach(p -> {
 			if (!super.isCancelled())
-				img.setRGB(p.x, p.y, fractal.filter(p.v));
+				img.setRGB(p.x, p.y, filter.get(p.v));
 
 			// each 100th of all pixels the progress bar updates
 			if (i.incrementAndGet() % (field.size() / 100) == 0)

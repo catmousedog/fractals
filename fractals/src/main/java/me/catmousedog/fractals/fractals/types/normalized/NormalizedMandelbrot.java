@@ -1,19 +1,19 @@
-package me.catmousedog.fractals.fractals.concrete.normalized;
+package me.catmousedog.fractals.fractals.types.normalized;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.filters.NormalizedFilter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 
-public class NormalizedMandelbrot extends NormalizedFractal implements Savable {
+public class NormalizedMandelbrot extends Fractal implements Savable {
 
 	public NormalizedMandelbrot(Settings settings) {
 		super(settings);
 	}
 
-	private NormalizedMandelbrot(Settings settings, int iterations, LinearTransform transform, Location[] locations,
-			double K) {
-		super(settings, iterations, transform, locations, K);
+	private NormalizedMandelbrot(Settings settings, Fractal fractal) {
+		super(settings, fractal);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class NormalizedMandelbrot extends NormalizedFractal implements Savable {
 	}
 
 	@Override
-	public String formalName() {
+	public String fileName() {
 		return "NormalizedMandelbrot";
 	}
 
@@ -60,6 +60,12 @@ public class NormalizedMandelbrot extends NormalizedFractal implements Savable {
 
 	@Override
 	public Fractal clone() {
-		return new NormalizedMandelbrot(settings, iterations, transform.clone(), locations, K);
+		return new NormalizedMandelbrot(settings, this);
+	}
+
+	@Override
+	protected void initFilters() {
+		filters = new Filter[] { new NormalizedFilter(this) };
+		filter = filters[0];
 	}
 }

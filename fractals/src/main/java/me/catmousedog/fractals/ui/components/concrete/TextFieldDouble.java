@@ -100,7 +100,16 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 
 	@Override
 	public void changedUpdate(DocumentEvent de) {
-//		save();
+	}
+
+	@Override
+	public void preRender() {
+		jtf.setEnabled(false);
+	}
+
+	@Override
+	public void postRender() {
+		jtf.setEnabled(true);
 	}
 
 }
