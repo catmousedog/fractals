@@ -130,6 +130,11 @@ public abstract class Filter implements Savable {
 			i.postRender();
 	}
 
+	/**
+	 * @return A {@link String} used as a tooltip for the user to read.
+	 */
+	public abstract String getTip();
+
 	@Override
 	public abstract String toString();
 

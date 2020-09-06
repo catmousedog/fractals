@@ -22,12 +22,13 @@ public class SliderDouble extends ActiveData<Double> {
 	private final JSlider js;
 	private final JLabel jl;
 	private final ChangeListener change;
+	private final double M, m;
 
 	public static class Builder {
 
 		private String lbl, tip;
 		private ChangeListener c;
-		private int major = 25, M = 100;
+		private double m = 0.0, M = 1.0;
 
 		public Builder setLabel(String lbl) {
 			this.lbl = lbl;
@@ -45,33 +46,35 @@ public class SliderDouble extends ActiveData<Double> {
 		}
 
 		/**
-		 * The major tick spacing for the {@link JSlider}, must be a value from 0 to the
-		 * value given to {@link Builder#setMax(int)}.
+		 * The minimum of the {@link JSlider}, the default for this is 0.
+		 * @param m
+		 * @return
 		 */
-		public Builder setMajor(int major) {
-			this.major = major;
+		public Builder setMin(double m) {
+			this.m = m;
 			return this;
 		}
 
 		/**
-		 * The maximum of the {@link JSlider}, the default for this is 100.
+		 * The maximum of the {@link JSlider}, the default for this is 1.
 		 */
-		public Builder setMax(int M) {
+		public Builder setMax(double M) {
 			this.M = M;
 			return this;
 		}
 
 		public SliderDouble build() {
-			return new SliderDouble(lbl, tip, c, major, M);
+			return new SliderDouble(lbl, tip, c, m, M);
 		}
 
 	}
 
-	private SliderDouble(String lbl, String tip, ChangeListener c, int m, int M) {
+	private SliderDouble(String lbl, String tip, ChangeListener c, double m, double M) {
+		this.M = M;
+		this.m = m;
 		change = c;
 		js = new JSlider();
-		js.setMaximum(M);
-		js.setMajorTickSpacing(m);
+		js.setMaximum(100);
 		js.setPreferredSize(new Dimension(100, js.getPreferredSize().height));
 		js.addChangeListener(e -> event(e));
 		js.setAlignmentX(JSlider.LEFT_ALIGNMENT);
@@ -97,12 +100,12 @@ public class SliderDouble extends ActiveData<Double> {
 
 	@Override
 	public void save() {
-		data = js.getValue() / (double) js.getMaximum();
+		data = m + (M - m) * js.getValue() / 100.0;
 	}
 
 	@Override
 	public void update() {
-		js.setValue((int) (data * js.getMaximum()));
+		js.setValue((int) ((data - m) * 100 / (M - m)));
 	}
 
 	@Override

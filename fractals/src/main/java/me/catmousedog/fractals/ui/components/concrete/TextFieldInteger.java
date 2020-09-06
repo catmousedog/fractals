@@ -8,8 +8,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import me.catmousedog.fractals.ui.components.Data;
 
@@ -17,15 +15,16 @@ import me.catmousedog.fractals.ui.components.Data;
  * Passive {@link Data} representing a {@link JTextField} that stores an
  * {@link Integer}
  */
-public class TextFieldInteger extends Data<Integer> implements DocumentListener {
+public class TextFieldInteger extends Data<Integer> {
 
 	private final JTextField jtf;
 	private final JLabel jl;
-	
+	private final int m, M;
+
 	public static class Builder {
 
 		private String lbl, tip;
-		private int i;
+		private int i, m = Integer.MIN_VALUE, M = Integer.MAX_VALUE;
 
 		public Builder setDefault(int i) {
 			this.i = i;
@@ -42,18 +41,37 @@ public class TextFieldInteger extends Data<Integer> implements DocumentListener 
 			return this;
 		}
 
+		/**
+		 * Sets the minimum of the {@link JTextField}, any value entered below this will
+		 * not register. The default is {@link Integer#MIN_VALUE}.
+		 */
+		public Builder setMin(int m) {
+			this.m = m;
+			return this;
+		}
+
+		/**
+		 * Sets the maximum of the {@link JTextField}, any value entered above this will
+		 * not register. The default is {@link Integer#MAX_VALUE}.
+		 */
+		public Builder setMax(int M) {
+			this.M = M;
+			return this;
+		}
+
 		public TextFieldInteger build() {
-			TextFieldInteger tfi = new TextFieldInteger(lbl, tip);
+			TextFieldInteger tfi = new TextFieldInteger(lbl, tip, m, M);
 			tfi.setData(i);
 			return tfi;
 		}
 
 	}
 
-	private TextFieldInteger(String lbl, String tip) {
+	private TextFieldInteger(String lbl, String tip, int m, int M) {
+		this.m = m;
+		this.M = M;
 		jtf = new JTextField();
 		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
-		jtf.getDocument().addDocumentListener(this);
 		jtf.setAlignmentX(JTextField.LEFT_ALIGNMENT);
 		jtf.setToolTipText(tip);
 
@@ -68,7 +86,7 @@ public class TextFieldInteger extends Data<Integer> implements DocumentListener 
 		JPanel jp = new JPanel();
 		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
 		jp.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-		
+
 		jp.add(jl);
 		jp.add(jtf);
 
@@ -78,7 +96,9 @@ public class TextFieldInteger extends Data<Integer> implements DocumentListener 
 	@Override
 	public void save() {
 		try {
-			data = Integer.parseInt(jtf.getText());
+			int i = Integer.parseInt(jtf.getText());
+			if (i <= M && i >= m)
+				data = i;
 		} catch (Exception e) {
 		}
 	}
@@ -86,20 +106,6 @@ public class TextFieldInteger extends Data<Integer> implements DocumentListener 
 	@Override
 	public void update() {
 		jtf.setText(Integer.toString(data));
-	}
-
-	@Override
-	public void insertUpdate(DocumentEvent de) {
-		save();
-	}
-
-	@Override
-	public void removeUpdate(DocumentEvent de) {
-		save();
-	}
-
-	@Override
-	public void changedUpdate(DocumentEvent de) {
 	}
 
 	@Override

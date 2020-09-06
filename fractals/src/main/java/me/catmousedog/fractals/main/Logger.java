@@ -40,12 +40,12 @@ public class Logger extends JPanel {
 	 * {@link JLabel} displaying the last render's generating time
 	 */
 	private final JLabel generateTime;
-	
+
 	/**
 	 * {@link JLabel} displaying the last render's colouring time
 	 */
 	private final JLabel colourTime;
-	
+
 	/**
 	 * label above the progress bar
 	 */
@@ -74,7 +74,7 @@ public class Logger extends JPanel {
 		generateTime = new JLabel("not yet generated");
 		generateTime.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		add(generateTime);
-		
+
 		colourTime = new JLabel("not yet coloured");
 		colourTime.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		add(colourTime);
@@ -100,9 +100,22 @@ public class Logger extends JPanel {
 	 * @param message to be logged
 	 */
 	public void log(@NotNull String message) {
-
 		System.out.println("logger: " + message);
+		logMessage(message);
+	}
 
+	/**
+	 * logs a message with 'exception' in front of it
+	 * 
+	 * @param e
+	 */
+	public void exception(@NotNull Exception e) {
+		String m = "exception: " + e.getMessage();
+		System.err.println(m);
+		logMessage(m);
+	}
+
+	private void logMessage(@NotNull String message) {
 		logMessages.add(message);
 
 		if (logMessages.size() > m)
@@ -112,15 +125,6 @@ public class Logger extends JPanel {
 			logs[m - j - 1].setText(logMessages.get(j));
 			logs[m - j - 1].setToolTipText(logMessages.get(j));
 		}
-	}
-
-	/**
-	 * logs a message with 'exception' in front of it
-	 * 
-	 * @param e
-	 */
-	public void exception(@NotNull Exception e) {
-		log("exception: " + e.getMessage());
 	}
 
 	/**
@@ -143,14 +147,14 @@ public class Logger extends JPanel {
 	public void setGenerated(long ms) {
 		generateTime.setText(String.format("generated in %d ms!", ms));
 	}
-	
+
 	/**
 	 * Display the time it took to colour
 	 * 
-	 * @param ms time in milliseconds 
+	 * @param ms time in milliseconds
 	 */
 	public void setColoured(long ms) {
 		colourTime.setText(String.format("coloured in %d ms!", ms));
 	}
-	
+
 }

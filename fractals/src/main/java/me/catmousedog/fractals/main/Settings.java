@@ -1,5 +1,6 @@
 package me.catmousedog.fractals.main;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.imageio.ImageIO;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
@@ -25,6 +28,16 @@ import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
 public class Settings {
 
 	private final Main main;
+
+	private String artifact_id;
+
+	private String version;
+
+	private int width = 800;
+
+	private int height = 800;
+
+	private boolean render_on_changes = true;
 
 	/**
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
@@ -58,6 +71,10 @@ public class Settings {
 			System.err.println("Settings.initFractals IOException");
 			e.printStackTrace();
 		}
+
+		// create images folder
+		if (!images.exists())
+			images.mkdir();
 	}
 
 	/**
@@ -162,31 +179,50 @@ public class Settings {
 		}
 	}
 
-	private String artifact_id;
+	private File images = new File("./images");
+
+	/**
+	 * Creates a new image in the <code>images</code> folder with a unique name.<br>
+	 * The name of the image will be the given <code>name</code> with a unique
+	 * number concatenated.
+	 * 
+	 * @param img  The {@link BufferedImage} to be stored as a file.
+	 * @param ext  The image extension, either 'jpg' or 'png'.
+	 * @param name The base file name.
+	 */
+	public void addImage(BufferedImage img, String ext, String name) {
+		String path = images.getAbsolutePath() + "/" + name;
+		File f;
+
+		for (int i = 1;; i++) {
+			f = new File(String.format("%s%d.%s", path, i, ext));
+			if (!f.exists())
+				break;
+		}
+
+		try {
+			ImageIO.write(img, ext, f);
+		} catch (IOException e) {
+			System.err.println("Settings.addImage IOException");
+			e.printStackTrace();
+		}
+	}
 
 	public String getArtifact_id() {
 		return artifact_id;
 	}
 
-	private String version;
-
 	public String getVersion() {
 		return version;
 	}
-
-	private int width = 800;
 
 	public int getWidth() {
 		return width;
 	}
 
-	private int height = 800;
-
 	public int getHeight() {
 		return height;
 	}
-
-	private boolean render_on_changes = true;
 
 	public boolean isRender_on_changes() {
 		return render_on_changes;

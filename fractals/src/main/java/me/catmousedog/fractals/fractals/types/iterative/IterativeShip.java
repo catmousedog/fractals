@@ -3,6 +3,7 @@ package me.catmousedog.fractals.fractals.types.iterative;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
+import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 
 /**
@@ -60,7 +61,7 @@ public final class IterativeShip extends Fractal {
 
 	@Override
 	protected void initFilters() {
-		filters = new Filter[] { new IterativeLinearFilter(this) };
+		filters = new Filter[] { new IterativeLinearFilter(this), new IterativePeriodicFilter(this) };
 		filter = filters[0];
 	}
 

@@ -4,24 +4,21 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main.InitialSize;
+import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.ui.JPInterface.AllData;
 
 /**
  * Represents a 2D plane of processed values by the function
@@ -64,7 +61,7 @@ public class Canvas extends JPanel {
 	/**
 	 * The latest {@link SwingWorker} responsible for generating the fractal.
 	 */
-	private SwingWorker<Void, Void> generator;
+	private Generator generator;
 
 	/**
 	 * The latest {@link SwingWorker} responsible for colouring the fractal.
@@ -72,14 +69,9 @@ public class Canvas extends JPanel {
 	private Painter painter;
 
 	/**
-	 * a list of all pixels
+	 * 
 	 */
-	private List<Pixel> field;
-
-	/**
-	 * image displayed on this instance of {@link JPanel}
-	 */
-	private BufferedImage img;
+	private final Field field;
 
 	/**
 	 * the current known width and height<br>
@@ -99,22 +91,23 @@ public class Canvas extends JPanel {
 	public Canvas(InitialSize size, Fractal fractal, Logger logger) {
 		this.logger = logger;
 		this.fractal = fractal;
+		field = new Field(size.getWidth(), size.getHeight());
 
-		setBorder(BorderFactory.createLoweredBevelBorder());
 		mouse = new Mouse(this);
 		addMouseListener(mouse);
+		setBorder(BorderFactory.createLoweredBevelBorder());
 
 		setPanelSize(size.getWidth(), size.getHeight());
 		savePrevConfig();
 	}
 
 	/**
-	 * Displays the current {@link Canvas#img}
+	 * Displays the current {@link Canvas#img}f
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(img, 0, 0, null);
+		g.drawImage(field.getImg(), 0, 0, null);
 	}
 
 	/**
@@ -125,7 +118,7 @@ public class Canvas extends JPanel {
 	 * {@link JPInterface}.
 	 */
 	public void render() {
-		generator = new Generator(this, jpi, logger);
+		generator = new Generator(field, fractal.clone(), () -> colourAndPaint(), logger);
 		generator.execute();
 	}
 
@@ -139,13 +132,17 @@ public class Canvas extends JPanel {
 	 * @return true if a new {@link Painter} was successfully executed.
 	 */
 	public boolean colourAndPaint() {
-		// prePaint
 		if (painter == null || painter.isRepainted()) {
-			painter = new Painter(this, jpi, logger);
+			painter = new Painter(field, fractal.getFilter().clone(), () -> {
+				repaint();
+				jpi.postRender();
+			}, logger);
+
 			painter.execute();
 			return true;
 		}
 		return false;
+
 	}
 
 	/**
@@ -153,8 +150,7 @@ public class Canvas extends JPanel {
 	 * size.<br>
 	 * Components reliant on the size of the {@link Canvas} are:
 	 * <ul>
-	 * <li>{@link Canvas#field} the list of {@link Pixel}.
-	 * <li>{@link Canvas#img} the {@link BufferedImage}.
+	 * <li>{@link Canvas#field}
 	 * <li>The {@link LinearTransform} of the {@link Fractal}. (the origin)
 	 * <li>The {@link JPInterface} extended by the {@link Canvas}.
 	 * </ul>
@@ -173,16 +169,7 @@ public class Canvas extends JPanel {
 		width = w;
 		height = h;
 
-		// set field size
-		field = new ArrayList<Pixel>(width * height);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				field.add(new Pixel(x, y));
-			}
-		}
-
-		// set image size
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		field.setSize(width, height);
 
 		// set config.getTransform()
 		fractal.getTransform().setOrigin(width / 2, height / 2);
@@ -220,6 +207,19 @@ public class Canvas extends JPanel {
 	}
 
 	/**
+	 * Attempts to cancel the {@link Generator} and {@link Painter}.
+	 * 
+	 * @return true if successful.
+	 */
+	public boolean cancel() {
+		if (generator.cancel(true))
+			return true;
+		if (painter.cancel())
+			return true;
+		return false;
+	}
+
+	/**
 	 * sets the instance of the {@link JPInterface} so the Canvas can save and
 	 * update the user input
 	 * 
@@ -228,12 +228,12 @@ public class Canvas extends JPanel {
 	public void setJPI(@NotNull JPInterface jpi) {
 		this.jpi = jpi;
 		mouse.setJPI(jpi);
-		AllData data = jpi.getData();
+		GUI gui = jpi.getGUI();
 		addComponentListener(new ComponentListener() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				data.getWidthjtf().setData(getWidth());
-				data.getHeightjtf().setData(getHeight());
+				gui.getWidthjtf().setData(getWidth());
+				gui.getHeightjtf().setData(getHeight());
 			}
 
 			@Override
@@ -248,10 +248,6 @@ public class Canvas extends JPanel {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
-	}
-
-	public void setImg(BufferedImage img) {
-		this.img = img;
 	}
 
 	/**
@@ -290,24 +286,34 @@ public class Canvas extends JPanel {
 	}
 
 	/**
-	 * @return the current {@link Generator}.
+	 * @return the current {@link Generator}, null if not generated yet.
 	 */
-	public SwingWorker<Void, Void> getGenerator() {
+	@Nullable
+	public Generator getGenerator() {
 		return generator;
 	}
 
 	/**
-	 * @return the current {@link Painter}.
+	 * @return the current {@link Painter}, null if not generated yet.
 	 */
-	public SwingWorker<Void, Void> getPainter() {
+	@Nullable
+	public Painter getPainter() {
 		return painter;
 	}
 
 	/**
-	 * @return the List of all {@link Pixel}s.
+	 * @return the {@link Field}.
 	 */
-	public List<Pixel> getField() {
+	public Field getField() {
 		return field;
+	}
+
+	public int getPanelWidth() {
+		return width;
+	}
+
+	public int getPanelHeight() {
+		return height;
 	}
 
 	/**

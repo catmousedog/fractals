@@ -192,7 +192,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Added
 - *Fractal.initPanel()* abstract method and implementation for each abstract fractal (*iterative*, *potential*, etc.).
 - abstract **Filter** class allowing for various implementations for each abstract fractal such as *iterative*, *normalized*, etc.
-- **IterativeFilter**, **NormalizedFilter**, **PotentialFilter** abstract classes.
+- **IterativeLinearFilter**, **NormalizedFilter** concrete filters.
 - filter combo box to choose filter for each fractal.
 - **SafeSavable** interface
 - *postRender* and *preRender* methods to all **Item**s and called them in *JPInterface.pre*- and *postRender()* which in turn makes all **Item**s disable during render.
@@ -207,3 +207,19 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - *Fractal.filter()* as each fractal can now have multiple **Filter**s.
 - abstract fractals: **IterativeFractal**, **NormalizedFractal** and **PotentialFractal** as all of their code was moved to **Fractal** or their respective **Filter**.
 - **PreSaved** enum.
+
+## [0.1.5] - concrete additions
+
+### Added
+- **IterativePeriodicFilter** concrete filter.
+- more options for the **NormalizedFilter**.
+- *Filter.getTip()*
+- *Picture* section
+- *Settings.addImage()*
+- TextField min and max for safety input
+
+### Changed
+- Moved **AllData** to new **GUI** class and new source file
+
+### Removed
+- Listener from TextField

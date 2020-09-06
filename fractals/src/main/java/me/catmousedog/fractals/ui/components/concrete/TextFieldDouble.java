@@ -8,8 +8,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import me.catmousedog.fractals.ui.components.Data;
 
@@ -17,15 +15,16 @@ import me.catmousedog.fractals.ui.components.Data;
  * Passive {@link Data} representing a {@link JTextField} that stores a
  * {@link Double}
  */
-public class TextFieldDouble extends Data<Double> implements DocumentListener {
+public class TextFieldDouble extends Data<Double> {
 
 	private JTextField jtf;
 	private JLabel jl;
+	private final double m, M;
 
 	public static class Builder {
 
 		private String lbl, tip;
-		private double d;
+		private double d, m = Double.NEGATIVE_INFINITY, M = Double.POSITIVE_INFINITY;
 
 		public Builder setDefault(double d) {
 			this.d = d;
@@ -42,18 +41,37 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 			return this;
 		}
 
+		/**
+		 * Sets the minimum of the {@link JTextField}, any value entered below this will
+		 * not register. The default is -infinity.
+		 */
+		public Builder setMin(int m) {
+			this.m = m;
+			return this;
+		}
+
+		/**
+		 * Sets the maximum of the {@link JTextField}, any value entered above this will
+		 * not register. The default is +infinity.
+		 */
+		public Builder setMax(int M) {
+			this.M = M;
+			return this;
+		}
+
 		public TextFieldDouble build() {
-			TextFieldDouble tfd = new TextFieldDouble(lbl, tip);
+			TextFieldDouble tfd = new TextFieldDouble(lbl, tip, m, M);
 			tfd.setData(d);
 			return tfd;
 		}
 
 	}
 
-	private TextFieldDouble(String lbl, String tip) {
+	private TextFieldDouble(String lbl, String tip, double m, double M) {
+		this.m = m;
+		this.M = M;
 		jtf = new JTextField();
 		jtf.setMaximumSize(new Dimension(Integer.MAX_VALUE, jtf.getPreferredSize().height));
-		jtf.getDocument().addDocumentListener(this);
 		jtf.setAlignmentX(JTextField.LEFT_ALIGNMENT);
 		jtf.setToolTipText(tip);
 
@@ -78,7 +96,9 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 	@Override
 	public void save() {
 		try {
-			data = Double.parseDouble(jtf.getText());
+			double d = Double.parseDouble(jtf.getText());
+			if (d <= M && d >= m)
+				data = d;
 		} catch (Exception e) {
 		}
 	}
@@ -86,20 +106,6 @@ public class TextFieldDouble extends Data<Double> implements DocumentListener {
 	@Override
 	public void update() {
 		jtf.setText(Double.toString(data));
-	}
-
-	@Override
-	public void insertUpdate(DocumentEvent de) {
-		save();
-	}
-
-	@Override
-	public void removeUpdate(DocumentEvent de) {
-		save();
-	}
-
-	@Override
-	public void changedUpdate(DocumentEvent de) {
 	}
 
 	@Override

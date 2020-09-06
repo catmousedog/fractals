@@ -62,8 +62,8 @@ public class ComboBoxItem extends ActiveData<Object> {
 	private ComboBoxItem(Object[] initial, String lbl, String tip, ActionListener e) {
 		action = e;
 		jcb = new JComboBox<Object>(initial);
-		jcb.setSelectedItem(null);
-		jcb.addActionListener(a -> event(a));
+		if (action != null)
+			jcb.addActionListener(a -> event(a));
 		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
 		jcb.setToolTipText(tip);
 		jcb.setAlignmentX(JComboBox.LEFT_ALIGNMENT);

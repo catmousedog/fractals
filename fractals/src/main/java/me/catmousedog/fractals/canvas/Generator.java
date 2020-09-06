@@ -1,5 +1,6 @@
 package me.catmousedog.fractals.canvas;
 
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -21,57 +22,63 @@ import me.catmousedog.fractals.ui.JPInterface;
 public class Generator extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
 	/**
-	 * The canvas instance this generator belongs to.
-	 * <p>
-	 * Also used to call {@link Canvas#colourAndPaint()}.
+	 * The list of {@link Pixel}s that will be edited.
 	 */
-	private final Canvas canvas;
+	private final List<Pixel> pixels;
 
 	/**
-	 * The user interface containing the {@link JPInterface#postRender()} method.
-	 */
-	private final JPInterface jpi;
-
-	/**
-	 * The {@link LinearTransform} used to describe the current location on the
-	 * {@link Canvas}.
-	 */
-	private final LinearTransform transform;
-
-	/**
-	 * The {@link Fractal} instance containing the fractal function,
+	 * A clone of the {@link Fractal} containing the fractal function,
 	 * {@link Fractal#get(double, double)}.
 	 */
 	private final Fractal fractal;
 
 	/**
-	 * The list of {@link Pixel}s.
+	 * The {@link LinearTransform} of the cloned {@link Fractal}.
 	 */
-	private final List<Pixel> field;
+	private final LinearTransform transform;
+
+	/**
+	 * The {@link Runnable} run when the {@link Generator} is done and wasn't
+	 * cancelled.
+	 */
+	private final Runnable runnable;
 
 	/**
 	 * The {@link Logger} instance.
 	 */
 	private final Logger logger;
 
-	/*
+	/**
 	 * Atomic counters for keeping calculation progress when using parallel streams.
 	 */
 	private AtomicInteger i, q;
 
-	public Generator(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
-		this.canvas = canvas;
-		fractal = canvas.getFractal().clone();
-		transform = canvas.getFractal().getTransform();
-		field = canvas.getField();
-		this.jpi = jpi;
+	/**
+	 * Creates a new {@link Painter} that changes the {@link Field}'s
+	 * {@link BufferedImage}.
+	 * 
+	 * @param field    The reference to the {@link Field} used for storing the
+	 *                 {@link List} of {@link Pixel}s that will be edited.
+	 * @param fractal  A clone of the {@link Fractal} containing the
+	 *                 {@link Fractal#get(double, double)}
+	 * @param runnable The {@link Runnable} run when the {@link Generator} is done
+	 *                 and wans't cancelled.
+	 * @param jpi      The {@link JPInterface} instance.
+	 * @param logger   The {@link Logger} instance.
+	 */
+	public Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable,
+			@NotNull Logger logger) {
+		this.pixels = field.getPixels();
+		this.fractal = fractal;
+		transform = fractal.getTransform();
+		this.runnable = runnable;
 		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
 
 	/**
 	 * Will generate the image by applying the fractal function
-	 * {@link Fractal#get(double, double)} and save to the {@link Canvas#field}.
+	 * {@link Fractal#get(double, double)} and save to the {@link Canvas#pixels}.
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
@@ -79,7 +86,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		long b = System.nanoTime();
 
 		// linear transformation to determine actual coordinates
-		field.parallelStream().forEach(p -> {
+		pixels.parallelStream().forEach(p -> {
 			if (!super.isCancelled()) {
 				double[] t = transform.apply(p.x, p.y);
 				p.tx = t[0];
@@ -92,13 +99,13 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		q = new AtomicInteger();
 
 		// for each in field, calculate fractal value 'v'
-		field.parallelStream().forEach(p -> {
+		pixels.parallelStream().forEach(p -> {
 
 			if (!super.isCancelled())
 				p.v = fractal.get(p.tx, p.ty);
 
 			// each 100th of all pixels the progress bar updates
-			if (i.incrementAndGet() % (field.size() / 100) == 0)
+			if (i.incrementAndGet() % (pixels.size() / 100) == 0)
 				setProgress(q.incrementAndGet());
 
 		});
@@ -120,16 +127,13 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getNewValue() instanceof Integer) {
+		if (super.isCancelled())
+			return;
+
+		if (evt.getNewValue() instanceof Integer)
 			logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
-		} else if (evt.getNewValue().equals(StateValue.DONE)) {
-			if (!super.isCancelled())
-				canvas.colourAndPaint();
-			else {
-				logger.setProgress("cancelled!", 0);
-				jpi.postRender();
-			}
-		}
+		else if (evt.getNewValue().equals(StateValue.DONE))
+			runnable.run();
 	}
 
 }

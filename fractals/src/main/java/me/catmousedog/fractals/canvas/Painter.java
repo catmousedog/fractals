@@ -16,25 +16,29 @@ import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.ui.JPInterface;
 
 public class Painter extends SwingWorker<Void, Void> implements PropertyChangeListener {
-	/**
-	 * the canvas instance this generator belongs to
-	 */
-	private final Canvas canvas;
 
 	/**
-	 * the user interface containing the {@link JPInterface#postRender()} method
+	 * {@link BufferedImage} to be edited.
 	 */
-	private final JPInterface jpi;
+	private final BufferedImage img;
 
 	/**
-	 * the list of pixels
+	 * The list of pixels used to calculate the image.
 	 */
-	private final List<Pixel> field;
+	private final List<Pixel> pixels;
 
+	/**
+	 * The {@link Filter} used to calculate the image.
+	 */
 	private final Filter filter;
 
 	/**
-	 * the logger instance
+	 * The {@link Runnable} run when the {@link SwingWorker} is done.
+	 */
+	private final Runnable runnable;
+
+	/**
+	 * The logger instance.
 	 */
 	private final Logger logger;
 
@@ -42,18 +46,30 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 
 	private boolean repainted = false;
 
-	public Painter(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Logger logger) {
-		this.canvas = canvas;
-		field = canvas.getField();
-		filter = canvas.getFractal().getFilter().clone();
-		this.jpi = jpi;
+	/**
+	 * Creates a new {@link Painter} that changes the {@link Field}'s
+	 * {@link BufferedImage}.
+	 * 
+	 * @param field    the {@link Field} used for storing the {@link BufferedImage}
+	 *                 and {@link List} of {@link Pixel}s.
+	 * @param filter   a clone of the {@link Filter} containing the
+	 *                 {@link Filter#get(Number)}.
+	 * @param runnable the {@link Runnable} run when the {@link Painter} is done.
+	 * @param jpi      the {@link JPInterface} instance.
+	 * @param logger   the {@link Logger} instance.
+	 */
+	public Painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable, @NotNull Logger logger) {
+		img = field.getImg();
+		this.pixels = field.getPixels();
+		this.filter = filter;
+		this.runnable = runnable;
 		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
 
 	/**
 	 * Will apply the {@link Filter#get(Number)} to each {@link Pixel} in
-	 * {@link Canvas#field} to colour the image.
+	 * {@link Canvas#pixels} to colour the image.
 	 * 
 	 * @return null
 	 */
@@ -62,22 +78,18 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 		// begin time
 		long b = System.nanoTime();
 
-		BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_BGR);
-
 		i = new AtomicInteger();
 		q = new AtomicInteger();
 
-		field.parallelStream().forEach(p -> {
+		pixels.parallelStream().forEach(p -> {
 			if (!super.isCancelled())
 				img.setRGB(p.x, p.y, filter.get(p.v));
 
 			// each 100th of all pixels the progress bar updates
-			if (i.incrementAndGet() % (field.size() / 100) == 0)
+			if (i.incrementAndGet() % (pixels.size() / 100) == 0)
 				setProgress(q.incrementAndGet());
 
 		});
-
-		canvas.setImg(img);
 
 		// end time
 		long e = System.nanoTime();
@@ -96,14 +108,27 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		if (super.isCancelled())
+			return;
+
 		if (evt.getNewValue() instanceof Integer) {
 			logger.setProgress("colouring fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
-			canvas.repaint();
-			jpi.postRender();
+			runnable.run();
 			logger.setProgress("done!", 100);
 			repainted = true;
 		}
+	}
+
+	/**
+	 * Cancels the {@link SwingWorker} and sets {@link Painter#repainted} to true so
+	 * a new Painter can be created in {@link Canvas}.
+	 * 
+	 * @return {@link SwingWorker#cancel(boolean)}
+	 */
+	public boolean cancel() {
+		repainted = true;
+		return super.cancel(true);
 	}
 
 	/**

@@ -75,7 +75,7 @@ public class Main implements Runnable {
 	public void run() {
 
 		ToolTipManager.sharedInstance().setInitialDelay(200);
-		ToolTipManager.sharedInstance().setDismissDelay(20000);
+		ToolTipManager.sharedInstance().setDismissDelay(60000);
 
 		// create JFrame
 		frame = new JFrame(settings.getArtifact_id() + "-" + settings.getVersion());
