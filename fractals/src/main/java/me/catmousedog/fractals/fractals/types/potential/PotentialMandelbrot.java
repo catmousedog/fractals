@@ -2,7 +2,7 @@ package me.catmousedog.fractals.fractals.types.potential;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.filters.NormalizedFilter;
+import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 
@@ -55,12 +55,16 @@ public class PotentialMandelbrot extends Fractal implements Savable {
 
 	@Override
 	public String getTip() {
-		return "<html>The mandelbrot generated using an electrostatic approximation. <br>This allows smooth pictures but longer generating times. <br>Not great for deep zooms.</html>";
+		return "<html>The mandelbrot generated using an electrostatic approximation."
+				+ "<br>This allows for smooth pictures but longer generating times."
+				+ "<br>This generation type is very similar to the 'normalized iteration count', "
+				+ "<br>but tends to major its frequency in deep zooms."
+				+ "<br>Not great for deep zooms as the value quickly approaches zero in deep zooms.</html>";
 	}
 
 	@Override
 	protected void initFilters() {
-		filters = new Filter[] { new NormalizedFilter(this) };
+		filters = new Filter[] { new LogPeriodicFilter(this) };
 		filter = filters[0];
 	}
 

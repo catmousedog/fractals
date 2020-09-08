@@ -19,10 +19,9 @@ import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 
 /**
- * class containing all the data entered by the user through the interface panel
- * <p>
- * This class is also used to render the image as it contains all the
- * JComponents it needs to change after rendering.
+ * Class used to interact the user entered data via the {@link GUI} class and
+ * the underlying components that need that data such as {@link Canvas}. <br>
+ * All of the methods in {@link JPInterface} must be called on the EDT.
  */
 @SuppressWarnings("serial")
 public class JPInterface extends JPanel implements Savable {
@@ -277,7 +276,6 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getMjtf().setData(canvas.getFractal().getTransform().getm());
 		gui.getNjtf().setData(canvas.getFractal().getTransform().getn());
 		gui.getRjtf().setData(canvas.getFractal().getTransform().getrot());
-		gui.getLocationjcb().setDataSafe(canvas.getFractal().getLocations());
 
 		/* Calculation */
 		gui.getIterjtf().setData(canvas.getFractal().getIterations());
@@ -308,14 +306,14 @@ public class JPInterface extends JPanel implements Savable {
 	 * {@link JPInterface#update()} cycle.
 	 */
 	public void updateFractal() {
-		// tooltip for fractal jcombobox
+		gui.getLocationjcb().setDataSafe(canvas.getFractal().getLocations());
+
 		gui.getFractaljcb().getComponent().setToolTipText(canvas.getFractal().getTip());
-		// set filters inside jcombobox
-		gui.getFilterjcb().setItems(canvas.getFractal().getFilters());
-		// set colour panel from current filter
-		canvas.getFractal().getFilter().setPanel(gui.getFractaljp().getPanel());
-		// filter tooltip
+
 		gui.getFilterjcb().getComponent().setToolTipText(canvas.getFractal().getFilter().getTip());
+		gui.getFilterjcb().setItems(canvas.getFractal().getFilters());
+
+		canvas.getFractal().getFilter().setPanel(gui.getFractaljp().getPanel());
 	}
 
 	/**
@@ -326,7 +324,7 @@ public class JPInterface extends JPanel implements Savable {
 	public void allowUndo(boolean allowUndo) {
 		this.allowUndo = allowUndo;
 	}
-	
+
 	/**
 	 * @return the {@link GUI} instance
 	 */

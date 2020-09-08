@@ -95,6 +95,7 @@ public class Canvas extends JPanel {
 
 		mouse = new Mouse(this);
 		addMouseListener(mouse);
+		addMouseMotionListener(mouse);
 		setBorder(BorderFactory.createLoweredBevelBorder());
 
 		setPanelSize(size.getWidth(), size.getHeight());

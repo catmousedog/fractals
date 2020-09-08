@@ -24,7 +24,7 @@ public class Logger extends JPanel {
 	/**
 	 * amount of logged messages displayed
 	 */
-	private int m = 6;
+	private int m = 3;
 
 	/**
 	 * array of JLabels representing the logged messages

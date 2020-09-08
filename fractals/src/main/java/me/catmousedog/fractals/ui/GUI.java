@@ -169,6 +169,11 @@ public class GUI {
 		 */
 		Title picture = new Title("Picture");
 
+		picturesizejcb = new ComboBoxItem.Builder(new String[] { "1280x720 (720p)", "1920x1080 (HD)", "3840x2160 (4K)",
+				"7680x4320 (8K)" }).setAction(a -> pictureSize()).setTip(
+						"<html>A set of predefined picture resolutions.<br> All of the aspect ratios in this list are 16:9.</html>")
+						.setDefault(1).build();
+
 		picturewjtf = new TextFieldInteger.Builder().setLabel("picture width").setTip(
 				"<html>The width of the picture in pixels.<br>It is recommended to have the same aspect ratio for the picture and the canvas to avoid cropping.</html>")
 				.setMin(100).setDefault(1920).build();
@@ -177,8 +182,9 @@ public class GUI {
 				"<html>The height of the picture in pixels.<br>It is recommended to have the same aspect ratio for the picture and the canvas to avoid cropping.</html>")
 				.setMin(100).setDefault(1080).build();
 
-		picturejb = new Button.Builder("Picture").setAction(a -> picture())
-				.setTip("<html>Generate a picture at the current location</html>").build();
+		picturejb = new Button.Builder("Picture").setAction(a -> picture()).setTip(
+				"<html>Generate a picture at the current location.<br> When generating large images make sure to allocate enough memory.</html>")
+				.build();
 
 		picturejcb = new ComboBoxItem.Builder(new String[] { "jpg", "png" })
 				.setTip("<html>The extension of the image when generated.</html>").build();
@@ -186,8 +192,8 @@ public class GUI {
 		all = new Item[] { p20, window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
 				njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, iterjtf, p5,
 				zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljl, fractaljcb, p5,
-				filterjl, filterjcb, p5, repaintjb, p5, colour, p5, fractaljp, p20, picture, p10, picturewjtf, p5,
-				picturehjtf, p5, picturejb, p5, picturejcb };
+				filterjl, filterjcb, p5, repaintjb, p5, colour, p5, fractaljp, p20, picture, p10, picturesizejcb, p5,
+				picturewjtf, p5, picturehjtf, p5, picturejb, p5, picturejcb };
 	}
 
 	/**
@@ -324,12 +330,38 @@ public class GUI {
 	}
 
 	/**
+	 * picturesizejcb
+	 */
+	private void pictureSize() {
+		switch (getPicturesizejcb().getComponent().getSelectedIndex()) {
+		case 0:
+			picturewjtf.setData(1280);
+			picturehjtf.setData(720);
+			break;
+		case 1:
+			picturewjtf.setData(1920);
+			picturehjtf.setData(1080);
+			break;
+		case 2:
+			picturewjtf.setData(3840);
+			picturehjtf.setData(2160);
+			break;
+		case 3:
+			picturewjtf.setData(7680);
+			picturehjtf.setData(4320);
+			break;
+		}
+	}
+
+	/**
 	 * picturejb
 	 */
 	private void picture() {
 		int w = picturewjtf.saveAndGet();
 		int h = picturehjtf.saveAndGet();
 		String ext = (String) picturejcb.saveAndGet();
+
+		jpi.update();
 
 		picture.newPicture(w, h, ext);
 	}
@@ -446,6 +478,12 @@ public class GUI {
 
 	public Panel getFractaljp() {
 		return fractaljp;
+	}
+
+	private final ComboBoxItem picturesizejcb;
+
+	public ComboBoxItem getPicturesizejcb() {
+		return picturesizejcb;
 	}
 
 	private final TextFieldInteger picturewjtf;

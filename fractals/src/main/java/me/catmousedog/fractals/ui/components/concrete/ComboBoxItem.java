@@ -33,6 +33,7 @@ public class ComboBoxItem extends ActiveData<Object> {
 		private Object[] initial;
 		private String lbl, tip;
 		private ActionListener e;
+		private int i;
 
 		public Builder(Object[] initial) {
 			this.initial = initial;
@@ -52,22 +53,28 @@ public class ComboBoxItem extends ActiveData<Object> {
 			this.e = e;
 			return this;
 		}
+		
+		public Builder setDefault(int i) {
+			this.i = i;
+			return this;
+		}
 
 		public ComboBoxItem build() {
-			return new ComboBoxItem(initial, lbl, tip, e);
+			return new ComboBoxItem(initial, lbl, tip, e, i);
 		}
 
 	}
 
-	private ComboBoxItem(Object[] initial, String lbl, String tip, ActionListener e) {
+	private ComboBoxItem(Object[] initial, String lbl, String tip, ActionListener e, int i) {
 		action = e;
 		jcb = new JComboBox<Object>(initial);
+		jcb.setSelectedIndex(i);
 		if (action != null)
 			jcb.addActionListener(a -> event(a));
 		jcb.setMaximumSize(new Dimension(Integer.MAX_VALUE, jcb.getPreferredSize().height));
 		jcb.setToolTipText(tip);
 		jcb.setAlignmentX(JComboBox.LEFT_ALIGNMENT);
-
+		
 		jl = new JLabel(lbl);
 		jl.setFont(new Font(null, Font.PLAIN, 12));
 		jl.setToolTipText(tip);

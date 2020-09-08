@@ -76,17 +76,23 @@ public class Picture {
 		double a = Math.max((double) canvas.getPanelHeight() / height, (double) canvas.getPanelWidth() / width);
 		transform.zoom(a);
 
-		Field field = new Field(width, height);
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Field field = new Field(width, height);
 
-		painter = new Painter(field, canvas.getFractal().getFilter().clone(), () -> {
-			settings.addImage(field.getImg(), ext, canvas.getFractal().fileName());
-			jpi.postRender();
-		}, logger);
+				painter = new Painter(field, canvas.getFractal().getFilter().clone(), () -> {
+					settings.addImage(field.getImg(), ext, canvas.getFractal().fileName());
+					jpi.postRender();
+				}, logger);
 
-		generator = new Generator(field, fractal, () -> {
-			painter.execute();
-		}, logger);
-		generator.execute();
+				generator = new Generator(field, fractal, () -> {
+					painter.execute();
+				}, logger);
+				generator.execute();
+			}
+		});
+		t.start();
 	}
 
 	/**

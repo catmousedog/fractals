@@ -2,7 +2,7 @@ package me.catmousedog.fractals.fractals.types.normalized;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.filters.NormalizedFilter;
+import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 
@@ -60,7 +60,7 @@ public class NormalizedShip extends Fractal implements Savable {
 
 	@Override
 	protected void initFilters() {
-		filters = new Filter[] { new NormalizedFilter(this) };
+		filters = new Filter[] { new LogPeriodicFilter(this) };
 		filter = filters[0];
 	}
 

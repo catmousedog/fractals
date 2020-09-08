@@ -3,14 +3,13 @@ package me.catmousedog.fractals.canvas;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import javax.swing.SwingWorker;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -25,7 +24,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	/**
 	 * The list of pixels used to calculate the image.
 	 */
-	private final List<Pixel> pixels;
+	private final Pixel[] pixels;
 
 	/**
 	 * The {@link Filter} used to calculate the image.
@@ -51,7 +50,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 * {@link BufferedImage}.
 	 * 
 	 * @param field    the {@link Field} used for storing the {@link BufferedImage}
-	 *                 and {@link List} of {@link Pixel}s.
+	 *                 and the {@link Pixel}s.
 	 * @param filter   a clone of the {@link Filter} containing the
 	 *                 {@link Filter#get(Number)}.
 	 * @param runnable the {@link Runnable} run when the {@link Painter} is done.
@@ -81,12 +80,12 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 		i = new AtomicInteger();
 		q = new AtomicInteger();
 
-		pixels.parallelStream().forEach(p -> {
+		Stream.of(pixels).parallel().forEach(p -> {
 			if (!super.isCancelled())
 				img.setRGB(p.x, p.y, filter.get(p.v));
 
 			// each 100th of all pixels the progress bar updates
-			if (i.incrementAndGet() % (pixels.size() / 100) == 0)
+			if (i.incrementAndGet() % (pixels.length / 100) == 0)
 				setProgress(q.incrementAndGet());
 
 		});

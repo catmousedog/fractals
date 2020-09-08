@@ -1,7 +1,5 @@
 package me.catmousedog.fractals.fractals;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -207,75 +205,6 @@ public abstract class Fractal implements SafeSavable {
 	}
 
 	/**
-	 * 
-	 */
-	protected Properties properties;
-
-	/**
-	 * Imports all the settings from the properties files belonging to this
-	 * {@link Fractal}.
-	 * <p>
-	 * Only called once for each {@link Fractal} upon instantiating the
-	 * {@link Settings} object.
-	 * 
-	 * @param properties {@link Properties} object for
-	 *                   './conrete_fractal/formalName.properties'
-	 * @param locations  {@link Properties} object for
-	 *                   './locations/formalName.properties'
-	 */
-	public void setProperties(@NotNull Properties properties, @NotNull Properties locations)
-			throws IllegalArgumentException {
-
-		List<Location> temp = new ArrayList<Location>();
-
-		// set default settings
-		try {
-			double dx = Double.parseDouble(properties.getProperty("default_x"));
-			double dy = Double.parseDouble(properties.getProperty("default_y"));
-			transform.setTranslation(dx, dy);
-			double m = Double.parseDouble(properties.getProperty("default_m"));
-			double n = Double.parseDouble(properties.getProperty("default_n"));
-			transform.setScalar(m, n);
-			double rot = Double.parseDouble(properties.getProperty("default_rot"));
-			transform.setRot(rot);
-
-			iterations = Integer.parseInt(properties.getProperty("default_iter"));
-			bailout = Double.parseDouble(properties.getProperty("bailout"));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-
-		// initialise locations
-		// for all keys
-		for (Object o : locations.keySet()) {
-			String key = (String) o;
-			String id = locations.getProperty(key);
-			String[] args = id.split(":");
-
-			// legal format
-			if (args.length > 5) {
-				try {
-					// parse id
-					double dx = Double.parseDouble(args[0]);
-					double dy = Double.parseDouble(args[1]);
-					double m = Double.parseDouble(args[2]);
-					double n = Double.parseDouble(args[3]);
-					double rot = Double.parseDouble(args[4]);
-					int iter = Integer.parseInt(args[5]);
-
-					// add new location
-					temp.add(new Location(key, dx, dy, m, n, rot, iter));
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		this.locations = new Location[temp.size()];
-		temp.toArray(this.locations);
-	}
-
-	/**
 	 * True if the <code>fractal</code> is the same concrete {@link Fractal}.<br>
 	 * The is achieved by checking if the {@link Fractal#fileName()}s are equal.
 	 * <p>
@@ -381,8 +310,16 @@ public abstract class Fractal implements SafeSavable {
 		return iterations;
 	}
 
+	public void setBailout(double bailout) {
+		this.bailout = bailout;
+	}
+
 	public double getBailout() {
 		return bailout;
+	}
+
+	public void setLocations(Location[] locations) {
+		this.locations = locations;
 	}
 
 	/**

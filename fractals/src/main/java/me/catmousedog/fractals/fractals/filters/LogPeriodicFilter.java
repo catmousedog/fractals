@@ -8,7 +8,7 @@ import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
-public class NormalizedFilter extends Filter {
+public class LogPeriodicFilter extends Filter {
 
 	private double r, g, b;
 
@@ -18,7 +18,7 @@ public class NormalizedFilter extends Filter {
 
 	private double rd, gd, bd;
 
-	public NormalizedFilter(Fractal fractal) {
+	public LogPeriodicFilter(Fractal fractal) {
 		super(fractal);
 		r = 1;
 		g = 1;
@@ -37,7 +37,7 @@ public class NormalizedFilter extends Filter {
 	 * 
 	 * @param filter
 	 */
-	private NormalizedFilter(Filter filter) {
+	private LogPeriodicFilter(Filter filter) {
 		super(filter);
 	}
 
@@ -50,13 +50,13 @@ public class NormalizedFilter extends Filter {
 	}
 
 	private int curve(double a, double f, double d, double v) {
-		return (int) (a * 127.5 * (1.0 + Math.cos(f * Math.log(v) / K - d)));
+		return (int) (a * 127.5 * (1.0 - Math.cos(f * Math.log(v) / K - d)));
 	}
 
 	@Override
 	public void setFilter(Filter filter) {
-		if (filter instanceof NormalizedFilter) {
-			NormalizedFilter nfilter = (NormalizedFilter) filter;
+		if (filter instanceof LogPeriodicFilter) {
+			LogPeriodicFilter nfilter = (LogPeriodicFilter) filter;
 			r = nfilter.r;
 			g = nfilter.g;
 			b = nfilter.b;
@@ -110,7 +110,7 @@ public class NormalizedFilter extends Filter {
 
 	@Override
 	public Filter clone() {
-		return new NormalizedFilter(this);
+		return new LogPeriodicFilter(this);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class NormalizedFilter extends Filter {
 
 	@Override
 	public String toString() {
-		return "Normalized Filter";
+		return "Logarithmic Periodic Filter";
 	}
 
 	/*

@@ -3,8 +3,8 @@ package me.catmousedog.fractals.canvas;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import javax.swing.SwingWorker;
 
@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.Pixel;
 import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.ui.JPInterface;
 
@@ -22,9 +21,9 @@ import me.catmousedog.fractals.ui.JPInterface;
 public class Generator extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
 	/**
-	 * The list of {@link Pixel}s that will be edited.
+	 * The array of {@link Pixel}s that will be edited.
 	 */
-	private final List<Pixel> pixels;
+	private final Pixel[] pixels;
 
 	/**
 	 * A clone of the {@link Fractal} containing the fractal function,
@@ -58,7 +57,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 * {@link BufferedImage}.
 	 * 
 	 * @param field    The reference to the {@link Field} used for storing the
-	 *                 {@link List} of {@link Pixel}s that will be edited.
+	 *                 {@link Pixel}s that will be edited.
 	 * @param fractal  A clone of the {@link Fractal} containing the
 	 *                 {@link Fractal#get(double, double)}
 	 * @param runnable The {@link Runnable} run when the {@link Generator} is done
@@ -86,7 +85,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		long b = System.nanoTime();
 
 		// linear transformation to determine actual coordinates
-		pixels.parallelStream().forEach(p -> {
+		Stream.of(pixels).parallel().forEach(p -> {
 			if (!super.isCancelled()) {
 				double[] t = transform.apply(p.x, p.y);
 				p.tx = t[0];
@@ -99,13 +98,13 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		q = new AtomicInteger();
 
 		// for each in field, calculate fractal value 'v'
-		pixels.parallelStream().forEach(p -> {
+		Stream.of(pixels).parallel().forEach(p -> {
 
 			if (!super.isCancelled())
 				p.v = fractal.get(p.tx, p.ty);
 
 			// each 100th of all pixels the progress bar updates
-			if (i.incrementAndGet() % (pixels.size() / 100) == 0)
+			if (i.incrementAndGet() % (pixels.length / 100) == 0)
 				setProgress(q.incrementAndGet());
 
 		});

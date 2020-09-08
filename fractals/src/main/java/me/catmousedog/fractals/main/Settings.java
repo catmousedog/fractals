@@ -9,18 +9,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.Fractal.Location;
+import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
 import me.catmousedog.fractals.fractals.types.potential.PotentialMandelbrot;
 import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
+import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**
  * Class for managing the {@code .properties} files within the resources.
@@ -169,14 +173,81 @@ public class Settings {
 				if (f1.exists())
 					p.load(new FileInputStream(fractalFilePath));
 				// create locations
-				Properties l = new Properties();
+				OrderedProperties l = new OrderedProperties();
 				if (f2.exists())
 					l.load(new FileInputStream(locationFilePath));
 
-				fractal.setProperties(p, l);
+				setProperties(fractal, p, l);
 				fractals.add(fractal);
 			}
 		}
+	}
+
+	/**
+	 * Imports all the settings from the properties files belonging to the given
+	 * {@link Fractal}.
+	 * <p>
+	 * Only called once for each {@link Fractal}.
+	 * 
+	 * @param properties {@link Properties} object for
+	 *                   './conrete_fractal/fileName.properties'
+	 * @param locations  {@link OrderedProperties} object for
+	 *                   './locations/fileName.properties'
+	 */
+	private void setProperties(Fractal fractal, Properties properties, OrderedProperties locations) {
+		List<Location> temp = new ArrayList<Location>();
+
+		LinearTransform transform = fractal.getTransform();
+
+		// set default settings
+		try {
+			double dx = Double.parseDouble(properties.getProperty("default_x"));
+			double dy = Double.parseDouble(properties.getProperty("default_y"));
+			transform.setTranslation(dx, dy);
+			double m = Double.parseDouble(properties.getProperty("default_m"));
+			double n = Double.parseDouble(properties.getProperty("default_n"));
+			transform.setScalar(m, n);
+			double rot = Double.parseDouble(properties.getProperty("default_rot"));
+			transform.setRot(rot);
+
+			fractal.setIterations(Integer.parseInt(properties.getProperty("default_iter")));
+			fractal.setBailout(Double.parseDouble(properties.getProperty("bailout")));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+		// initialise locations
+		// for all keys
+		Enumeration<Object> keys = locations.keys();
+
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			String id = locations.getProperty(key);
+			String[] args = id.split(":");
+
+			// legal format
+			if (args.length > 5) {
+				try {
+					// parse id
+					double dx = Double.parseDouble(args[0]);
+					double dy = Double.parseDouble(args[1]);
+					double m = Double.parseDouble(args[2]);
+					double n = Double.parseDouble(args[3]);
+					double rot = Double.parseDouble(args[4]);
+					int iter = Integer.parseInt(args[5]);
+
+					// add new location
+					temp.add(fractal.new Location(key, dx, dy, m, n, rot, iter));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		Location[] l = new Location[temp.size()];
+		temp.toArray(l);
+
+		fractal.setLocations(l);
 	}
 
 	private File images = new File("./images");
