@@ -134,5 +134,4 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		else if (evt.getNewValue().equals(StateValue.DONE))
 			runnable.run();
 	}
-
 }

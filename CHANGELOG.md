@@ -220,12 +220,15 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - ComboBox for predefined resolutions
 - concrete locations
 - middle mouse button shows Pixel information
+- *apache.commons.imaging* dependency for changing image properties
+- image name now includes the location
 
 ### Changed
 - Moved **AllData** to new **GUI** class and new source file
 - Moved 'settings' code from **Fractal** to **Settings**
 - List of Pixels to Pixel array. Tremendously increase the parallel speed! colouring: before=300ms after=40ms<br> This also solved the Pixel creating issue when trying to create huge images. The lag spike is now 2 seconds compared to 20 seconds.
-- locations appear in order in combobox
+- locations appear in order in combobox through **OrderedProperties** class.
+- Fixed minor bug with certain *Filter.get(Number V)* methods.
 
 ### Removed
 - Listener from TextFields

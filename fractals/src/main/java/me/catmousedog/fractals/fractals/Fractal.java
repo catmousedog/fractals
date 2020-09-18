@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.SafeSavable;
 import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Data;
@@ -20,13 +21,16 @@ import me.catmousedog.fractals.ui.components.Data;
  * <p>
  * An implementation of this class must define:
  * <ul>
- * <li>A constructor for creating the {@link Fractal}.
- * <li>A constructor for cloning the {@link Fractal}, taking the {@link Fractal}
- * itself as a parameter.
+ * <li>A constructor taking a {@link Settings} object for creating the
+ * <code>Fractal</code>.
+ * <li>A <code>private</code> constructor for cloning the <code>Fractal</code>,
+ * taking the {@link Settings} object and the <code>Fractal</code> itself as a
+ * parameter.
  * <li>The {@link Fractal#get(double, double)} function.
  * <li>The name methods: {@link Fractal#informalName()},
  * {@link Fractal#fileName()} and {@link Fractal#getTip()}.
- * <li>{@link Fractal#initFilters()} method.
+ * <li>{@link Fractal#initFilters()} method where the {@link Fractal#filter} and
+ * the {@link Fractal#filters} array are initialised.
  * <li>{@link Fractal#clone()} method with the cloning constructor.
  * </ul>
  */
@@ -123,11 +127,11 @@ public abstract class Fractal implements SafeSavable {
 	/**
 	 * calculates the fractal value for a given point in space
 	 * 
-	 * @param x the x coordinate of the point
-	 * @param y the y coordinate of the point
+	 * @param cx the x coordinate of the point
+	 * @param cy the y coordinate of the point
 	 * @return the value the fractal function returns
 	 */
-	public abstract Number get(double x, double y);
+	public abstract Number get(double cx, double cy);
 
 	/**
 	 * Initialses the {@link Fractal#filters} array and the
@@ -227,7 +231,8 @@ public abstract class Fractal implements SafeSavable {
 	}
 
 	/**
-	 * @return The informal name, for the user to read.
+	 * @return The informal name, for the user to read.<br>
+	 *         Can not be longer than the {@link JPInterface} width.
 	 */
 	@NotNull
 	public abstract String informalName();
@@ -262,7 +267,7 @@ public abstract class Fractal implements SafeSavable {
 	 *                                  format.
 	 */
 	public void fromID(@NotNull String id) throws IllegalArgumentException {
-		String[] args = id.split(":");
+		String[] args = id.split(":|;");
 
 		if (args.length < 4)
 			throw new IllegalArgumentException("String not of format 'dx:dy:m:n:rot'");

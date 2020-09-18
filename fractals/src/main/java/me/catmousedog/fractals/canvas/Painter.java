@@ -53,7 +53,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 *                 and the {@link Pixel}s.
 	 * @param filter   a clone of the {@link Filter} containing the
 	 *                 {@link Filter#get(Number)}.
-	 * @param runnable the {@link Runnable} run when the {@link Painter} is done.
+	 * @param runnable the {@link Runnable} run when the {@link Painter} is done on the EDT.
 	 * @param jpi      the {@link JPInterface} instance.
 	 * @param logger   the {@link Logger} instance.
 	 */
@@ -87,7 +87,6 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 			// each 100th of all pixels the progress bar updates
 			if (i.incrementAndGet() % (pixels.length / 100) == 0)
 				setProgress(q.incrementAndGet());
-
 		});
 
 		// end time

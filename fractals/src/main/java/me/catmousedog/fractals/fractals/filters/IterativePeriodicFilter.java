@@ -49,7 +49,7 @@ public class IterativePeriodicFilter extends Filter {
 
 	@Override
 	public int get(Number V) {
-		int v = (int) V;
+		int v = V.intValue();
 		if (inverted)
 			v = 255 - v;
 		return new Color(curve(r, rf, v), curve(g, gf, v), curve(b, bf, v)).getRGB();

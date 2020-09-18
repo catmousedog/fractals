@@ -18,8 +18,7 @@ public class PotentialMandelbrot extends Fractal implements Savable {
 
 	@Override
 	public Number get(double cx, double cy) {
-
-		double x = 0, y = 0;
+		double x = cx, y = cy;
 		double tx;
 		double t1, t2;
 
@@ -34,7 +33,7 @@ public class PotentialMandelbrot extends Fractal implements Savable {
 			x = t1 - t2 + cx;
 			y = 2 * tx * y + cy;
 
-			p = Math.log(t1 + t2);
+			p = Math.log(t1 + t2)/2;
 
 			if (p > bailout) {
 				return p / Math.pow(2, i);

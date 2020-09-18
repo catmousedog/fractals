@@ -82,7 +82,7 @@ public class Picture {
 				Field field = new Field(width, height);
 
 				painter = new Painter(field, canvas.getFractal().getFilter().clone(), () -> {
-					settings.addImage(field.getImg(), ext, canvas.getFractal().fileName());
+					settings.addImage(field.getImg(), ext, canvas.getFractal());
 					jpi.postRender();
 				}, logger);
 

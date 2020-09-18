@@ -50,7 +50,7 @@ public class LogPeriodicFilter extends Filter {
 	}
 
 	private int curve(double a, double f, double d, double v) {
-		return (int) (a * 127.5 * (1.0 - Math.cos(f * Math.log(v) / K - d)));
+		return (int) (a * 127.5 * (1.0 - Math.cos(f * Math.log(Math.abs(v)) / K - d)));
 	}
 
 	@Override
@@ -116,8 +116,8 @@ public class LogPeriodicFilter extends Filter {
 	@Override
 	public String getTip() {
 		return "<html>A filter designed to be used with 'smooth' fractals.<br>"
-				+ "This filter uses a periodic function of the form <i>cos(ln(x))</i> for the red, green and blue components.<br>"
-				+ "This filter takes strictly positive values, it is best used with values close to zero, hence it is best used with 'smooth' fractals.<br>"
+				+ "It uses a periodic function of the form <i>cos(ln(x))</i> for the red, green and blue components.<br>"
+				+ "This filter is best used with values close to zero i.e. 'smooth' fractals.<br>"
 				+ "Each 'curve' has its own amplitude, frequency and offset which can be changed.</html>";
 	}
 

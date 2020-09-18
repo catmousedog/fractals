@@ -9,22 +9,22 @@ import me.catmousedog.fractals.main.Settings;
 /**
  * Number = Integer
  */
-public final class IterativeShip extends Fractal {
+public final class IterativeInverseMandelbrot extends Fractal {
 
-	public IterativeShip(Settings settings) {
+	public IterativeInverseMandelbrot(Settings settings) {
 		super(settings);
 	}
 
-	private IterativeShip(Settings settings, Fractal fractal) {
+	private IterativeInverseMandelbrot(Settings settings, Fractal fractal) {
 		super(settings, fractal);
 	}
 
-	/**
-	 * returns 0 - 255
-	 */
 	@Override
 	public Number get(double cx, double cy) {
-		double x = cx, y = cy;
+		double kx = cx / (cx * cx + cy * cy);
+		double ky = -cy / (cx * cx + cy * cy);
+
+		double x = kx, y = ky;
 		double tx;
 		double t1, t2;
 
@@ -35,10 +35,10 @@ public final class IterativeShip extends Fractal {
 			t2 = y * y;
 
 			if (t1 + t2 > bailout)
-				return 255 - (255 * i) / iterations;
+				return 255 * (iterations - i) / iterations;
 
-			x = t1 - t2 + cx;
-			y = Math.abs(2 * tx * y) + cy;
+			x = t1 - t2 + kx;
+			y = 2 * tx * y + ky;
 
 		}
 		return 0;
@@ -46,17 +46,17 @@ public final class IterativeShip extends Fractal {
 
 	@Override
 	public String informalName() {
-		return "Iterative Burning Ship";
+		return "Iterative I-Mandelbrot";
 	}
 
 	@Override
 	public String fileName() {
-		return "IterativeShip";
+		return "IterativeInverseMandelbrot";
 	}
 
 	@Override
 	public String getTip() {
-		return "<html>The Buring Ship generated using an escape time algorithm."
+		return "<html>The second order mandelbrot with the reciprocal of the coordinate added instead. (<i>z²+1/c<i/>)"
 				+ "<br>This allows for deep zooms but creates aliasing effects, generally has the shortest generating time.</html>";
 	}
 
@@ -68,6 +68,6 @@ public final class IterativeShip extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new IterativeShip(settings, this);
+		return new IterativeInverseMandelbrot(settings, this);
 	}
 }

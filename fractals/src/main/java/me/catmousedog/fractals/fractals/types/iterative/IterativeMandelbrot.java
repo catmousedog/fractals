@@ -21,7 +21,7 @@ public final class IterativeMandelbrot extends Fractal {
 
 	@Override
 	public Number get(double cx, double cy) {
-		double x = 0, y = 0;
+		double x = cx, y = cy;
 		double tx;
 		double t1, t2;
 
@@ -53,7 +53,8 @@ public final class IterativeMandelbrot extends Fractal {
 
 	@Override
 	public String getTip() {
-		return "<html>The mandelbrot generated using an escape time algorithm. <br>This allows for deep zooms but creates aliasing effects, but has the shortest generating time.</html>";
+		return "<html>The second order mandelbrot (<i>z²+c<i/>) generated using an escape time algorithm."
+				+ "<br>This allows for deep zooms but creates aliasing effects, generally has the shortest generating time.</html>";
 	}
 
 	@Override

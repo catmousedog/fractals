@@ -132,7 +132,10 @@ public class JPInterface extends JPanel implements Savable {
 	}
 
 	/**
-	 * Called before the image is rendered.
+	 * Calls anything that needs to be called pre-render.<br>
+	 * This includes disabling buttons, inputs, etc.
+	 * <p>
+	 * Should be run on the EDT.
 	 */
 	@Override
 	public void preRender() {
@@ -178,11 +181,10 @@ public class JPInterface extends JPanel implements Savable {
 	private boolean allowUndo = false;
 
 	/**
-	 * This method is run after the image is done rendering. It shouldn't be
-	 * possible for this to occur concurrently or in the wrong order of calling
-	 * {@link JPInterface#render}.
+	 * Calls anything to that needs to be called post-render.<br>
+	 * This includes enabling buttons, inputs, etc.
 	 * <p>
-	 * Will be run on the EDT.
+	 * Should be run on the EDT.
 	 */
 	@Override
 	public void postRender() {
@@ -306,13 +308,14 @@ public class JPInterface extends JPanel implements Savable {
 	 * {@link JPInterface#update()} cycle.
 	 */
 	public void updateFractal() {
+		/* Location */
 		gui.getLocationjcb().setDataSafe(canvas.getFractal().getLocations());
 
+		/* Fractal */
 		gui.getFractaljcb().getComponent().setToolTipText(canvas.getFractal().getTip());
-
 		gui.getFilterjcb().getComponent().setToolTipText(canvas.getFractal().getFilter().getTip());
 		gui.getFilterjcb().setItems(canvas.getFractal().getFilters());
-
+		// colour
 		canvas.getFractal().getFilter().setPanel(gui.getFractaljp().getPanel());
 	}
 

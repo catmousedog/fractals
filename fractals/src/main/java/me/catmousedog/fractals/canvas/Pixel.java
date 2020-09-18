@@ -30,9 +30,9 @@ public class Pixel {
 	public int hashCode() {
 		return x << 16 ^ y;
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format("%f : %f = %f", tx, ty, v.doubleValue());
+		return String.format("%f : %f = %s", tx, ty, Double.toString(v.doubleValue()));
 	}
 }

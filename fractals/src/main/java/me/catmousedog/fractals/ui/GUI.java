@@ -186,7 +186,7 @@ public class GUI {
 				"<html>Generate a picture at the current location.<br> When generating large images make sure to allocate enough memory.</html>")
 				.build();
 
-		picturejcb = new ComboBoxItem.Builder(new String[] { "jpg", "png" })
+		picturejcb = new ComboBoxItem.Builder(new String[] { "png", "jpg" })
 				.setTip("<html>The extension of the image when generated.</html>").build();
 
 		all = new Item[] { p20, window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
@@ -315,10 +315,11 @@ public class GUI {
 		Filter f = (Filter) getFilterjcb().saveAndGet();
 		if (f.getClass().equals(canvas.getFractal().getFilter().getClass()))
 			return;
-		jpi.renderWithout(settings.isRender_on_changes(), () -> {
-			canvas.getFractal().pickFilter(f);
-			jpi.updateFractal();
-		});
+		jpi.save();
+		canvas.getFractal().pickFilter(f);
+		jpi.updateFractal();
+		jpi.update();
+		canvas.getFractal().saveAndColour();
 	}
 
 	/**

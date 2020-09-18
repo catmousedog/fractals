@@ -83,7 +83,7 @@ public class Main implements Runnable {
 		frame.setLayout(new BorderLayout());
 
 		// create canvas
-		canvas = new Canvas(size, fractals[0], logger);
+		canvas = new Canvas(size, settings.getDefaultFractal(), logger);
 		for (Fractal f : fractals)
 			f.setCanvas(canvas);
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);

@@ -43,7 +43,7 @@ public class IterativeLinearFilter extends Filter {
 
 	@Override
 	public int get(Number V) {
-		int v = (int) V;
+		int v = V.intValue();
 		if (inverted)
 			v = 255 - v;
 		return new Color((int) (v * r), (int) (v * g), (int) (v * b)).getRGB();

@@ -5,19 +5,25 @@ import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 
-public class PotentialShip extends Fractal {
+/**
+ * Number = Integer
+ */
+public final class PotentialInverseMandelbrot extends Fractal {
 
-	public PotentialShip(Settings settings) {
+	public PotentialInverseMandelbrot(Settings settings) {
 		super(settings);
 	}
 
-	private PotentialShip(Settings settings, Fractal fractal) {
+	private PotentialInverseMandelbrot(Settings settings, Fractal fractal) {
 		super(settings, fractal);
 	}
 
 	@Override
 	public Number get(double cx, double cy) {
-		double x = cx, y = cy;
+		double kx = cx / (cx * cx + cy * cy);
+		double ky = -cy / (cx * cx + cy * cy);
+
+		double x = kx, y = ky;
 		double tx;
 		double t1, t2;
 
@@ -29,8 +35,8 @@ public class PotentialShip extends Fractal {
 			t1 = x * x;
 			t2 = y * y;
 
-			x = t1 - t2 + cx;
-			y = Math.abs(2 * tx * y) + cy;
+			x = t1 - t2 + kx;
+			y = 2 * tx * y + ky;
 
 			p = Math.log(t1 + t2)/2;
 
@@ -43,21 +49,19 @@ public class PotentialShip extends Fractal {
 
 	@Override
 	public String informalName() {
-		return "Potential Burning Ship";
+		return "Potential I-Mandelbrot";
 	}
 
 	@Override
 	public String fileName() {
-		return "PotentialShip";
+		return "PotentialInverseMandelbrot";
 	}
 
 	@Override
 	public String getTip() {
-		return "<html>The burning ship generated using an electrostatic approximation."
-				+ "<br>This allows for smooth pictures but longer generating times."
-				+ "<br>This generation type is very similar to the 'normalized iteration count', "
-				+ "<br>but tends to major its frequency in deep zooms."
-				+ "<br>Not great for deep zooms as the value quickly approaches zero in deep zooms.</html>";
+		return "<html>The second order mandelbrot with the reciprocal of the coordinate added instead. (<i>z²+1/c<i/>)"
+				+ "<br>This allows for smooth pictures but long generating times."
+				+ "<br>Not great for deep zooms.</html>";
 	}
 
 	@Override
@@ -68,6 +72,6 @@ public class PotentialShip extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new PotentialShip(settings, this);
+		return new PotentialInverseMandelbrot(settings, this);
 	}
 }

@@ -15,13 +15,19 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.types.iterative.IterativeInverseMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
+import me.catmousedog.fractals.fractals.types.iterative.TestFractal;
+import me.catmousedog.fractals.fractals.types.normalized.NormalizedInverseMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
+import me.catmousedog.fractals.fractals.types.potential.PotentialInverseMandelbrot;
 import me.catmousedog.fractals.fractals.types.potential.PotentialMandelbrot;
 import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
 import me.catmousedog.fractals.utils.OrderedProperties;
@@ -47,7 +53,15 @@ public class Settings {
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
 	private final Fractal[] allFractals = new Fractal[] { new IterativeMandelbrot(this), new NormalizedMandelbrot(this),
-			new PotentialMandelbrot(this), new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this) };
+			new PotentialMandelbrot(this), new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this),
+			new IterativeInverseMandelbrot(this), new NormalizedInverseMandelbrot(this),
+			new PotentialInverseMandelbrot(this), new TestFractal(this) };
+
+	/**
+	 * property in the settings.properties, if not enabled this is the first fractal
+	 * that is enabled
+	 */
+	private Fractal defaultFractal;
 
 	public Settings(Main main) {
 		this.main = main;
@@ -94,13 +108,16 @@ public class Settings {
 	private void initSettings() throws IOException {
 		// create file and load defaults
 		File f = new File("./settings.properties");
+		InputStream settingsStream = main.getClass().getClassLoader()
+				.getResourceAsStream("default_settings.properties");
 		if (!f.exists()) {
-			Files.copy(main.getClass().getClassLoader().getResourceAsStream("default_settings.properties"),
-					Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(settingsStream, Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
 		}
 
 		// load settings from file
-		settings = new Properties();
+		Properties defaultSettings = new Properties();
+		defaultSettings.load(settingsStream);
+		settings = new Properties(defaultSettings);
 		settings.load(new FileInputStream(f));
 		// render_on_changes
 		render_on_changes = Boolean.parseBoolean(settings.getProperty("render_on_change"));
@@ -181,6 +198,16 @@ public class Settings {
 				fractals.add(fractal);
 			}
 		}
+
+		// defaultFractal
+		String d = settings.getProperty("defaultFractal");
+		defaultFractal = fractals.get(0);
+		for (Fractal f : fractals) {
+			if (f.fileName().equals(d)) {
+				defaultFractal = f;
+				break;
+			}
+		}
 	}
 
 	/**
@@ -257,20 +284,21 @@ public class Settings {
 	 * The name of the image will be the given <code>name</code> with a unique
 	 * number concatenated.
 	 * 
-	 * @param img  The {@link BufferedImage} to be stored as a file.
-	 * @param ext  The image extension, either 'jpg' or 'png'.
-	 * @param name The base file name.
+	 * @param img     The {@link BufferedImage} to be stored as a file.
+	 * @param ext     The image extension, either 'jpg' or 'png'.
+	 * @param fractal The {@link Fractal} with which this image was created.
 	 */
-	public void addImage(BufferedImage img, String ext, String name) {
-		String path = images.getAbsolutePath() + "/" + name;
+	public void addImage(@NotNull BufferedImage img, @NotNull String ext, @NotNull Fractal fractal) {
+		String imageName = fractal.fileName() + "_" + fractal.getTransform().toString();
+		String path = images.getAbsolutePath() + "/" + imageName;
 		File f;
 
 		for (int i = 1;; i++) {
-			f = new File(String.format("%s%d.%s", path, i, ext));
+			f = new File(String.format("%s_%d.%s", path, i, ext));
 			if (!f.exists())
 				break;
 		}
-
+		
 		try {
 			ImageIO.write(img, ext, f);
 		} catch (IOException e) {
@@ -310,6 +338,17 @@ public class Settings {
 			out[i] = fractals.get(i);
 
 		return out;
+	}
+
+	/**
+	 * The <code>defaultFractal</code> will not be null if
+	 * {@link Settings#initFractals()} has been called.
+	 * 
+	 * @return the default {@link Fractal}
+	 */
+	@NotNull
+	public Fractal getDefaultFractal() {
+		return defaultFractal;
 	}
 
 }

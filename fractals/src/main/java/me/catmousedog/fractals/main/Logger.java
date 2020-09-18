@@ -2,6 +2,7 @@ package me.catmousedog.fractals.main;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -91,11 +92,15 @@ public class Logger extends JPanel {
 		// progress bar
 		jpb = new JProgressBar();
 		add(jpb);
-		setProgress("no calculations", 0);
+
+		EventQueue.invokeLater(() -> {
+			setProgress("no calculations", 0);
+		});
 	}
 
 	/**
-	 * Log message so the user can see it in the feedback panel
+	 * Log message so the user can see it in the feedback panel.<br>
+	 * Doesn't need to be called on the EDT.
 	 * 
 	 * @param message to be logged
 	 */
@@ -105,7 +110,8 @@ public class Logger extends JPanel {
 	}
 
 	/**
-	 * logs a message with 'exception' in front of it
+	 * logs a message with 'exception' in front of it.<br>
+	 * Doesn't need to be called on the EDT.
 	 * 
 	 * @param e
 	 */
@@ -116,19 +122,22 @@ public class Logger extends JPanel {
 	}
 
 	private void logMessage(@NotNull String message) {
-		logMessages.add(message);
+		EventQueue.invokeLater(() -> {
+			logMessages.add(message);
 
-		if (logMessages.size() > m)
-			logMessages.remove(0);
+			if (logMessages.size() > m)
+				logMessages.remove(0);
 
-		for (int j = 0; j < logMessages.size(); j++) {
-			logs[m - j - 1].setText(logMessages.get(j));
-			logs[m - j - 1].setToolTipText(logMessages.get(j));
-		}
+			for (int j = 0; j < logMessages.size(); j++) {
+				logs[m - j - 1].setText(logMessages.get(j));
+				logs[m - j - 1].setToolTipText(logMessages.get(j));
+			}
+		});
 	}
 
 	/**
-	 * sets the progress message and the progress bar value
+	 * sets the progress message and the progress bar value.<br>
+	 * Must be run on the EDT.
 	 * 
 	 * @param progressMessage the message above the progress bar without the
 	 *                        progress value
@@ -140,21 +149,27 @@ public class Logger extends JPanel {
 	}
 
 	/**
-	 * Display the time it took to generate
+	 * Display the time it took to generate.<br>
+	 * This method does not need to be called from the EDT.
 	 * 
 	 * @param ms time in milliseconds
 	 */
 	public void setGenerated(long ms) {
-		generateTime.setText(String.format("generated in %d ms!", ms));
+		EventQueue.invokeLater(() -> {
+			generateTime.setText(String.format("generated in %d ms!", ms));
+		});
 	}
 
 	/**
-	 * Display the time it took to colour
+	 * Display the time it took to colour.<br>
+	 * This method does not need to be called from the EDT.
 	 * 
 	 * @param ms time in milliseconds
 	 */
 	public void setColoured(long ms) {
-		colourTime.setText(String.format("coloured in %d ms!", ms));
+		EventQueue.invokeLater(() -> {
+			colourTime.setText(String.format("coloured in %d ms!", ms));
+		});
 	}
 
 }

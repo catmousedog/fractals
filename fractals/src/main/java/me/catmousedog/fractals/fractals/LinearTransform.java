@@ -123,7 +123,7 @@ public class LinearTransform {
 		transform.setOrigin(ox, oy);
 		return transform;
 	}
-	
+
 	/**
 	 * Changes the zoom by a factor <code>f</code>.
 	 * 
@@ -137,11 +137,11 @@ public class LinearTransform {
 	public int getOx() {
 		return ox;
 	}
-	
+
 	public int getOy() {
 		return oy;
 	}
-	
+
 	public double getdx() {
 		return dx;
 	}
@@ -160,5 +160,13 @@ public class LinearTransform {
 
 	public double getrot() {
 		return rot;
+	}
+
+	/**
+	 * @return {@link String} of format: <code>x=%dx y=%dy m=%m n=%n</code>
+	 */
+	@Override
+	public String toString() {
+		return String.format("x=%f y=%f m=%f n=%f", dx, dy, m, n);
 	}
 }
