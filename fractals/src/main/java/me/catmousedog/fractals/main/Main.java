@@ -73,7 +73,6 @@ public class Main implements Runnable {
 	 */
 	@Override
 	public void run() {
-
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 		ToolTipManager.sharedInstance().setDismissDelay(60000);
 

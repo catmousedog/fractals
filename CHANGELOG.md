@@ -222,6 +222,8 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - middle mouse button shows Pixel information
 - *apache.commons.imaging* dependency for changing image properties
 - image name now includes the location
+- nullable *Fractal.mouse* field for allowing *fractals* to have *MouseMotionListener*.
+- zooming can no longer be done by dragging.
 
 ### Changed
 - Moved **AllData** to new **GUI** class and new source file

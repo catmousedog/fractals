@@ -91,6 +91,7 @@ public class Canvas extends JPanel {
 	public Canvas(InitialSize size, Fractal fractal, Logger logger) {
 		this.logger = logger;
 		this.fractal = fractal;
+		addMouseMotionListener(fractal.getMouse());
 		field = new Field(size.getWidth(), size.getHeight());
 
 		mouse = new Mouse(this);
@@ -257,7 +258,9 @@ public class Canvas extends JPanel {
 	 * @param fractal
 	 */
 	public void setFractal(@NotNull Fractal fractal) {
+		super.removeMouseMotionListener(this.fractal.getMouse());
 		this.fractal = fractal;
+		super.addMouseMotionListener(fractal.getMouse());
 		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
 		jpi.updateFractal();
 	}

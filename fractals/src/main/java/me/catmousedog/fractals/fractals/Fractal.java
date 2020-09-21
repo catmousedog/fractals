@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.fractals;
 
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -8,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.canvas.Canvas;
+import me.catmousedog.fractals.canvas.Mouse;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -40,6 +43,18 @@ public abstract class Fractal implements SafeSavable {
 	 * Settings object to access user settings
 	 */
 	protected final Settings settings;
+
+	/**
+	 * A {@link MouseMotionListener} for <code>Fractals</code> that allow mouse
+	 * motion input. <br>
+	 * A <code>Fractal</code> can not have a regular {@link MouseListener} as this
+	 * is already used by the {@link Mouse}.
+	 * <p>
+	 * Null if this <code>Fractal</code> does not have a
+	 * <code>MouseMotionListener</code>.
+	 */
+	@Nullable
+	protected final MouseMotionListener mouse;
 
 	/**
 	 * The instance of the canvas, used to call {@link Canvas#colourAndPaint()} when
@@ -99,11 +114,29 @@ public abstract class Fractal implements SafeSavable {
 	 * Only used once for each {@link Fractal} in the {@link Settings}.
 	 * <p>
 	 * This constructor also calls {@link Fractal#initFilters()}.
+	 * <p>
+	 * This constructor also takes a {@link MouseMotionListener}.
+	 * 
+	 * @param settings
+	 */
+	public Fractal(Settings settings, MouseMotionListener mouse) {
+		this.settings = settings;
+		this.mouse = mouse;
+		transform = new LinearTransform();
+		initFilters();
+	}
+
+	/**
+	 * Constructor used to initialise the {@link Fractal}.<br>
+	 * Only used once for each {@link Fractal} in the {@link Settings}.
+	 * <p>
+	 * This constructor also calls {@link Fractal#initFilters()}.
 	 * 
 	 * @param settings
 	 */
 	public Fractal(Settings settings) {
 		this.settings = settings;
+		mouse = null;
 		transform = new LinearTransform();
 		initFilters();
 	}
@@ -118,6 +151,7 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	protected Fractal(Settings settings, Fractal fractal) {
 		this.settings = settings;
+		mouse = null;
 		transform = fractal.getTransform().clone();
 		filter = fractal.getFilter().clone();
 		iterations = fractal.getIterations();
@@ -293,6 +327,15 @@ public abstract class Fractal implements SafeSavable {
 		return Double.toString(transform.getdx()) + ":" + Double.toString(transform.getdy()) + ":"
 				+ Double.toString(transform.getm()) + ":" + Double.toString(transform.getn()) + ":"
 				+ Double.toString(transform.getrot()) + ":" + Integer.toString(iterations);
+	}
+
+	/**
+	 * @return The {@link MouseMotionListener} belonging to this
+	 *         <code>Fractal</code> or <code>null</code> if absent.
+	 */
+	@Nullable
+	public MouseMotionListener getMouse() {
+		return mouse;
 	}
 
 	/**
