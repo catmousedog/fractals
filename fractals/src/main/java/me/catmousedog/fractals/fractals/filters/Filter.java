@@ -1,14 +1,17 @@
 package me.catmousedog.fractals.fractals.filters;
 
-import javax.swing.JComponent;
+import java.awt.Font;
+
 import javax.swing.JPanel;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.Label;
 
 /**
  * An abstract colour {@link Filter} including the {@link Filter#get(Number)}
@@ -51,7 +54,7 @@ public abstract class Filter implements Savable {
 	 * {@link Filter#clone()} is called. <br>
 	 * These fields should <b>NOT</b> be given a default value any other way.
 	 */
-	protected Filter(Fractal fractal) {
+	protected Filter(@NotNull Fractal fractal) {
 		this.fractal = fractal;
 		initPanel();
 	}
@@ -62,7 +65,7 @@ public abstract class Filter implements Savable {
 	 * 
 	 * @param filter
 	 */
-	protected Filter(Filter filter) {
+	protected Filter(@NotNull Filter filter) {
 		setFilter(filter);
 	}
 
@@ -73,14 +76,14 @@ public abstract class Filter implements Savable {
 	 * @param v value calculated by the fractal
 	 * @return the rgb value as an integer
 	 */
-	public abstract int get(Number v);
+	public abstract int get(@NotNull Number v);
 
 	/**
 	 * Change this {@link Filter} to equal the given <code>filter</code>.
 	 * 
 	 * @param filter
 	 */
-	public abstract void setFilter(Filter filter);
+	public abstract void setFilter(@NotNull Filter filter);
 
 	/**
 	 * Clones the {@link Filter}.<br>
@@ -91,21 +94,23 @@ public abstract class Filter implements Savable {
 	public abstract Filter clone();
 
 	/**
-	 * Initialises the {@link Filter}'s panel. This includes creating all the
-	 * {@link JComponent}s and creating the {@link Filter#items}.<br>
-	 * This is only done once for each {@link Filter}, so not when the
-	 * {@link Filter} is cloned.
+	 * Initialises the <code>Filter's</code> panel. This includes creating all the
+	 * <code>JComponents</code> and creating the {@link Filter#items}.<br>
+	 * This is only done once for each <code>Filter</code>, so not when the
+	 * <code>Filter</code> is cloned.
 	 */
 	protected abstract void initPanel();
 
+	private Label fi = new Label("Filter", "Settings for the current filter.", Font.BOLD, 12);
+	
 	/**
 	 * Adds all the necessary components to a given {@link JPanel} on the
 	 * {@link JPInterface}.
 	 * 
 	 * @param jp The JPanel to add the {@link Item}s to.
 	 */
-	public void setPanel(JPanel jp) {
-		jp.removeAll();
+	 public void addPanel(@NotNull JPanel jp) {
+		jp.add(fi.panel());
 		for (Item i : items)
 			jp.add(i.panel());
 	}

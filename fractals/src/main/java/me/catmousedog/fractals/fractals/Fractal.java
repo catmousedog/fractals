@@ -1,5 +1,6 @@
 package me.catmousedog.fractals.fractals;
 
+import java.awt.Font;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Properties;
@@ -17,6 +18,8 @@ import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.SafeSavable;
 import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Data;
+import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.Label;
 
 /**
  * Represents a fractal including its fractal function
@@ -32,7 +35,7 @@ import me.catmousedog.fractals.ui.components.Data;
  * <li>The {@link Fractal#get(double, double)} function.
  * <li>The name methods: {@link Fractal#informalName()},
  * {@link Fractal#fileName()} and {@link Fractal#getTip()}.
- * <li>{@link Fractal#initFilters()} method where the {@link Fractal#filter} and
+ * <li>{@link Fractal#initFractal()} method where the {@link Fractal#filter} and
  * the {@link Fractal#filters} array are initialised.
  * <li>{@link Fractal#clone()} method with the cloning constructor.
  * </ul>
@@ -42,7 +45,14 @@ public abstract class Fractal implements SafeSavable {
 	/**
 	 * Settings object to access user settings
 	 */
+	@NotNull
 	protected final Settings settings;
+
+	/**
+	 * The {@link LinearTransform} used to represent the location
+	 */
+	@NotNull
+	protected final LinearTransform transform;
 
 	/**
 	 * A {@link MouseMotionListener} for <code>Fractals</code> that allow mouse
@@ -52,9 +62,11 @@ public abstract class Fractal implements SafeSavable {
 	 * <p>
 	 * Null if this <code>Fractal</code> does not have a
 	 * <code>MouseMotionListener</code>.
+	 * <p>
+	 * It is effectively final after being assigned its value.
 	 */
 	@Nullable
-	protected final MouseMotionListener mouse;
+	protected MouseMotionListener mouse;
 
 	/**
 	 * The instance of the canvas, used to call {@link Canvas#colourAndPaint()} when
@@ -63,6 +75,7 @@ public abstract class Fractal implements SafeSavable {
 	 * It is effectively final after being assigned its value through
 	 * {@link Fractal#setCanvas(Canvas)}.
 	 */
+	@Nullable
 	protected Canvas canvas;
 
 	/**
@@ -82,21 +95,24 @@ public abstract class Fractal implements SafeSavable {
 	 * created in the {@link Settings}s.
 	 * <p>
 	 * It is effectively final after being assigned its value through
-	 * {@link Fractal#initFilters()} and it is null for all clones.
+	 * {@link Fractal#initFractal()} and it is null for all clones.
 	 */
 	@Nullable
 	protected Filter[] filters;
-
-	/**
-	 * The {@link LinearTransform} used to represent the location
-	 */
-	protected final LinearTransform transform;
 
 	/**
 	 * The current {@link Filter}, an element from {@link Fractal#filters}.
 	 */
 	@NotNull
 	protected Filter filter;
+
+	/**
+	 * Array of all {@link Item}s in order of addition.<br>
+	 * Only not null for the original <code>Fractal</code> if defined in
+	 * {@link Fractal#initFractal()}.
+	 */
+	@Nullable
+	protected Item[] items;
 
 	/**
 	 * The amount of iterations. Each {@link Fractal} might use this differently.
@@ -113,7 +129,7 @@ public abstract class Fractal implements SafeSavable {
 	 * Constructor used to initialise the {@link Fractal}.<br>
 	 * Only used once for each {@link Fractal} in the {@link Settings}.
 	 * <p>
-	 * This constructor also calls {@link Fractal#initFilters()}.
+	 * This constructor also calls {@link Fractal#initFractal()}.
 	 * <p>
 	 * This constructor also takes a {@link MouseMotionListener}.
 	 * 
@@ -123,14 +139,14 @@ public abstract class Fractal implements SafeSavable {
 		this.settings = settings;
 		this.mouse = mouse;
 		transform = new LinearTransform();
-		initFilters();
+		initFractal();
 	}
 
 	/**
 	 * Constructor used to initialise the {@link Fractal}.<br>
 	 * Only used once for each {@link Fractal} in the {@link Settings}.
 	 * <p>
-	 * This constructor also calls {@link Fractal#initFilters()}.
+	 * This constructor also calls {@link Fractal#initFractal()}.
 	 * 
 	 * @param settings
 	 */
@@ -138,11 +154,11 @@ public abstract class Fractal implements SafeSavable {
 		this.settings = settings;
 		mouse = null;
 		transform = new LinearTransform();
-		initFilters();
+		initFractal();
 	}
 
 	/**
-	 * Creates a new {@link Fractal} without calling {@link Fractal#initFilters()}
+	 * Creates a new {@link Fractal} without calling {@link Fractal#initFractal()}
 	 * that is an exact copy but has no reference (except for
 	 * {@link Fractal#settings}) to the original {@link Fractal}.
 	 * <code>filter</code>.
@@ -168,11 +184,14 @@ public abstract class Fractal implements SafeSavable {
 	public abstract Number get(double cx, double cy);
 
 	/**
-	 * Initialses the {@link Fractal#filters} array and the
-	 * {@link Fractal#filter}.<br>
-	 * Only done once when the {@link Fractal} is created.
+	 * Initialises the {@link Fractal#filters} array, the {@link Fractal#filter},
+	 * the {@link Fractal#mouse} and the {@link Fractal#items} array. The latter two
+	 * may be <code>null</code> if not implemented.
+	 * <p>
+	 * Only done once when the <code>Fractal</code> is created, not for clones of
+	 * <code>Fractals</code>.
 	 */
-	protected abstract void initFilters();
+	protected abstract void initFractal();
 
 	/**
 	 * Whether or not the listeners in the {@link Fractal#setPanel(JPanel)}
@@ -202,6 +221,10 @@ public abstract class Fractal implements SafeSavable {
 	@Override
 	public void preRender() {
 		filter.preRender();
+		if (items != null) {
+			for (Item item : items)
+				item.preRender();
+		}
 	}
 
 	/**
@@ -210,6 +233,10 @@ public abstract class Fractal implements SafeSavable {
 	@Override
 	public void postRender() {
 		filter.postRender();
+		if (items != null) {
+			for (Item item : items)
+				item.postRender();
+		}
 	}
 
 	/**
@@ -240,6 +267,26 @@ public abstract class Fractal implements SafeSavable {
 		allowListener = false;
 		update();
 		allowListener = true;
+	}
+
+	private Label fr = new Label("Fractal", "Settings for the current fractal.", Font.BOLD, 12);
+
+	/**
+	 * Removes all current components and adds all the necessary components to a
+	 * given {@link JPanel} on the {@link JPInterface}.
+	 * 
+	 * @param jp The JPanel to add the {@link Item}s to.
+	 */
+	public void setPanel(@NotNull JPanel jp) {
+		jp.removeAll();
+
+		if (items != null) {
+			jp.add(fr.panel());
+			for (Item i : items)
+				jp.add(i.panel());
+		}
+
+		filter.addPanel(jp);
 	}
 
 	/**

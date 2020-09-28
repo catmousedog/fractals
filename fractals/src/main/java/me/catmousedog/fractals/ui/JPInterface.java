@@ -1,6 +1,7 @@
 package me.catmousedog.fractals.ui;
 
 import java.awt.Dimension;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -164,8 +165,8 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getFractaljcb().preRender();
 		gui.getFilterjcb().preRender();
 		gui.getRepaintjb().preRender();
-		// colour
-		canvas.getFractal().getFilter().preRender();
+		// specific
+		canvas.getFractal().preRender();
 
 		/* Picture */
 		gui.getPicturewjtf().preRender();
@@ -217,8 +218,8 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getFilterjcb().postRender();
 		gui.getRepaintjb().postRender();
 		;
-		// colour
-		canvas.getFractal().getFilter().postRender();
+		// specific
+		canvas.getFractal().postRender();
 
 		/* Picture */
 		gui.getPicturewjtf().postRender();
@@ -255,7 +256,7 @@ public class JPInterface extends JPanel implements Savable {
 		canvas.setZoomFactor(gui.getZoomjtf().saveAndGet());
 
 		/* Fractal */
-		// colour
+		// specific
 		canvas.getFractal().save();
 
 		/* Picture */
@@ -286,7 +287,7 @@ public class JPInterface extends JPanel implements Savable {
 		/* Fractal */
 		gui.getFractaljcb().setDataSafe(canvas.getFractal());
 		gui.getFilterjcb().setDataSafe(canvas.getFractal().getFilter());
-		// colour
+		// specific
 		canvas.getFractal().safeUpdate();
 
 		/* Picture */
@@ -316,7 +317,7 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getFilterjcb().getComponent().setToolTipText(canvas.getFractal().getFilter().getTip());
 		gui.getFilterjcb().setItems(canvas.getFractal().getFilters());
 		// colour
-		canvas.getFractal().getFilter().setPanel(gui.getFractaljp().getPanel());
+		canvas.getFractal().setPanel(gui.getFractaljp().getPanel());
 	}
 
 	/**

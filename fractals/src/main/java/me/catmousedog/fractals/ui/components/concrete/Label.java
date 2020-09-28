@@ -22,7 +22,15 @@ public class Label extends Data<Object> {
 		jl.setToolTipText(tip);
 		jl.setAlignmentX(0);
 	}
-	
+
+	public Label(String text, String tip, int mod, int size) {
+		this.text = text;
+		jl = new JLabel(text);
+		jl.setFont(new Font(null, mod, size));
+		jl.setToolTipText(tip);
+		jl.setAlignmentX(0);
+	}
+
 	public Label(String text) {
 		this(text, null);
 	}

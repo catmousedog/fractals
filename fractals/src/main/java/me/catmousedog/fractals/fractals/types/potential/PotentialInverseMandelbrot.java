@@ -65,7 +65,7 @@ public final class PotentialInverseMandelbrot extends Fractal {
 	}
 
 	@Override
-	protected void initFilters() {
+	protected void initFractal() {
 		filters = new Filter[] { new LogPeriodicFilter(this) };
 		filter = filters[0];
 	}

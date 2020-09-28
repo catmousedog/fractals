@@ -58,7 +58,7 @@ public class NormalizedShip extends Fractal implements Savable {
 	}
 
 	@Override
-	protected void initFilters() {
+	protected void initFractal() {
 		filters = new Filter[] { new LogPeriodicFilter(this) };
 		filter = filters[0];
 	}

@@ -21,6 +21,7 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeInverseMandelbrot;
+import me.catmousedog.fractals.fractals.types.iterative.IterativeJulia;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
 import me.catmousedog.fractals.fractals.types.iterative.TestFractal;
@@ -53,7 +54,7 @@ public class Settings {
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
 	private final Fractal[] allFractals = new Fractal[] { new IterativeMandelbrot(this), new NormalizedMandelbrot(this),
-			new PotentialMandelbrot(this), new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this),
+			new PotentialMandelbrot(this), new IterativeJulia(this), new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this),
 			new IterativeInverseMandelbrot(this), new NormalizedInverseMandelbrot(this),
 			new PotentialInverseMandelbrot(this), new TestFractal(this) };
 

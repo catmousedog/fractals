@@ -224,6 +224,9 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - image name now includes the location
 - nullable *Fractal.mouse* field for allowing *fractals* to have *MouseMotionListener*.
 - zooming can no longer be done by dragging.
+- concrete fractal: *Julia* (implementation of *MouseMotionListener*)
+- added items array for fractal
+- *Fractal.setPanel* for fractal specific settings
 
 ### Changed
 - Moved **AllData** to new **GUI** class and new source file
@@ -231,9 +234,20 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - List of Pixels to Pixel array. Tremendously increase the parallel speed! colouring: before=300ms after=40ms<br> This also solved the Pixel creating issue when trying to create huge images. The lag spike is now 2 seconds compared to 20 seconds.
 - locations appear in order in combobox through **OrderedProperties** class.
 - Fixed minor bug with certain *Filter.get(Number V)* methods.
-
+- **Canvas** will only *render* synchronously
 ### Removed
 - Listener from TextFields
 
 ### Note
 - Did some testing on the efficiency of HashSet and HashMaps for storing the Pixels, the array seems to be the fasted option for parallel execution
+
+## TODO
+- fix artifacts in julia set
+- folder for each fractal type
+- checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
+- copy and paste for colours
+- dropdown like 'locations' for unique colours
+- if already repainting schedule new repaint request and override it of new request comes in so only the last gets executed
+- keylistener
+- make logger messages fade
+- use java.util.Logger

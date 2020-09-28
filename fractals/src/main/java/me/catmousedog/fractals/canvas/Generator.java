@@ -47,6 +47,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	private final Logger logger;
 
+	private boolean isGenerated = false;
+	
 	/**
 	 * Atomic counters for keeping calculation progress when using parallel streams.
 	 */
@@ -77,7 +79,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 	/**
 	 * Will generate the image by applying the fractal function
-	 * {@link Fractal#get(double, double)} and save to the {@link Canvas#pixels}.
+	 * {@link Fractal#get(double, double)} and save to the given {@link Field}.
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
@@ -120,7 +122,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 	/**
 	 * Called each percent of completion, updates the progress bar and runs the
-	 * {@link Canvas#colourAndPaint()} when done.
+	 * {@link Generator#runnable} when done.
 	 * <p>
 	 * Ran on the EDT
 	 */
@@ -131,7 +133,13 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 
 		if (evt.getNewValue() instanceof Integer)
 			logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
-		else if (evt.getNewValue().equals(StateValue.DONE))
+		else if (evt.getNewValue().equals(StateValue.DONE)) {
 			runnable.run();
+			isGenerated = true;
+		}
+	}
+	
+	public boolean isGenerated() {
+		return isGenerated;
 	}
 }

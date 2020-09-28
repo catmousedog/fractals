@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -111,6 +112,8 @@ public class Canvas extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(field.getImg(), 0, 0, null);
 	}
+	
+	static int i = 0;
 
 	/**
 	 * generates the image using a {@link SwingWorker} and calls the
@@ -120,8 +123,10 @@ public class Canvas extends JPanel {
 	 * {@link JPInterface}.
 	 */
 	public void render() {
-		generator = new Generator(field, fractal.clone(), () -> colourAndPaint(), logger);
-		generator.execute();
+		if (generator == null || generator.isGenerated()) {
+			generator = new Generator(field, fractal.clone(), () -> colourAndPaint(), logger);
+			generator.execute();
+		}
 	}
 
 	/**

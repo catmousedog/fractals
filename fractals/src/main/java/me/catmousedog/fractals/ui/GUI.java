@@ -159,8 +159,7 @@ public class GUI {
 				"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
 				.build();
 
-		SubTitle colour = new SubTitle("Colour",
-				"<html>This section contains the filter specific colour settings.</html>");
+		SubTitle specific = new SubTitle("Fractal Specific", "<html>This section contains the fractal specific settings.</html>");
 
 		fractaljp = new Panel();
 
@@ -192,7 +191,7 @@ public class GUI {
 		all = new Item[] { p20, window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
 				njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, iterjtf, p5,
 				zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljl, fractaljcb, p5,
-				filterjl, filterjcb, p5, repaintjb, p5, colour, p5, fractaljp, p20, picture, p10, picturesizejcb, p5,
+				filterjl, filterjcb, p5, repaintjb, p5, specific, p5, fractaljp, p20, picture, p10, picturesizejcb, p5,
 				picturewjtf, p5, picturehjtf, p5, picturejb, p5, picturejcb };
 	}
 
