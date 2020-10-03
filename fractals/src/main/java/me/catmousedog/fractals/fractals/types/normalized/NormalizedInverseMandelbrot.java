@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.fractals.types.normalized;
 
+import java.util.Properties;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
@@ -10,12 +12,16 @@ import me.catmousedog.fractals.main.Settings;
  */
 public final class NormalizedInverseMandelbrot extends Fractal {
 
+	private int offset;
+
 	public NormalizedInverseMandelbrot(Settings settings) {
 		super(settings);
+
 	}
 
-	private NormalizedInverseMandelbrot(Settings settings, Fractal fractal) {
+	private NormalizedInverseMandelbrot(Settings settings, Fractal fractal, int offset) {
 		super(settings, fractal);
+		this.offset = offset;
 	}
 
 	@Override
@@ -35,14 +41,15 @@ public final class NormalizedInverseMandelbrot extends Fractal {
 			t1 = x * x;
 			t2 = y * y;
 
-			x = t1 - t2 + kx;
-			y = 2 * tx * y + ky;
-
 			p = Math.log(t1 + t2) / 2;
 
 			if (p > bailout) {
-				return i + 3 - Math.log(p) / Math.log(2);
+				return i + offset - Math.log(p) / Math.log(2);
 			}
+
+			x = t1 - t2 + kx;
+			y = 2 * tx * y + ky;
+
 		}
 		return 0;
 	}
@@ -70,7 +77,13 @@ public final class NormalizedInverseMandelbrot extends Fractal {
 	}
 
 	@Override
+	public void setProperties(Properties properties) {
+		super.setProperties(properties);
+		offset = Integer.parseInt(properties.getProperty("offset"));
+	}
+
+	@Override
 	public Fractal clone() {
-		return new NormalizedInverseMandelbrot(settings, this);
+		return new NormalizedInverseMandelbrot(settings, this, offset);
 	}
 }

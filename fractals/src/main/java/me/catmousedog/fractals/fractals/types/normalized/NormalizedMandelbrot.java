@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.fractals.types.normalized;
 
+import java.util.Properties;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
@@ -8,12 +10,15 @@ import me.catmousedog.fractals.ui.Savable;
 
 public class NormalizedMandelbrot extends Fractal implements Savable {
 
+	private int offset;
+
 	public NormalizedMandelbrot(Settings settings) {
 		super(settings);
 	}
 
-	private NormalizedMandelbrot(Settings settings, Fractal fractal) {
+	private NormalizedMandelbrot(Settings settings, Fractal fractal, int offset) {
 		super(settings, fractal);
+		this.offset = offset;
 	}
 
 	@Override
@@ -30,14 +35,14 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 			t1 = x * x;
 			t2 = y * y;
 
-			x = t1 - t2 + cx;
-			y = 2 * tx * y + cy;
-
-			p = Math.log(t1 + t2)/2;
+			p = Math.log(t1 + t2) / 2;
 
 			if (p > bailout) {
-				return i + 1 - Math.log(p) / Math.log(2);
+				return i + offset - Math.log(p) / Math.log(2);
 			}
+
+			x = t1 - t2 + cx;
+			y = 2 * tx * y + cy;
 		}
 		return 0;
 	}
@@ -60,12 +65,18 @@ public class NormalizedMandelbrot extends Fractal implements Savable {
 
 	@Override
 	public Fractal clone() {
-		return new NormalizedMandelbrot(settings, this);
+		return new NormalizedMandelbrot(settings, this, offset);
 	}
 
 	@Override
 	protected void initFractal() {
 		filters = new Filter[] { new LogPeriodicFilter(this) };
 		filter = filters[0];
+	}
+
+	@Override
+	public void setProperties(Properties properties) {
+		super.setProperties(properties);
+		offset = Integer.parseInt(properties.getProperty("offset"));
 	}
 }

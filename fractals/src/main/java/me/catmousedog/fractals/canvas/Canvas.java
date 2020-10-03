@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -36,7 +36,7 @@ public class Canvas extends JPanel {
 	/**
 	 * used to log progress to the user
 	 */
-	private final Logger logger;
+	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * The effectively final instance of the {@link JPInterface}.
@@ -89,8 +89,7 @@ public class Canvas extends JPanel {
 	 * @param jpi     the user interface, used for saving and updating
 	 * @param logger  the logger instance
 	 */
-	public Canvas(InitialSize size, Fractal fractal, Logger logger) {
-		this.logger = logger;
+	public Canvas(InitialSize size, Fractal fractal) {
 		this.fractal = fractal;
 		addMouseMotionListener(fractal.getMouse());
 		field = new Field(size.getWidth(), size.getHeight());
@@ -124,7 +123,7 @@ public class Canvas extends JPanel {
 	 */
 	public void render() {
 		if (generator == null || generator.isGenerated()) {
-			generator = new Generator(field, fractal.clone(), () -> colourAndPaint(), logger);
+			generator = new Generator(field, fractal.clone(), () -> colourAndPaint());
 			generator.execute();
 		}
 	}

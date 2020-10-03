@@ -227,6 +227,9 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - concrete fractal: *Julia* (implementation of *MouseMotionListener*)
 - added items array for fractal
 - *Fractal.setPanel* for fractal specific settings
+- added *Fractal.setProperties* method to allow custom properties for each fractal
+- *Fractal.setLocation*
+- UIConsoleHandler
 
 ### Changed
 - Moved **AllData** to new **GUI** class and new source file
@@ -237,12 +240,19 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - **Canvas** will only *render* synchronously
 ### Removed
 - Listener from TextFields
+- moved to java.util.logging.Logger
+
+### Removed
+- *Fractal.setSpecificProperties*, just override the setProperties method from now on
 
 ### Note
 - Did some testing on the efficiency of HashSet and HashMaps for storing the Pixels, the array seems to be the fasted option for parallel execution
 
 ## TODO
-- fix artifacts in julia set
+- (move setProgress to Logger? extend Logger? but that means I would have to cast it each time to call the concrete methods) (make UIConsole into a singleton?)
+- make uncatched exceptions go to logger
+- UIConsoleHandler -> make complex logging to file and System.out but simple logs to UI
+- fix artifacts in julia set -> (slow down repaint?)
 - folder for each fractal type
 - checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
 - copy and paste for colours
@@ -251,3 +261,6 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - keylistener
 - make logger messages fade
 - use java.util.Logger
+- create fractal properties files and location if not found
+- julia default fixed point settings
+- advanced setting -> overlay for overlaying mandelbrot over julia set

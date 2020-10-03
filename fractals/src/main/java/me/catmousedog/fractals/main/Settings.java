@@ -26,6 +26,7 @@ import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
 import me.catmousedog.fractals.fractals.types.iterative.TestFractal;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedInverseMandelbrot;
+import me.catmousedog.fractals.fractals.types.normalized.NormalizedJulia;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
 import me.catmousedog.fractals.fractals.types.potential.PotentialInverseMandelbrot;
@@ -54,9 +55,9 @@ public class Settings {
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
 	private final Fractal[] allFractals = new Fractal[] { new IterativeMandelbrot(this), new NormalizedMandelbrot(this),
-			new PotentialMandelbrot(this), new IterativeJulia(this), new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this),
-			new IterativeInverseMandelbrot(this), new NormalizedInverseMandelbrot(this),
-			new PotentialInverseMandelbrot(this), new TestFractal(this) };
+			new PotentialMandelbrot(this), new IterativeJulia(this), new NormalizedJulia(this), new IterativeShip(this),
+			new NormalizedShip(this), new PotentialShip(this), new IterativeInverseMandelbrot(this),
+			new NormalizedInverseMandelbrot(this), new PotentialInverseMandelbrot(this), new TestFractal(this) };
 
 	/**
 	 * property in the settings.properties, if not enabled this is the first fractal
@@ -120,6 +121,7 @@ public class Settings {
 		defaultSettings.load(settingsStream);
 		settings = new Properties(defaultSettings);
 		settings.load(new FileInputStream(f));
+
 		// render_on_changes
 		render_on_changes = Boolean.parseBoolean(settings.getProperty("render_on_change"));
 		// intial size
@@ -187,13 +189,20 @@ public class Settings {
 
 			if (enabled.equalsIgnoreCase("true")) {
 				// create properties
-				Properties p = new Properties();
-				if (f1.exists())
+				Properties defaultP = new Properties();
+				defaultP.load(s1);
+				Properties p = new Properties(defaultP);
+				if (f1.exists()) {
 					p.load(new FileInputStream(fractalFilePath));
+				}
+
 				// create locations
-				OrderedProperties l = new OrderedProperties();
-				if (f2.exists())
+				OrderedProperties defaultL = new OrderedProperties();
+				defaultL.load(s2);
+				OrderedProperties l = new OrderedProperties(defaultL);
+				if (f2.exists()) {
 					l.load(new FileInputStream(locationFilePath));
+				}
 
 				setProperties(fractal, p, l);
 				fractals.add(fractal);
@@ -238,8 +247,7 @@ public class Settings {
 			double rot = Double.parseDouble(properties.getProperty("default_rot"));
 			transform.setRot(rot);
 
-			fractal.setIterations(Integer.parseInt(properties.getProperty("default_iter")));
-			fractal.setBailout(Double.parseDouble(properties.getProperty("bailout")));
+			fractal.setProperties(properties);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -299,7 +307,7 @@ public class Settings {
 			if (!f.exists())
 				break;
 		}
-		
+
 		try {
 			ImageIO.write(img, ext, f);
 		} catch (IOException e) {

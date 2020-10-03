@@ -130,23 +130,6 @@ public abstract class Fractal implements SafeSavable {
 	 * Only used once for each {@link Fractal} in the {@link Settings}.
 	 * <p>
 	 * This constructor also calls {@link Fractal#initFractal()}.
-	 * <p>
-	 * This constructor also takes a {@link MouseMotionListener}.
-	 * 
-	 * @param settings
-	 */
-	public Fractal(Settings settings, MouseMotionListener mouse) {
-		this.settings = settings;
-		this.mouse = mouse;
-		transform = new LinearTransform();
-		initFractal();
-	}
-
-	/**
-	 * Constructor used to initialise the {@link Fractal}.<br>
-	 * Only used once for each {@link Fractal} in the {@link Settings}.
-	 * <p>
-	 * This constructor also calls {@link Fractal#initFractal()}.
 	 * 
 	 * @param settings
 	 */
@@ -196,6 +179,8 @@ public abstract class Fractal implements SafeSavable {
 	/**
 	 * Whether or not the listeners in the {@link Fractal#setPanel(JPanel)}
 	 * {@link JPanel} are allowed to fire.
+	 * <p>
+	 * Only stops listeners from calling {@link Fractal#saveAndColour()}.
 	 */
 	private boolean allowListener = false;
 
@@ -290,6 +275,18 @@ public abstract class Fractal implements SafeSavable {
 	}
 
 	/**
+	 * Called for each <code>fractal</code> once upon creation. Sets all of the
+	 * default values from the <code>properties</code>. <br>
+	 * Can be overriden to add fractal specific properties.
+	 * 
+	 * @param properties
+	 */
+	public void setProperties(Properties properties) {
+		iterations = Integer.parseInt(properties.getProperty("default_iter"));
+		bailout = Double.parseDouble(properties.getProperty("bailout"));
+	}
+
+	/**
 	 * True if the <code>fractal</code> is the same concrete {@link Fractal}.<br>
 	 * The is achieved by checking if the {@link Fractal#fileName()}s are equal.
 	 * <p>
@@ -340,43 +337,6 @@ public abstract class Fractal implements SafeSavable {
 	public abstract Fractal clone();
 
 	/**
-	 * Changes this {@link Fractal} to match the given <code>id</code>.<br>
-	 * 
-	 * @param id {@link String} of format: <code>dx:dy:m:n:rot:iter</code>
-	 * 
-	 * @throws IllegalArgumentException if the <code>id</code> is not of the correct
-	 *                                  format.
-	 */
-	public void fromID(@NotNull String id) throws IllegalArgumentException {
-		String[] args = id.split(":|;");
-
-		if (args.length < 4)
-			throw new IllegalArgumentException("String not of format 'dx:dy:m:n:rot'");
-
-		try {
-			transform.setTranslation(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
-			transform.setScalar(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
-			if (args.length > 4)
-				transform.setRot(Double.parseDouble(args[4]));
-			if (args.length > 5)
-				iterations = Integer.parseInt(args[5]);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Creates an <code>id</code> to represent the location of this {@link Fractal}.
-	 * 
-	 * @return String of format: "dx:dy:m:n:rot:iter"
-	 */
-	public String getID() {
-		return Double.toString(transform.getdx()) + ":" + Double.toString(transform.getdy()) + ":"
-				+ Double.toString(transform.getm()) + ":" + Double.toString(transform.getn()) + ":"
-				+ Double.toString(transform.getrot()) + ":" + Integer.toString(iterations);
-	}
-
-	/**
 	 * @return The {@link MouseMotionListener} belonging to this
 	 *         <code>Fractal</code> or <code>null</code> if absent.
 	 */
@@ -411,6 +371,17 @@ public abstract class Fractal implements SafeSavable {
 
 	public double getBailout() {
 		return bailout;
+	}
+
+	/**
+	 * Changes the current {@link LinearTransform} and iterations to correspond with
+	 * the given <code>location</code>.
+	 * 
+	 * @param location
+	 */
+	public void setLocation(Location location) {
+		transform.set(location.getTransform());
+		iterations = location.getIterations();
 	}
 
 	public void setLocations(Location[] locations) {
@@ -448,8 +419,11 @@ public abstract class Fractal implements SafeSavable {
 		return filter;
 	}
 
+//	public String
+
 	/**
-	 * Class used to store an immutable location.
+	 * Class used to store an immutable location. A <code>Location</code> should
+	 * never contain any references, only clones.
 	 */
 	public class Location {
 
@@ -457,12 +431,64 @@ public abstract class Fractal implements SafeSavable {
 
 		private final LinearTransform transform;
 
-		private final int iterations;
+		private int iterations;
 
+		/**
+		 * Creates a <code>location</code> of the current <code>fractal</code>.
+		 */
+		public Location() {
+			this.name = null;
+			transform = Fractal.this.transform.clone();
+			iterations = Fractal.this.iterations;
+		}
+
+		/**
+		 * Creates a new location with a <code>name</code>, {@link LinearTransform} and
+		 * <code>iterations</code>.
+		 * 
+		 * @param name
+		 * @param dx
+		 * @param dy
+		 * @param m
+		 * @param n
+		 * @param rot
+		 * @param iterations
+		 */
 		public Location(String name, double dx, double dy, double m, double n, double rot, int iterations) {
 			this.name = name;
 			transform = new LinearTransform(dx, dy, m, n, rot);
 			this.iterations = iterations;
+		}
+
+		/**
+		 * Creates a <code>location</code> that matches the <code>id</code>. The
+		 * <code>id</code> is of the same format as the one returned by
+		 * {@link Location#getID()}.
+		 * 
+		 * @param id <code>String</code> of format 'dx:dy:m:n:rot:iter' with the last
+		 *           two, optional parameters, by default the values of the current
+		 *           <code>fractal</code>.
+		 * @throws IllegalArgumentException if the <code>id</code> is not of the correct
+		 *                                  'dx:dy:m:n:rot:iter' format or if a number
+		 *                                  could not be parsed.
+		 */
+		public Location(String id) throws IllegalArgumentException {
+			name = null;
+			transform = Fractal.this.transform.clone();
+			iterations = Fractal.this.iterations;
+
+			String[] args = id.split(":|;");
+
+			if (args.length < 4)
+				throw new IllegalArgumentException("String not of format 'dx:dy:m:n'");
+
+			transform.setTranslation(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
+			transform.setScalar(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+			if (args.length > 4)
+				transform.setRot(Double.parseDouble(args[4]));
+			if (args.length > 5)
+				iterations = Integer.parseInt(args[5]);
+
 		}
 
 		public LinearTransform getTransform() {
@@ -478,5 +504,14 @@ public abstract class Fractal implements SafeSavable {
 			return name;
 		}
 
+		/**
+		 * @return The location <code>id</code>, a <code>String</code> of the form:
+		 *         <code>x:y:m:mn:rot:iter</code>.
+		 */
+		public String getID() {
+			return Double.toString(transform.getdx()) + ":" + Double.toString(transform.getdy()) + ":"
+					+ Double.toString(transform.getm()) + ":" + Double.toString(transform.getn()) + ":"
+					+ Double.toString(transform.getrot()) + ":" + Integer.toString(iterations);
+		}
 	}
 }

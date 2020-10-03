@@ -13,7 +13,7 @@ import me.catmousedog.fractals.canvas.Generator;
 import me.catmousedog.fractals.canvas.Painter;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.main.Settings;
 
 /**
@@ -37,9 +37,9 @@ public class Picture {
 	private final Settings settings;
 
 	/**
-	 * The {@link Logger} instance.
+	 * The {@link UIConsole} instance.
 	 */
-	private final Logger logger;
+	private final UIConsole logger;
 
 	/**
 	 * The current {@link SwingWorker} responsible for generating the fractal.
@@ -52,7 +52,7 @@ public class Picture {
 	private Painter painter;
 
 	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings,
-			@NotNull Logger logger) {
+			@NotNull UIConsole logger) {
 		this.canvas = canvas;
 		this.jpi = jpi;
 		this.settings = settings;

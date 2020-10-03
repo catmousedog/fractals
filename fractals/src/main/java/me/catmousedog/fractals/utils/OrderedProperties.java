@@ -13,6 +13,13 @@ public class OrderedProperties extends Properties {
 
 	private final LinkedHashSet<Object> keyOrder = new LinkedHashSet<>();
 
+	public OrderedProperties() {
+	}
+
+	public OrderedProperties(OrderedProperties properties) {
+		super(properties);
+	}
+
 	@Override
 	public Enumeration<Object> keys() {
 		return Collections.enumeration(keyOrder);

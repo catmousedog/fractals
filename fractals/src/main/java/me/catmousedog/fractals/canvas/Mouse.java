@@ -30,16 +30,16 @@ public class Mouse implements MouseListener, MouseMotionListener {
 	private JPInterface jpi;
 
 	private boolean isStationary = true;
-	
+
 	public Mouse(Canvas canvas) {
 		this.canvas = canvas;
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent me) {
-		if (!isStationary)
+		if (canvas.getFractal().getMouse() != null && !isStationary)
 			return;
-		
+
 		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
 
 		// JPInterface#renderWithout(Runnable r) couldn't be used because of the
@@ -82,7 +82,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
 
 		isStationary = true;
-		
+
 		// mmb (info)
 		if (me.getButton() == MouseEvent.BUTTON2) {
 			middleMouse = true;
@@ -92,14 +92,14 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent me) {
-		isStationary = false; // if dragging the mouse disable zooming
-		if (!middleMouse)
-			return;
+		isStationary = false;
 
-		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
+		if (middleMouse) {
+			me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
 
-		tip.hide();
-		displayTip(me.getX(), me.getY());
+			tip.hide();
+			displayTip(me.getX(), me.getY());
+		}
 	}
 
 	@Override

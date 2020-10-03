@@ -7,6 +7,8 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 
@@ -14,7 +16,7 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.ActiveData;
@@ -54,7 +56,7 @@ public class GUI {
 
 	private final JPInterface jpi;
 
-	private final Logger logger;
+	private final Logger logger = Logger.getLogger("fractals");
 
 	private final Settings settings;
 
@@ -63,10 +65,9 @@ public class GUI {
 	 */
 	private final Picture picture;
 
-	public GUI(Main main, Canvas canvas, JPInterface jpi, Logger logger, Settings settings) {
+	public GUI(Main main, Canvas canvas, JPInterface jpi, Settings settings) {
 		this.canvas = canvas;
 		this.jpi = jpi;
-		this.logger = logger;
 		this.settings = settings;
 		picture = new Picture(canvas, jpi, settings, logger);
 
@@ -159,7 +160,8 @@ public class GUI {
 				"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
 				.build();
 
-		SubTitle specific = new SubTitle("Fractal Specific", "<html>This section contains the fractal specific settings.</html>");
+		SubTitle specific = new SubTitle("Fractal Specific",
+				"<html>This section contains the fractal specific settings.</html>");
 
 		fractaljp = new Panel();
 
@@ -200,14 +202,12 @@ public class GUI {
 	 */
 	private void copy() {
 		// update?
-		String clip = canvas.getFractal().getID();
+		String clip = canvas.getFractal().new Location().getID();
 
 		try {
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.exception(e);
-			logger.log("unable to copy to clipboard");
+			logger.log(Level.WARNING, "unable to copy to clipboard", e);
 		}
 	}
 
@@ -219,20 +219,20 @@ public class GUI {
 			String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 
 			canvas.savePrevConfig();
+
 			try {
-				canvas.getFractal().fromID(clip);
+				Location l = canvas.getFractal().new Location(clip);
+				canvas.getFractal().setLocation(l);
+
+				if (settings.isRender_on_changes()) {
+					jpi.update();
+					jpi.renderNow();
+				}
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
 				logger.exception(e);
 			}
 
-			if (settings.isRender_on_changes()) {
-				jpi.update();
-				jpi.renderNow();
-			}
-
 		} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
-			logger.log("unable to paste from clipboard");
 			logger.exception(e);
 			e.printStackTrace();
 		}
@@ -245,9 +245,7 @@ public class GUI {
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			@SuppressWarnings("unchecked")
 			JComboBox<Object> jcb = (JComboBox<Object>) a.getSource();
-			Location l = (Location) jcb.getSelectedItem();
-			canvas.getFractal().getTransform().set(l.getTransform());
-			canvas.getFractal().setIterations(l.getIterations());
+			canvas.getFractal().setLocation((Location) jcb.getSelectedItem());
 		});
 	}
 

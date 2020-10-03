@@ -3,6 +3,11 @@ package me.catmousedog.fractals.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -33,10 +38,12 @@ public class Main implements Runnable {
 	 */
 	private final InitialSize size = new InitialSize();
 
+	private final Logger logger = Logger.getLogger("fractals");
+
 	/**
 	 * Logger containing a JPanel to display any feedback such as progress bars
 	 */
-	private final Logger logger = new Logger(size);
+	private final UIConsole uiConsole = new UIConsole(size);
 
 	private JFrame frame;
 
@@ -47,7 +54,7 @@ public class Main implements Runnable {
 
 	/**
 	 * master panel on the right side containing {@link Canvas#jsp} and
-	 * {@link Main#logger}
+	 * {@link Main#uiConsole}
 	 */
 	private JPanel rpanel;
 
@@ -73,6 +80,17 @@ public class Main implements Runnable {
 	 */
 	@Override
 	public void run() {
+		logger.setLevel(Level.ALL);
+		try {
+			FileHandler fileHandler = new FileHandler("logs/test.log");
+			fileHandler.setLevel(Level.ALL);
+			fileHandler.setFormatter(new SimpleFormatter());
+			logger.addHandler(fileHandler);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		logger.addHandler(uiConsole);
+
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 		ToolTipManager.sharedInstance().setDismissDelay(60000);
 
@@ -82,7 +100,7 @@ public class Main implements Runnable {
 		frame.setLayout(new BorderLayout());
 
 		// create canvas
-		canvas = new Canvas(size, settings.getDefaultFractal(), logger);
+		canvas = new Canvas(size, settings.getDefaultFractal());
 		for (Fractal f : fractals)
 			f.setCanvas(canvas);
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
@@ -93,7 +111,7 @@ public class Main implements Runnable {
 		rpanel.setLayout(new BorderLayout());
 
 		// create interface panel
-		jpi = new JPInterface(size, this, canvas, logger, settings);
+		jpi = new JPInterface(size, this, canvas, settings);
 
 		// add jpi to canvas
 		canvas.setJPI(jpi);
@@ -105,7 +123,7 @@ public class Main implements Runnable {
 		rpanel.add(jsp, BorderLayout.CENTER);
 
 		// create feedback panel
-		rpanel.add(logger, BorderLayout.PAGE_END);
+		rpanel.add(uiConsole.getPanel(), BorderLayout.PAGE_END);
 
 		// add right panel
 		frame.getContentPane().add(rpanel, BorderLayout.LINE_END);
@@ -126,6 +144,10 @@ public class Main implements Runnable {
 		// initial render
 		if (settings.isRender_on_changes())
 			jpi.renderNow();
+
+		logger.info("info");
+		logger.warning("warning");
+		logger.fine("fine");
 	}
 
 	public void setSize(int w, int h) {

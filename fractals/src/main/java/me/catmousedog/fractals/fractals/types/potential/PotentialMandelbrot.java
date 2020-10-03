@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.fractals.types.potential;
 
+import java.util.Properties;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;

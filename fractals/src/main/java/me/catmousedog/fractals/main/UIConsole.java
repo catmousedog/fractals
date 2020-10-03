@@ -1,15 +1,14 @@
 package me.catmousedog.fractals.main;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.util.Vector;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,23 +18,7 @@ import me.catmousedog.fractals.main.Main.InitialSize;
 /**
  * This class is used to log messages to the user and show any outputs
  */
-@SuppressWarnings("serial")
-public class Logger extends JPanel {
-
-	/**
-	 * amount of logged messages displayed
-	 */
-	private int m = 3;
-
-	/**
-	 * array of JLabels representing the logged messages
-	 */
-	private final JLabel[] logs = new JLabel[m];
-
-	/**
-	 * Stack of Strings representing the first to last logged messages
-	 */
-	private final Vector<String> logMessages = new Vector<String>();
+public class UIConsole extends UIConsoleHandler {
 
 	/**
 	 * {@link JLabel} displaying the last render's generating time
@@ -57,82 +40,44 @@ public class Logger extends JPanel {
 	 */
 	private final JProgressBar jpb;
 
-	public Logger(InitialSize size) {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setPreferredSize(new Dimension(size.getIwidth() + 2 * size.getHgap(), size.getFeedbackheight()));
-		setBorder(BorderFactory.createLineBorder(Color.GRAY));
+	public UIConsole(InitialSize size) {
+		super(size);
 
-		// log labels
-		for (int j = 0; j < m; j++) {
-			logs[j] = new JLabel();
-			logs[j].setAlignmentX(JLabel.CENTER_ALIGNMENT);
-			add(logs[j]);
-		}
-
-		add(Box.createVerticalGlue());
+		panel.add(Box.createVerticalGlue());
 
 		// time labels
 		generateTime = new JLabel("not yet generated");
 		generateTime.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		add(generateTime);
+		panel.add(generateTime);
 
 		colourTime = new JLabel("not yet coloured");
 		colourTime.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		add(colourTime);
+		panel.add(colourTime);
 
-		add(Box.createVerticalStrut(5));
+		panel.add(Box.createVerticalStrut(5));
 
 		// progress label
 		progress = new JLabel();
 		progress.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		add(progress);
+		panel.add(progress);
 
-		add(Box.createVerticalStrut(2));
+		panel.add(Box.createVerticalStrut(2));
 
 		// progress bar
 		jpb = new JProgressBar();
-		add(jpb);
+		panel.add(jpb);
 
 		EventQueue.invokeLater(() -> {
 			setProgress("no calculations", 0);
 		});
 	}
 
-	/**
-	 * Log message so the user can see it in the feedback panel.<br>
-	 * Doesn't need to be called on the EDT.
-	 * 
-	 * @param message to be logged
-	 */
-	public void log(@NotNull String message) {
-		System.out.println("logger: " + message);
-		logMessage(message);
+	public void log(String m) {
+
 	}
 
-	/**
-	 * logs a message with 'exception' in front of it.<br>
-	 * Doesn't need to be called on the EDT.
-	 * 
-	 * @param e
-	 */
-	public void exception(@NotNull Exception e) {
-		String m = "exception: " + e.getMessage();
-		System.err.println(m);
-		logMessage(m);
-	}
+	public void exception(Exception e) {
 
-	private void logMessage(@NotNull String message) {
-		EventQueue.invokeLater(() -> {
-			logMessages.add(message);
-
-			if (logMessages.size() > m)
-				logMessages.remove(0);
-
-			for (int j = 0; j < logMessages.size(); j++) {
-				logs[m - j - 1].setText(logMessages.get(j));
-				logs[m - j - 1].setToolTipText(logMessages.get(j));
-			}
-		});
 	}
 
 	/**

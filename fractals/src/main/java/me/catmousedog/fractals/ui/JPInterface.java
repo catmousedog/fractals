@@ -1,7 +1,7 @@
 package me.catmousedog.fractals.ui;
 
 import java.awt.Dimension;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.Logger;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 
@@ -39,20 +39,19 @@ public class JPInterface extends JPanel implements Savable {
 	private final Canvas canvas;
 
 	/**
-	 * The {@link Logger} instance.
+	 * The {@link UIConsole} instance.
 	 */
-	private final Logger logger;
+	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * user data from the user interface
 	 */
 	private final GUI gui;
 
-	public JPInterface(InitialSize size, Main main, Canvas canvas, Logger logger, Settings settings) {
+	public JPInterface(InitialSize size, Main main, Canvas canvas, Settings settings) {
 		this.main = main;
 		this.canvas = canvas;
-		this.logger = logger;
-		gui = new GUI(main, canvas, this, logger, settings);
+		gui = new GUI(main, canvas, this, settings);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));

@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.fractals.types.normalized;
 
+import java.util.Properties;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
@@ -8,12 +10,15 @@ import me.catmousedog.fractals.ui.Savable;
 
 public class NormalizedShip extends Fractal implements Savable {
 
+	private int offset;
+
 	public NormalizedShip(Settings settings) {
 		super(settings);
 	}
 
-	private NormalizedShip(Settings settings, Fractal fractal) {
+	private NormalizedShip(Settings settings, Fractal fractal, int offset) {
 		super(settings, fractal);
+		this.offset = offset;
 	}
 
 	@Override
@@ -30,14 +35,14 @@ public class NormalizedShip extends Fractal implements Savable {
 			t1 = x * x;
 			t2 = y * y;
 
-			x = t1 - t2 + cx;
-			y = Math.abs(2 * tx * y) + cy;
-
-			p = Math.log(t1 + t2)/2;
+			p = Math.log(t1 + t2) / 2;
 
 			if (p > bailout) {
-				return i + 1 - Math.log(p) / Math.log(2);
+				return i + offset - Math.log(p) / Math.log(2);
 			}
+
+			x = t1 - t2 + cx;
+			y = Math.abs(2 * tx * y) + cy;
 		}
 		return 0;
 	}
@@ -64,7 +69,13 @@ public class NormalizedShip extends Fractal implements Savable {
 	}
 
 	@Override
+	public void setProperties(Properties properties) {
+		super.setProperties(properties);
+		offset = Integer.parseInt(properties.getProperty("offset"));
+	}
+
+	@Override
 	public Fractal clone() {
-		return new NormalizedShip(settings, this);
+		return new NormalizedShip(settings, this, offset);
 	}
 }

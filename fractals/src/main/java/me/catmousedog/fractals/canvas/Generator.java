@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import javax.swing.SwingWorker;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.main.Logger;
+import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.ui.JPInterface;
 
 /**
@@ -43,12 +44,12 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	private final Runnable runnable;
 
 	/**
-	 * The {@link Logger} instance.
+	 * The <code>logger</code>
 	 */
-	private final Logger logger;
+	private final Logger logger = Logger.getLogger("fractals");
 
 	private boolean isGenerated = false;
-	
+
 	/**
 	 * Atomic counters for keeping calculation progress when using parallel streams.
 	 */
@@ -65,15 +66,13 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 * @param runnable The {@link Runnable} run when the {@link Generator} is done
 	 *                 and wans't cancelled.
 	 * @param jpi      The {@link JPInterface} instance.
-	 * @param logger   The {@link Logger} instance.
+	 * @param logger   The {@link UIConsole} instance.
 	 */
-	public Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable,
-			@NotNull Logger logger) {
+	public Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
 		this.pixels = field.getPixels();
 		this.fractal = fractal;
 		transform = fractal.getTransform();
 		this.runnable = runnable;
-		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
 
@@ -138,7 +137,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 			isGenerated = true;
 		}
 	}
-	
+
 	public boolean isGenerated() {
 		return isGenerated;
 	}
