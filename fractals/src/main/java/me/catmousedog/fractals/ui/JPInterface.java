@@ -15,9 +15,9 @@ import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.utils.FeedbackPanel;
 
 /**
  * Class used to interact the user entered data via the {@link GUI} class and
@@ -39,7 +39,7 @@ public class JPInterface extends JPanel implements Savable {
 	private final Canvas canvas;
 
 	/**
-	 * The {@link UIConsole} instance.
+	 * The {@link FeedbackPanel} instance.
 	 */
 	private final Logger logger = Logger.getLogger("fractals");
 
@@ -77,7 +77,7 @@ public class JPInterface extends JPanel implements Savable {
 	public void render() {
 		// already rendering
 		if (!gui.getRenderjb().saveAndGet()) {
-			logger.log("already rendering...");
+			logger.finer("already rendering...");
 			return;
 		}
 
@@ -98,7 +98,7 @@ public class JPInterface extends JPanel implements Savable {
 	public void renderNow() {
 		// already rendering
 		if (!gui.getRenderjb().saveAndGet()) {
-			logger.log("already rendering...");
+			logger.finer("already rendering...");
 			return;
 		}
 

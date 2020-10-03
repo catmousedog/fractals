@@ -13,7 +13,6 @@ import me.catmousedog.fractals.canvas.Generator;
 import me.catmousedog.fractals.canvas.Painter;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.main.Settings;
 
 /**
@@ -37,11 +36,6 @@ public class Picture {
 	private final Settings settings;
 
 	/**
-	 * The {@link UIConsole} instance.
-	 */
-	private final UIConsole logger;
-
-	/**
 	 * The current {@link SwingWorker} responsible for generating the fractal.
 	 */
 	private Generator generator;
@@ -51,12 +45,10 @@ public class Picture {
 	 */
 	private Painter painter;
 
-	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings,
-			@NotNull UIConsole logger) {
+	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings) {
 		this.canvas = canvas;
 		this.jpi = jpi;
 		this.settings = settings;
-		this.logger = logger;
 	}
 
 	/**
@@ -84,11 +76,11 @@ public class Picture {
 				painter = new Painter(field, canvas.getFractal().getFilter().clone(), () -> {
 					settings.addImage(field.getImg(), ext, canvas.getFractal());
 					jpi.postRender();
-				}, logger);
+				});
 
 				generator = new Generator(field, fractal, () -> {
 					painter.execute();
-				}, logger);
+				});
 				generator.execute();
 			}
 		});

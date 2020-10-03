@@ -95,6 +95,10 @@ public class Settings {
 		// create images folder
 		if (!images.exists())
 			images.mkdir();
+
+		File logs = new File("./logs");
+		if (!logs.exists())
+			logs.mkdirs();
 	}
 
 	/**

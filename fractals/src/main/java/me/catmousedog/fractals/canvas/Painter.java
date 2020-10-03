@@ -11,8 +11,8 @@ import javax.swing.SwingWorker;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.utils.FeedbackPanel;
 
 public class Painter extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
@@ -39,7 +39,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	/**
 	 * The logger instance.
 	 */
-	private final UIConsole logger;
+	private final FeedbackPanel logger = FeedbackPanel.getInstance();
 
 	private AtomicInteger i, q;
 
@@ -55,14 +55,13 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 *                 {@link Filter#get(Number)}.
 	 * @param runnable the {@link Runnable} run when the {@link Painter} is done on the EDT.
 	 * @param jpi      the {@link JPInterface} instance.
-	 * @param logger   the {@link UIConsole} instance.
+	 * @param logger   the {@link FeedbackPanel} instance.
 	 */
-	public Painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable, @NotNull UIConsole logger) {
+	public Painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable) {
 		img = field.getImg();
 		this.pixels = field.getPixels();
 		this.filter = filter;
 		this.runnable = runnable;
-		this.logger = logger;
 		addPropertyChangeListener(this);
 	}
 

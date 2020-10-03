@@ -229,7 +229,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - *Fractal.setPanel* for fractal specific settings
 - added *Fractal.setProperties* method to allow custom properties for each fractal
 - *Fractal.setLocation*
-- UIConsoleHandler
+- FeedbackPanel singleton for displaying generating / painting times, this class is also a **Handler** for logging messages
 
 ### Changed
 - Moved **AllData** to new **GUI** class and new source file
@@ -248,19 +248,3 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Note
 - Did some testing on the efficiency of HashSet and HashMaps for storing the Pixels, the array seems to be the fasted option for parallel execution
 
-## TODO
-- (move setProgress to Logger? extend Logger? but that means I would have to cast it each time to call the concrete methods) (make UIConsole into a singleton?)
-- make uncatched exceptions go to logger
-- UIConsoleHandler -> make complex logging to file and System.out but simple logs to UI
-- fix artifacts in julia set -> (slow down repaint?)
-- folder for each fractal type
-- checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
-- copy and paste for colours
-- dropdown like 'locations' for unique colours
-- if already repainting schedule new repaint request and override it of new request comes in so only the last gets executed
-- keylistener
-- make logger messages fade
-- use java.util.Logger
-- create fractal properties files and location if not found
-- julia default fixed point settings
-- advanced setting -> overlay for overlaying mandelbrot over julia set

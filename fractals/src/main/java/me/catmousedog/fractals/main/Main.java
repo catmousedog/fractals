@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -17,6 +18,7 @@ import javax.swing.ToolTipManager;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.utils.FeedbackPanel;
 
 /**
  * the main class
@@ -38,12 +40,17 @@ public class Main implements Runnable {
 	 */
 	private final InitialSize size = new InitialSize();
 
+	/**
+	 * The <code>Logger</code> used to log messages to the user and log files.
+	 */
 	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
-	 * Logger containing a JPanel to display any feedback such as progress bars
+	 * The panel containing all the feedback.<br>
+	 * This is also a {@link Handler} so any loggable messages will appear on this
+	 * panel.
 	 */
-	private final UIConsole uiConsole = new UIConsole(size);
+	private final FeedbackPanel feedback = FeedbackPanel.init(size);
 
 	private JFrame frame;
 
@@ -54,7 +61,7 @@ public class Main implements Runnable {
 
 	/**
 	 * master panel on the right side containing {@link Canvas#jsp} and
-	 * {@link Main#uiConsole}
+	 * {@link Main#feedback}
 	 */
 	private JPanel rpanel;
 
@@ -80,6 +87,7 @@ public class Main implements Runnable {
 	 */
 	@Override
 	public void run() {
+		// add handlers to logger
 		logger.setLevel(Level.ALL);
 		try {
 			FileHandler fileHandler = new FileHandler("logs/test.log");
@@ -89,7 +97,7 @@ public class Main implements Runnable {
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
-		logger.addHandler(uiConsole);
+		logger.addHandler(feedback);
 
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 		ToolTipManager.sharedInstance().setDismissDelay(60000);
@@ -123,7 +131,7 @@ public class Main implements Runnable {
 		rpanel.add(jsp, BorderLayout.CENTER);
 
 		// create feedback panel
-		rpanel.add(uiConsole.getPanel(), BorderLayout.PAGE_END);
+		rpanel.add(feedback.getPanel(), BorderLayout.PAGE_END);
 
 		// add right panel
 		frame.getContentPane().add(rpanel, BorderLayout.LINE_END);
@@ -168,7 +176,7 @@ public class Main implements Runnable {
 		 * <p>
 		 * The default size is set in the {@code settings.properties} file
 		 */
-		private int width = settings.getWidth(), height = settings.getHeight();
+		private final int width = settings.getWidth(), height = settings.getHeight();
 
 		/**
 		 * The interface width, this remains constant unless the frame is smaller than
@@ -176,22 +184,22 @@ public class Main implements Runnable {
 		 * Note that this is not the width of the {@linkplain Main#jpi}, as this is
 		 * usually smaller.
 		 */
-		private int iwidth = 200;
+		private final int iwidth = 200;
 
 		/**
 		 * height of the feedback box
 		 */
-		private int feedbackheight = 150;
+		private final int feedbackheight = 150;
 
 		/**
 		 * vertical gap for the jpi border
 		 */
-		private int vgap = 10;
+		private final int vgap = 10;
 
 		/**
 		 * horizontal gap for the jpi border
 		 */
-		private int hgap = 4;
+		private final int hgap = 4;
 
 		/**
 		 * @return the width

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -32,11 +30,6 @@ public class Canvas extends JPanel {
 	 * the mouse listener
 	 */
 	private final Mouse mouse;
-
-	/**
-	 * used to log progress to the user
-	 */
-	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * The effectively final instance of the {@link JPInterface}.
@@ -111,7 +104,7 @@ public class Canvas extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(field.getImg(), 0, 0, null);
 	}
-	
+
 	static int i = 0;
 
 	/**
@@ -142,7 +135,7 @@ public class Canvas extends JPanel {
 			painter = new Painter(field, fractal.getFilter().clone(), () -> {
 				repaint();
 				jpi.postRender();
-			}, logger);
+			});
 
 			painter.execute();
 			return true;

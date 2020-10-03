@@ -1,7 +1,11 @@
 # Compiled class file
 *.class
 
-# Log file
+# images
+*.jpg
+*.png
+
+# Log files
 *.log
 *.log.lck
 

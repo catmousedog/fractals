@@ -1,7 +1,5 @@
 package me.catmousedog.fractals.fractals.types.iterative;
 
-import java.util.Properties;
-
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;

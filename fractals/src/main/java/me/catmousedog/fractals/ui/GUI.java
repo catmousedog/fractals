@@ -16,7 +16,6 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.ActiveData;
@@ -33,6 +32,7 @@ import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
+import me.catmousedog.fractals.utils.FeedbackPanel;
 
 /**
  * Concrete class containing all the actual {@link Data} containers displayed in
@@ -58,6 +58,8 @@ public class GUI {
 
 	private final Logger logger = Logger.getLogger("fractals");
 
+	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
+	
 	private final Settings settings;
 
 	/**
@@ -69,7 +71,7 @@ public class GUI {
 		this.canvas = canvas;
 		this.jpi = jpi;
 		this.settings = settings;
-		picture = new Picture(canvas, jpi, settings, logger);
+		picture = new Picture(canvas, jpi, settings);
 
 		Padding p5 = new Padding(5);
 
@@ -220,21 +222,18 @@ public class GUI {
 
 			canvas.savePrevConfig();
 
-			try {
-				Location l = canvas.getFractal().new Location(clip);
-				canvas.getFractal().setLocation(l);
+			Location l = canvas.getFractal().new Location(clip);
+			canvas.getFractal().setLocation(l);
 
-				if (settings.isRender_on_changes()) {
-					jpi.update();
-					jpi.renderNow();
-				}
-			} catch (IllegalArgumentException e) {
-				logger.exception(e);
+			if (settings.isRender_on_changes()) {
+				jpi.update();
+				jpi.renderNow();
 			}
 
+		} catch (IllegalArgumentException e) {
+			logger.log(Level.FINE, "clipboard is not correct format", e);
 		} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
-			logger.exception(e);
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "could not paste clipboard", e);
 		}
 	}
 
@@ -284,9 +283,9 @@ public class GUI {
 		if (canvas.cancel()) {
 			jpi.allowUndo(false);
 			canvas.undo();
-			logger.setProgress("cancelled render", 0);
+			feedback.setProgress("cancelled render", 0);
 		} else if (picture.cancel()) {
-			logger.setProgress("cancelled image", 0);
+			feedback.setProgress("cancelled image", 0);
 		}
 		jpi.update();
 		jpi.postRender();

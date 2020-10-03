@@ -2,7 +2,6 @@ package me.catmousedog.fractals.fractals.types.iterative;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.util.Properties;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;

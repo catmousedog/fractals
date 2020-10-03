@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import javax.swing.SwingWorker;
@@ -13,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.main.UIConsole;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.utils.FeedbackPanel;
 
 /**
  * swing worker used for generating the image and updating at the same time
@@ -43,10 +42,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	private final Runnable runnable;
 
-	/**
-	 * The <code>logger</code>
-	 */
-	private final Logger logger = Logger.getLogger("fractals");
+	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
 
 	private boolean isGenerated = false;
 
@@ -66,7 +62,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 * @param runnable The {@link Runnable} run when the {@link Generator} is done
 	 *                 and wans't cancelled.
 	 * @param jpi      The {@link JPInterface} instance.
-	 * @param logger   The {@link UIConsole} instance.
+	 * @param logger   The {@link FeedbackPanel} instance.
 	 */
 	public Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
 		this.pixels = field.getPixels();
@@ -114,7 +110,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		long e = System.nanoTime();
 
 		// log time
-		logger.setGenerated((e - b) / 1000000);
+		feedback.setGenerated((e - b) / 1000000);
 
 		return null;
 	}
@@ -131,7 +127,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 			return;
 
 		if (evt.getNewValue() instanceof Integer)
-			logger.setProgress("calculating fractal", (Integer) evt.getNewValue());
+			feedback.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		else if (evt.getNewValue().equals(StateValue.DONE)) {
 			runnable.run();
 			isGenerated = true;
