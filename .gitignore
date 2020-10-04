@@ -1,3 +1,9 @@
+# project settings
+settings.properties
+
+# project files
+\logs
+
 # Compiled class file
 *.class
 
