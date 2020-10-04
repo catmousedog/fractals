@@ -248,3 +248,16 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Note
 - Did some testing on the efficiency of HashSet and HashMaps for storing the Pixels, the array seems to be the fasted option for parallel execution
 
+## [0.2] - minor fixes stable
+
+### Added
+- UncaughtExceptionhandler
+
+### Changed
+- folder for each fractal type
+- fixed generation artifacts, can no longer render if already rendering 
+
+### Removed
+
+### Note
+ 

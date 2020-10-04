@@ -1,18 +1,20 @@
 # TODO
 
-## [0.1.5] - concrete additions
-- [x] (move setProgress to Logger? extend Logger? but that means I would have to cast it each time to call the concrete methods) (make UIConsole into a singleton?)
+## [0.2] - minor fixes stable
+- [x] make FeedbackPanel into a singleton
 - [x] UIConsoleHandler -> make complex logging to file and System.out but simple logs to UI
-- [ ] make uncatched exceptions go to logger
-- [ ] fix artifacts in julia set -> (slow down repaint?)
-- [ ] folder for each fractal type
-- [ ] checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
+- [x] make uncatched exceptions go to logger
+- [x] fix artifacts in julia set -> (slow down repaint?)
+- [x] folder for each fractal type
+- [x] fix maven building 
+- [ ] make only one *global* generator / painter work (so canvas and Picture can not do work at the same time?)
+- [ ] if already repainting schedule new repaint request and override it of new request comes in so only the last gets executed
 - [ ] copy and paste for colours
 - [ ] dropdown like 'locations' for unique colours
-- [ ] if already repainting schedule new repaint request and override it of new request comes in so only the last gets executed
 - [ ] keylistener
 - [ ] make logger messages fade
-- [ ] use java.util.Logger
 - [ ] create fractal properties files and location if not found
 - [ ] julia default fixed point settings
 - [ ] advanced setting -> overlay for overlaying mandelbrot over julia set
+- [ ] (make abstract sub fractal types? IterativeFractal, ...)
+- [ ] checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
