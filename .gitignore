@@ -1,17 +1,5 @@
-#eclipse settings
-/.settings
-.project
-
-#concrete files
-/logs
-/concrete_fractals
-/locations
-/target
-settings.properties
-
 # Compiled class file
 *.class
-.classpath
 
 # images
 *.jpg
