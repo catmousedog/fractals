@@ -248,9 +248,11 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Note
 - Did some testing on the efficiency of HashSet and HashMaps for storing the Pixels, the array seems to be the fasted option for parallel execution
 
-## [0.2] - minor fixes stable
+## [0.2] - workers package
 
 ### Added
+- GlobalWorker abstract class
+- RenderWorker singleton for calling the global Generator and Painter
 - UncaughtExceptionhandler
 
 ### Changed

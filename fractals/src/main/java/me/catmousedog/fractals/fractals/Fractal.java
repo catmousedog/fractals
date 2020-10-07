@@ -69,7 +69,7 @@ public abstract class Fractal implements SafeSavable {
 	protected MouseMotionListener mouse;
 
 	/**
-	 * The instance of the canvas, used to call {@link Canvas#colourAndPaint()} when
+	 * The instance of the canvas, used to call {@link Canvas#paint()} when
 	 * {@link Data} changes.
 	 * <p>
 	 * It is effectively final after being assigned its value through
@@ -226,18 +226,17 @@ public abstract class Fractal implements SafeSavable {
 
 	/**
 	 * Saves all data through {@link Savable#save()} and colours the image through
-	 * {@link Canvas#colourAndPaint()} if {@link Settings#isRender_on_changes()}.
+	 * {@link Canvas#paint()} if {@link Settings#isRender_on_changes()}.
 	 * 
 	 * @return true if the canvas successfully called
-	 *         {@link Canvas#colourAndPaint()}, false otherwise
+	 *         {@link Canvas#paint()}, false otherwise
 	 */
-	public boolean saveAndColour() {
+	public void saveAndColour() {
 		if (allowListener) {
 			save();
 			if (settings.isRender_on_changes())
-				return canvas.colourAndPaint();
+				canvas.paint();
 		}
-		return false;
 	}
 
 	/**

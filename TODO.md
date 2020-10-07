@@ -7,6 +7,8 @@
 - [x] fix artifacts in julia set -> (slow down repaint?)
 - [x] folder for each fractal type
 - [x] fix maven building 
+- [ ] update comments on 'fractals.workers' package
+- [ ] make Settings a singleton?
 - [ ] make only one *global* generator / painter work (so canvas and Picture can not do work at the same time?)
 - [ ] if already repainting schedule new repaint request and override it of new request comes in so only the last gets executed
 - [ ] copy and paste for colours

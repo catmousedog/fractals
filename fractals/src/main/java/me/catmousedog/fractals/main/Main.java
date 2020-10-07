@@ -20,6 +20,7 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.utils.FeedbackPanel;
+import me.catmousedog.fractals.workers.RenderWorker;
 
 /**
  * the main class

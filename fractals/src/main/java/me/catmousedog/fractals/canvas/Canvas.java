@@ -7,10 +7,8 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
@@ -18,6 +16,9 @@ import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.workers.RenderWorker;
+import me.catmousedog.fractals.workers.Generator;
+import me.catmousedog.fractals.workers.Painter;
 
 /**
  * Represents a 2D plane of processed values by the function
@@ -25,6 +26,8 @@ import me.catmousedog.fractals.ui.JPInterface;
  */
 @SuppressWarnings("serial")
 public class Canvas extends JPanel {
+
+	private final RenderWorker renderer = RenderWorker.getInstance();
 
 	/**
 	 * the mouse listener
@@ -51,16 +54,6 @@ public class Canvas extends JPanel {
 	 * The zoomFactor to use when zooming in or out.
 	 */
 	private double zoomFactor = 2;
-
-	/**
-	 * The latest {@link SwingWorker} responsible for generating the fractal.
-	 */
-	private Generator generator;
-
-	/**
-	 * The latest {@link SwingWorker} responsible for colouring the fractal.
-	 */
-	private Painter painter;
 
 	/**
 	 * The <code>Field</code> of <code>Pixels</code>, used to represent the complex
@@ -106,8 +99,6 @@ public class Canvas extends JPanel {
 		g.drawImage(field.getImg(), 0, 0, null);
 	}
 
-	private boolean generatorScheduled = false;
-	
 	/**
 	 * Generates and paints the image using the <code>generator</code> and
 	 * <code>painter</code>.
@@ -117,16 +108,15 @@ public class Canvas extends JPanel {
 	 * true before starting a new <code>Generator</code>.
 	 */
 	public void render() {
-		if (!generatorScheduled && (isGenerated() && isRepainted())) {
-			generator = new Generator(field, fractal.clone(), () -> colourAndPaint());
-			generator.execute();
-		} else {
-			generatorScheduled = true;
-		}
+		renderer.newRender(field, fractal.clone(), fractal.getFilter().clone(), () -> {
+			repaint();
+			jpi.postRender();
+		});
 	}
 
 	/**
-	 * Colours the image and paints it using a the {@link Painter}.
+	 * Colours the current <code>fractal</code> and paints it using the
+	 * {@link Painter}.
 	 * <p>
 	 * This can be called safely whilst the {@link Painter} is still colouring. This
 	 * method will check if {@link Painter#isRepainted()} returns true before
@@ -134,18 +124,11 @@ public class Canvas extends JPanel {
 	 * 
 	 * @return true if a new {@link Painter} was successfully executed.
 	 */
-	public boolean colourAndPaint() {
-
-		if (isRepainted()) {
-			painter = new Painter(field, fractal.getFilter().clone(), () -> {
-				repaint();
-				jpi.postRender();
-			});
-
-			painter.execute();
-			return true;
-		}
-		return false;
+	public void paint() {
+		renderer.newPainter(field, fractal.getFilter().clone(), () -> {
+			repaint();
+			jpi.postRender();
+		});
 	}
 
 	/**
@@ -207,19 +190,6 @@ public class Canvas extends JPanel {
 		fractal.setIterations(prevConfig.getIterations());
 		zoomFactor = prevConfig.getZoomFactor();
 		setFractal(fractal);
-	}
-
-	/**
-	 * Attempts to cancel the {@link Generator} and {@link Painter}.
-	 * 
-	 * @return true if successful.
-	 */
-	public boolean cancel() {
-		if (generator.cancel(true))
-			return true;
-		if (painter.cancel())
-			return true;
-		return false;
 	}
 
 	/**
@@ -288,30 +258,6 @@ public class Canvas extends JPanel {
 	 */
 	public double getZoomFactor() {
 		return zoomFactor;
-	}
-
-	/**
-	 * @return the current {@link Generator}, null if not generated yet.
-	 */
-	@Nullable
-	public Generator getGenerator() {
-		return generator;
-	}
-
-	private boolean isGenerated() {
-		return generator == null || generator.isGenerated();
-	}
-
-	/**
-	 * @return the current {@link Painter}, null if not generated yet.
-	 */
-	@Nullable
-	public Painter getPainter() {
-		return painter;
-	}
-
-	private boolean isRepainted() {
-		return painter == null || painter.isRepainted();
 	}
 
 	/**

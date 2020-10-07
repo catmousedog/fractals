@@ -163,10 +163,10 @@ public class LinearTransform {
 	}
 
 	/**
-	 * @return {@link String} of format: <code>x=%dx y=%dy m=%m n=%n</code>
+	 * @return <code>String</code> of format: <code>x=%dx y=%dy m=%m n=%n</code>
 	 */
 	@Override
 	public String toString() {
-		return String.format("x=%f y=%f m=%f n=%f", dx, dy, m, n);
+		return String.format("x=%s y=%s m=%s n=%s", Double.toString(dx), Double.toString(dy), Double.toString(m), Double.toString(n));
 	}
 }

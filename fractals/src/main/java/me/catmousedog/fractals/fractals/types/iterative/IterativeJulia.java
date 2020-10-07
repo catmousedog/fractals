@@ -100,7 +100,7 @@ public final class IterativeJulia extends Fractal {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				if (mousejcx.saveAndGet() && canvas.getGenerator().isGenerated()) {
+				if (mousejcx.saveAndGet()) {
 					double[] t = transform.apply(e.getX(), e.getY());
 					jx = t[0];
 					jy = t[1];

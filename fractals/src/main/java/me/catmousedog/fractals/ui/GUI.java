@@ -33,6 +33,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
 import me.catmousedog.fractals.utils.FeedbackPanel;
+import me.catmousedog.fractals.workers.RenderWorker;
 
 /**
  * Concrete class containing all the actual {@link Data} containers displayed in
@@ -280,12 +281,12 @@ public class GUI {
 	 * cancel button
 	 */
 	private void cancel() {
-		if (canvas.cancel()) {
+		if (RenderWorker.getInstance().cancel()) {
 			jpi.allowUndo(false);
 			canvas.undo();
 			feedback.setProgress("cancelled render", 0);
-		} else if (picture.cancel()) {
-			feedback.setProgress("cancelled image", 0);
+//		} else if (picture.cancel()) {
+//			feedback.setProgress("cancelled image", 0);
 		}
 		jpi.update();
 		jpi.postRender();

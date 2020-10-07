@@ -1,16 +1,15 @@
-package me.catmousedog.fractals.canvas;
+package me.catmousedog.fractals.workers;
 
 import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import javax.swing.SwingWorker;
-
 import org.jetbrains.annotations.NotNull;
 
+import me.catmousedog.fractals.canvas.Field;
+import me.catmousedog.fractals.canvas.Pixel;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.ui.JPInterface;
@@ -19,7 +18,7 @@ import me.catmousedog.fractals.utils.FeedbackPanel;
 /**
  * swing worker used for generating the image and updating at the same time
  */
-public class Generator extends SwingWorker<Void, Void> implements PropertyChangeListener {
+public class Generator extends GlobalWorker {
 
 	/**
 	 * The array of {@link Pixel}s that will be edited.
@@ -37,15 +36,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	private final LinearTransform transform;
 
-	/**
-	 * The {@link Runnable} run when the {@link Generator} is done and wasn't
-	 * cancelled.
-	 */
-	private final Runnable runnable;
-
 	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
-
-	private boolean isGenerated = false;
 
 	/**
 	 * Atomic counters for keeping calculation progress when using parallel streams.
@@ -65,12 +56,11 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 * @param jpi      The {@link JPInterface} instance.
 	 * @param logger   The {@link FeedbackPanel} instance.
 	 */
-	public Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
-		this.pixels = field.getPixels();
+	Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
+		super(runnable);
+		pixels = field.getPixels();
 		this.fractal = fractal;
 		transform = fractal.getTransform();
-		this.runnable = runnable;
-		addPropertyChangeListener(this);
 	}
 
 	/**
@@ -79,6 +69,7 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
+		System.out.println("generator start");
 		// begin time
 		long b = System.nanoTime();
 
@@ -115,6 +106,8 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 			feedback.setGenerated((e - b) / 1000000);
 		});
 
+		System.out.println("generator end");
+
 		return null;
 	}
 
@@ -132,15 +125,9 @@ public class Generator extends SwingWorker<Void, Void> implements PropertyChange
 		if (evt.getNewValue() instanceof Integer)
 			feedback.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		else if (evt.getNewValue().equals(StateValue.DONE)) {
-			runnable.run();
-			isGenerated = true;
+			System.out.println("generator finished");
+			if (runnable != null)
+				runnable.run();
 		}
-	}
-
-	/**
-	 * @return true if the <code>Generator</code> is completely finished.
-	 */
-	public boolean isGenerated() {
-		return isGenerated;
 	}
 }

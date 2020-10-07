@@ -1,21 +1,21 @@
-package me.catmousedog.fractals.canvas;
+package me.catmousedog.fractals.workers;
 
 import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import javax.swing.SwingWorker;
-
 import org.jetbrains.annotations.NotNull;
 
+import me.catmousedog.fractals.canvas.Canvas;
+import me.catmousedog.fractals.canvas.Field;
+import me.catmousedog.fractals.canvas.Pixel;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.utils.FeedbackPanel;
 
-public class Painter extends SwingWorker<Void, Void> implements PropertyChangeListener {
+public class Painter extends GlobalWorker {
 
 	/**
 	 * {@link BufferedImage} to be edited.
@@ -33,18 +33,11 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	private final Filter filter;
 
 	/**
-	 * The {@link Runnable} run when the {@link SwingWorker} is done.
-	 */
-	private final Runnable runnable;
-
-	/**
 	 * The logger instance.
 	 */
-	private final FeedbackPanel logger = FeedbackPanel.getInstance();
+	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
 
 	private AtomicInteger i, q;
-
-	private boolean repainted = false;
 
 	/**
 	 * Creates a new {@link Painter} that changes the {@link Field}'s
@@ -52,19 +45,17 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 * 
 	 * @param field    the {@link Field} used for storing the {@link BufferedImage}
 	 *                 and the {@link Pixel}s.
-	 * @param filter   a clone of the {@link Filter} containing the
-	 *                 {@link Filter#get(Number)}.
+	 * @param filter   a clone of the {@link Filter} containing the {@link Filter#get(Number)}.
 	 * @param runnable the {@link Runnable} run when the {@link Painter} is done on
 	 *                 the EDT.
 	 * @param jpi      the {@link JPInterface} instance.
-	 * @param logger   the {@link FeedbackPanel} instance.
+	 * @param feedback the {@link FeedbackPanel} instance.
 	 */
-	public Painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable) {
+	Painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable) {
+		super(runnable);
 		img = field.getImg();
-		this.pixels = field.getPixels();
+		pixels = field.getPixels();
 		this.filter = filter;
-		this.runnable = runnable;
-		addPropertyChangeListener(this);
 	}
 
 	/**
@@ -75,6 +66,7 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 	 */
 	@Override
 	protected Void doInBackground() {
+		System.out.println("painter start");
 		// begin time
 		long b = System.nanoTime();
 
@@ -95,8 +87,10 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 
 		// log time
 		EventQueue.invokeLater(() -> {
-			logger.setColoured((e - b) / 1000000);
+			feedback.setColoured((e - b) / 1000000);
 		});
+
+		System.out.println("painter ends");
 
 		return null;
 	}
@@ -113,30 +107,13 @@ public class Painter extends SwingWorker<Void, Void> implements PropertyChangeLi
 			return;
 
 		if (evt.getNewValue() instanceof Integer) {
-			logger.setProgress("colouring fractal", (Integer) evt.getNewValue());
+			feedback.setProgress("colouring fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
-			runnable.run();
-			logger.setProgress("done!", 100);
-			repainted = true;
+			System.out.println("painter finished");
+			if (runnable != null)
+				runnable.run();
+			feedback.setProgress("done!", 100);
 		}
-	}
-
-	/**
-	 * Cancels the {@link SwingWorker} and sets {@link Painter#repainted} to true so
-	 * a new Painter can be created in {@link Canvas}.
-	 * 
-	 * @return {@link SwingWorker#cancel(boolean)}
-	 */
-	public boolean cancel() {
-		repainted = true;
-		return super.cancel(true);
-	}
-
-	/**
-	 * @return true if the image has been coloured and repainted.
-	 */
-	public boolean isRepainted() {
-		return repainted;
 	}
 
 }

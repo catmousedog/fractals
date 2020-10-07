@@ -5,15 +5,16 @@ import java.awt.image.BufferedImage;
 import javax.swing.SwingWorker;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.canvas.Field;
-import me.catmousedog.fractals.canvas.Generator;
-import me.catmousedog.fractals.canvas.Painter;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.workers.Generator;
+import me.catmousedog.fractals.workers.Painter;
+import me.catmousedog.fractals.workers.RenderWorker;
 
 /**
  * Class for creating images.
@@ -38,12 +39,12 @@ public class Picture {
 	/**
 	 * The current {@link SwingWorker} responsible for generating the fractal.
 	 */
-	private Generator generator;
+//	private Generator generator;
 
 	/**
 	 * The current {@link SwingWorker} responsible for colouring the fractal.
 	 */
-	private Painter painter;
+//	private Painter painter;
 
 	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings) {
 		this.canvas = canvas;
@@ -60,9 +61,10 @@ public class Picture {
 	 * @param ext    The extension used for the image file, either 'png' or 'jpg'.
 	 */
 	public void newPicture(int width, int height, String ext) {
-//		jpi.preRender();
+		jpi.preRender();
 
 		Fractal fractal = canvas.getFractal().clone();
+		Filter filter = canvas.getFractal().getFilter().clone();
 		LinearTransform transform = fractal.getTransform();
 		transform.setOrigin(width / 2, height / 2);
 		double a = Math.max((double) canvas.getPanelHeight() / height, (double) canvas.getPanelWidth() / width);
@@ -73,15 +75,11 @@ public class Picture {
 			public void run() {
 				Field field = new Field(width, height);
 
-				painter = new Painter(field, canvas.getFractal().getFilter().clone(), () -> {
-					settings.addImage(field.getImg(), ext, canvas.getFractal());
+				RenderWorker.getInstance().newRender(field, fractal, filter, () -> {
+					settings.addImage(field.getImg(), ext, fractal);
 					jpi.postRender();
 				});
 
-				generator = new Generator(field, fractal, () -> {
-					painter.execute();
-				});
-				generator.execute();
 			}
 		});
 		t.start();
@@ -92,29 +90,29 @@ public class Picture {
 	 * 
 	 * @return true if successful.
 	 */
-	public boolean cancel() {
-		if (generator != null && generator.cancel(true))
-			return true;
-		if (painter != null && painter.cancel(true))
-			return true;
-		return false;
-	}
+//	public boolean cancel() {
+//		if (generator != null && generator.cancel(true))
+//			return true;
+//		if (painter != null && painter.cancel(true))
+//			return true;
+//		return false;
+//	}
 
 	/**
 	 * @return The current {@link Generator}, can be null if no
 	 *         {@link Picture#newPicture(int, int, String)} was called.
 	 */
-	@Nullable
-	public Generator getGenerator() {
-		return generator;
-	}
+//	@Nullable
+//	public Generator getGenerator() {
+//		return generator;
+//	}
 
 	/**
 	 * @return The current {@link Painter}, can be null if no
 	 *         {@link Picture#newPicture(int, int, String)} was called.
 	 */
-	@Nullable
-	public Painter getPainter() {
-		return painter;
-	}
+//	@Nullable
+//	public Painter getPainter() {
+//		return painter;
+//	}
 }
