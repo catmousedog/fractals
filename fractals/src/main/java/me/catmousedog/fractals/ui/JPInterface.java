@@ -97,10 +97,10 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	public void renderNow() {
 		// already rendering
-		if (!gui.getRenderjb().saveAndGet()) {
-			logger.finer("already rendering...");
-			return;
-		}
+//		if (!gui.getRenderjb().saveAndGet()) {
+//			logger.finer("already rendering...");
+//			return;
+//		}
 
 		preRender();
 

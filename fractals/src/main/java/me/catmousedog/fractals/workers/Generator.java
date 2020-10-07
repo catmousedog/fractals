@@ -69,7 +69,6 @@ public class Generator extends GlobalWorker {
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
-		System.out.println("generator start");
 		// begin time
 		long b = System.nanoTime();
 
@@ -106,8 +105,6 @@ public class Generator extends GlobalWorker {
 			feedback.setGenerated((e - b) / 1000000);
 		});
 
-		System.out.println("generator end");
-
 		return null;
 	}
 
@@ -125,9 +122,7 @@ public class Generator extends GlobalWorker {
 		if (evt.getNewValue() instanceof Integer)
 			feedback.setProgress("calculating fractal", (Integer) evt.getNewValue());
 		else if (evt.getNewValue().equals(StateValue.DONE)) {
-			System.out.println("generator finished");
-			if (runnable != null)
-				runnable.run();
+			runnable.run();
 		}
 	}
 }

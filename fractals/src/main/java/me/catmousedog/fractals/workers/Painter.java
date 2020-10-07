@@ -45,7 +45,8 @@ public class Painter extends GlobalWorker {
 	 * 
 	 * @param field    the {@link Field} used for storing the {@link BufferedImage}
 	 *                 and the {@link Pixel}s.
-	 * @param filter   a clone of the {@link Filter} containing the {@link Filter#get(Number)}.
+	 * @param filter   a clone of the {@link Filter} containing the
+	 *                 {@link Filter#get(Number)}.
 	 * @param runnable the {@link Runnable} run when the {@link Painter} is done on
 	 *                 the EDT.
 	 * @param jpi      the {@link JPInterface} instance.
@@ -66,7 +67,6 @@ public class Painter extends GlobalWorker {
 	 */
 	@Override
 	protected Void doInBackground() {
-		System.out.println("painter start");
 		// begin time
 		long b = System.nanoTime();
 
@@ -90,8 +90,6 @@ public class Painter extends GlobalWorker {
 			feedback.setColoured((e - b) / 1000000);
 		});
 
-		System.out.println("painter ends");
-
 		return null;
 	}
 
@@ -109,9 +107,7 @@ public class Painter extends GlobalWorker {
 		if (evt.getNewValue() instanceof Integer) {
 			feedback.setProgress("colouring fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
-			System.out.println("painter finished");
-			if (runnable != null)
-				runnable.run();
+			runnable.run();
 			feedback.setProgress("done!", 100);
 		}
 	}

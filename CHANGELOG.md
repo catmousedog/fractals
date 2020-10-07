@@ -252,12 +252,12 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 
 ### Added
 - GlobalWorker abstract class
-- RenderWorker singleton for calling the global Generator and Painter
+- RenderWorker singleton for calling the global Generator and Painter. 
 - UncaughtExceptionhandler
 
 ### Changed
 - folder for each fractal type
-- fixed generation artifacts, can no longer render if already rendering 
+
 
 ### Removed
 

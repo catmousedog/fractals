@@ -2,8 +2,6 @@ package me.catmousedog.fractals.ui;
 
 import java.awt.image.BufferedImage;
 
-import javax.swing.SwingWorker;
-
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
@@ -36,15 +34,7 @@ public class Picture {
 	 */
 	private final Settings settings;
 
-	/**
-	 * The current {@link SwingWorker} responsible for generating the fractal.
-	 */
-//	private Generator generator;
-
-	/**
-	 * The current {@link SwingWorker} responsible for colouring the fractal.
-	 */
-//	private Painter painter;
+	private boolean generating = false;
 
 	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings) {
 		this.canvas = canvas;
@@ -61,6 +51,8 @@ public class Picture {
 	 * @param ext    The extension used for the image file, either 'png' or 'jpg'.
 	 */
 	public void newPicture(int width, int height, String ext) {
+		generating = true;
+
 		jpi.preRender();
 
 		Fractal fractal = canvas.getFractal().clone();
@@ -78,6 +70,7 @@ public class Picture {
 				RenderWorker.getInstance().newRender(field, fractal, filter, () -> {
 					settings.addImage(field.getImg(), ext, fractal);
 					jpi.postRender();
+					generating = false;
 				});
 
 			}
@@ -86,33 +79,13 @@ public class Picture {
 	}
 
 	/**
-	 * Attempts to cancel the current image generation.
-	 * 
-	 * @return true if successful.
+	 * @return true if a picture is being generated.
 	 */
-//	public boolean cancel() {
-//		if (generator != null && generator.cancel(true))
-//			return true;
-//		if (painter != null && painter.cancel(true))
-//			return true;
-//		return false;
-//	}
-
-	/**
-	 * @return The current {@link Generator}, can be null if no
-	 *         {@link Picture#newPicture(int, int, String)} was called.
-	 */
-//	@Nullable
-//	public Generator getGenerator() {
-//		return generator;
-//	}
-
-	/**
-	 * @return The current {@link Painter}, can be null if no
-	 *         {@link Picture#newPicture(int, int, String)} was called.
-	 */
-//	@Nullable
-//	public Painter getPainter() {
-//		return painter;
-//	}
+	public boolean isGenerating() {
+		return generating;
+	}
+	
+	public void setGenerating(boolean generating) {
+		this.generating = generating;
+	}
 }

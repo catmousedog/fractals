@@ -60,13 +60,15 @@ public class GUI {
 	private final Logger logger = Logger.getLogger("fractals");
 
 	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
-	
+
 	private final Settings settings;
 
 	/**
 	 * Class used for generating images.
 	 */
 	private final Picture picture;
+
+	private final RenderWorker renderer = RenderWorker.getInstance();
 
 	public GUI(Main main, Canvas canvas, JPInterface jpi, Settings settings) {
 		this.canvas = canvas;
@@ -281,12 +283,15 @@ public class GUI {
 	 * cancel button
 	 */
 	private void cancel() {
-		if (RenderWorker.getInstance().cancel()) {
-			jpi.allowUndo(false);
-			canvas.undo();
-			feedback.setProgress("cancelled render", 0);
-//		} else if (picture.cancel()) {
-//			feedback.setProgress("cancelled image", 0);
+		if (renderer.cancel()) {
+			if (picture.isGenerating()) {
+				picture.setGenerating(false);
+				feedback.setProgress("cancelled image", 0);
+			} else {
+				jpi.allowUndo(false);
+				canvas.undo();
+				feedback.setProgress("cancelled render", 0);
+			}
 		}
 		jpi.update();
 		jpi.postRender();
