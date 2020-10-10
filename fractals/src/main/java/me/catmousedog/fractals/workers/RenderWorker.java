@@ -90,8 +90,8 @@ public class RenderWorker {
 	 * @param field    the reference to the <code>Field</code>.
 	 * @param fractal  a clone of the <code>Fractal</code>.
 	 * @param filter   a clone of the <code>Filter</code>.
-	 * @param runnable a <code>Runnable</code> run after the <code>Painter</code>
-	 *                 has finished.
+	 * @param runnable a <code>Runnable</code> ran after the <code>Painter</code>
+	 *                 has finished on the EDT.
 	 */
 	public void newRender(@NotNull Field field, @NotNull Fractal fractal, @NotNull Filter filter,
 			@Nullable Runnable runnable) {
@@ -99,7 +99,6 @@ public class RenderWorker {
 			newPainter(field, filter, () -> {
 				if (runnable != null)
 					runnable.run();
-				generatorReady = true;
 				runScheduledGenerator();
 			});
 		});
@@ -112,14 +111,13 @@ public class RenderWorker {
 	 * 
 	 * @param field    the reference to the <code>Field</code>.
 	 * @param fractal  a clone of the <code>Fractal</code>.
-	 * @param runnable a <code>Runnable</code> run after the <code>Generator</code>
-	 *                 has finished.
+	 * @param runnable a <code>Runnable</code> ran after the <code>Generator</code>
+	 *                 has finished on the EDT.
 	 */
 	public void newGenerator(@NotNull Field field, @NotNull Fractal fractal, @Nullable Runnable runnable) {
 		generator(field, fractal, () -> {
 			if (runnable != null)
 				runnable.run();
-			generatorReady = true;
 			runScheduledGenerator();
 		});
 	}
@@ -141,14 +139,13 @@ public class RenderWorker {
 	 * 
 	 * @param field    the reference to the <code>Field</code>.
 	 * @param filter   a clone of the <code>Filter</code>.
-	 * @param runnable a <code>Runnable</code> run after the <code>Painter</code>
-	 *                 has finished.
+	 * @param runnable a <code>Runnable</code> ran after the <code>Painter</code>
+	 *                 has finished on the EDT. <br>
 	 */
 	public void newPainter(@NotNull Field field, @NotNull Filter filter, @Nullable Runnable runnable) {
 		painter(field, filter, () -> {
 			if (runnable != null)
 				runnable.run();
-			painterReady = true;
 			runScheduledPainter();
 		});
 	}
@@ -166,44 +163,49 @@ public class RenderWorker {
 	/**
 	 * Attempt to run the {@link RenderWorker#scheduledGenerator}. <br>
 	 * This can only work if the {@link RenderWorker#currentGenerator} is ready and
-	 * a <code>scheduledGenerator</code> exists.
-	 * 
-	 * @return true if a <code>scheduledGenerator</code> was executed.
+	 * a <code>scheduledGenerator</code> exists. If there is no
+	 * <code>scheduledGenerator</code> the {@link RenderWorker#generatorReady} will
+	 * be set to true so a new <code>generator</code> can be started.
+	 * <p>
+	 * This should only be run when the <code>currentGenerator</code> has finished.
 	 */
-	synchronized boolean runScheduledGenerator() {
-		if (generatorReady && scheduledGenerator != null) {
+	synchronized void runScheduledGenerator() {
+		if (scheduledGenerator != null) {
 			generatorReady = false;
 			currentGenerator = scheduledGenerator;
 			scheduledGenerator = null;
 			currentGenerator.execute();
-			return true;
+		} else {
+			generatorReady = true;
 		}
-		return false;
 	}
 
 	/**
 	 * Attempt to run the {@link RenderWorker#scheduledPainter}. <br>
 	 * This can only work if the {@link RenderWorker#currentPainter} is ready and a
-	 * <code>scheduledPainter</code> exists.
-	 * 
-	 * @return true if a <code>scheduledPainter</code> was executed.
+	 * <code>scheduledPainter</code> exists. If there is no
+	 * <code>scheduledPainter</code> the {@link RenderWorker#painterReady} will be
+	 * set to true so a new <code>painter</code> can be started.
+	 * <p>
+	 * This should only be run when the <code>currentPainter</code> has finished.
 	 */
-	synchronized boolean runScheduledPainter() {
-		if (painterReady && scheduledPainter != null) {
-			painterReady = false;
-			currentPainter = scheduledPainter;
+	synchronized void runScheduledPainter() {
+		if (scheduledPainter != null) {
+			painterReady = false; // should already be false
+			currentPainter = scheduledPainter; // recursively start another painter
 			scheduledPainter = null;
 			currentPainter.execute();
-			return true;
+		} else {
+			painterReady = true;
 		}
-		return false;
 	}
 
 	/**
 	 * Attempts to cancel the {@link RenderWorker#currentGenerator} and
 	 * {@link RenderWorker#currentPainter}.
 	 * 
-	 * @return {@link Generator#cancel(boolean)} for the <code>currentGenerator</code>.
+	 * @return {@link Generator#cancel(boolean)} for the
+	 *         <code>currentGenerator</code>.
 	 */
 	public boolean cancel() {
 		boolean out = false;

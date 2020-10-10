@@ -113,7 +113,7 @@ public class Canvas extends JPanel {
 			jpi.postRender();
 		});
 	}
-
+	
 	/**
 	 * Colours the current <code>fractal</code> and paints it using the
 	 * {@link Painter}.
