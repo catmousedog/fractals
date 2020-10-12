@@ -75,7 +75,7 @@ public class IterativeLinearFilter extends Filter {
 		gjs.setDataSafe(g);
 		bjs.setDataSafe(b);
 		rjtf.setData(r);
-		gjtf.setData(b);
+		gjtf.setData(g);
 		bjtf.setData(b);
 	}
 

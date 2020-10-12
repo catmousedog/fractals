@@ -106,7 +106,7 @@ public final class IterativeJulia extends Fractal {
 					jy = t[1];
 					update();
 					if (settings.isRender_on_changes())
-						canvas.render();
+						jpi.renderNow();
 				}
 			}
 		};

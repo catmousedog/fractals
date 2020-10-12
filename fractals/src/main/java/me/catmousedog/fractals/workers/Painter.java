@@ -47,10 +47,8 @@ public class Painter extends GlobalWorker {
 	 *                 and the {@link Pixel}s.
 	 * @param filter   a clone of the {@link Filter} containing the
 	 *                 {@link Filter#get(Number)}.
-	 * @param runnable the {@link Runnable} run when the {@link Painter} is done on
-	 *                 the EDT.
-	 * @param jpi      the {@link JPInterface} instance.
-	 * @param feedback the {@link FeedbackPanel} instance.
+	 * @param runnable the {@link Runnable} run when the {@link Painter} is done.
+	 *                 Run on the EDT.
 	 */
 	Painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable) {
 		super(runnable);
@@ -89,7 +87,6 @@ public class Painter extends GlobalWorker {
 		EventQueue.invokeLater(() -> {
 			feedback.setColoured((e - b) / 1000000);
 		});
-
 		return null;
 	}
 

@@ -96,14 +96,7 @@ public class JPInterface extends JPanel implements Savable {
 	 * This method still calls the {@link JPInterface#postRender()} method.
 	 */
 	public void renderNow() {
-		// already rendering
-//		if (!gui.getRenderjb().saveAndGet()) {
-//			logger.finer("already rendering...");
-//			return;
-//		}
-
 		preRender();
-
 		canvas.render();
 	}
 

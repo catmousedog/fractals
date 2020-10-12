@@ -6,11 +6,12 @@
 - [x] make uncatched exceptions go to logger
 - [x] folder for each fractal type
 - [x] fix maven building 
-- [ ] fix Mouse and JPI.renderNow()
-- [ ] fix painter artifacts
-- [ ] update comments on 'fractals.workers' package
-- [ ] make Settings a singleton?
+- [x] fix painter artifacts
+- [x] update comments on 'fractals.workers' package
 - [x] make only one *global* generator / painter work (so canvas and Picture can not do work at the same time?)
+- [ ] settings for disabling scheduled workers
+- [ ] two progress bars for painter and generator? Maybe part of GlobalWorker class?
+- [ ] make Settings a singleton?
 - [ ] copy and paste for colours
 - [ ] dropdown like 'locations' for unique colours
 - [ ] keylistener
@@ -18,5 +19,5 @@
 - [ ] create fractal properties files and location if not found
 - [ ] julia default fixed point settings
 - [ ] advanced setting -> overlay for overlaying mandelbrot over julia set
-- [ ] (make abstract sub fractal types? IterativeFractal, ...)
 - [ ] checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
+- [ ] fix and add concrete locations and settings for all the fractals

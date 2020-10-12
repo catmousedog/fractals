@@ -73,10 +73,20 @@ public abstract class Fractal implements SafeSavable {
 	 * {@link Data} changes.
 	 * <p>
 	 * It is effectively final after being assigned its value through
-	 * {@link Fractal#setCanvas(Canvas)}.
+	 * {@link Fractal#setCanvas()}.
 	 */
 	@Nullable
 	protected Canvas canvas;
+
+	/**
+	 * The instance of the <code>JPInterface</code>, used to call
+	 * {@link JPInterface#renderNow()}.
+	 * <p>
+	 * It is effectively final after being assigned its value through
+	 * {@link Fractal#setJPI()}.
+	 */
+	@NotNull
+	protected JPInterface jpi;
 
 	/**
 	 * Array of all locations used by this {@link Fractal}.<br>
@@ -228,8 +238,8 @@ public abstract class Fractal implements SafeSavable {
 	 * Saves all data through {@link Savable#save()} and colours the image through
 	 * {@link Canvas#paint()} if {@link Settings#isRender_on_changes()}.
 	 * 
-	 * @return true if the canvas successfully called
-	 *         {@link Canvas#paint()}, false otherwise
+	 * @return true if the canvas successfully called {@link Canvas#paint()}, false
+	 *         otherwise
 	 */
 	public void saveAndColour() {
 		if (allowListener) {
@@ -369,6 +379,10 @@ public abstract class Fractal implements SafeSavable {
 
 	public void setCanvas(@NotNull Canvas canvas) {
 		this.canvas = canvas;
+	}
+
+	public void setJPI(@NotNull JPInterface jpi) {
+		this.jpi = jpi;
 	}
 
 	public void setIterations(int i) {

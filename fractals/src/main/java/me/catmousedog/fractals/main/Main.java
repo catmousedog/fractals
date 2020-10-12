@@ -27,6 +27,25 @@ import me.catmousedog.fractals.utils.FeedbackPanel;
 public class Main implements Runnable, UncaughtExceptionHandler {
 
 	/**
+	 * The <code>Logger</code> used to log messages to the user and log files.
+	 */
+	private final Logger logger = Logger.getLogger("fractals");
+
+	{
+		// add handlers to logger
+		logger.setLevel(Level.ALL);
+
+		try {
+			FileHandler fileHandler = new FileHandler("logs/fractals.log");
+			fileHandler.setLevel(Level.ALL);
+			fileHandler.setFormatter(new SimpleFormatter());
+			logger.addHandler(fileHandler);
+		} catch (SecurityException | IOException e) {
+			logger.log(Level.WARNING, "could not add FileHandler to Logger", e);
+		}
+	}
+
+	/**
 	 * Settings object for storing all the settings stored outside the application.
 	 */
 	private final Settings settings = new Settings(this);
@@ -40,11 +59,6 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	 * Object for storing all the initial dimensions
 	 */
 	private final InitialSize size = new InitialSize();
-
-	/**
-	 * The <code>Logger</code> used to log messages to the user and log files.
-	 */
-	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * The panel containing all the feedback.<br>
@@ -89,20 +103,12 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	@Override
 	public void run() {
 		Thread.setDefaultUncaughtExceptionHandler(this);
-		// add handlers to logger
-		logger.setLevel(Level.ALL);
-		logger.addHandler(feedback);
-		try {
-			FileHandler fileHandler = new FileHandler("logs/fractals.log");
-			fileHandler.setLevel(Level.ALL);
-			fileHandler.setFormatter(new SimpleFormatter());
-			logger.addHandler(fileHandler);
-		} catch (SecurityException | IOException e) {
-			logger.log(Level.WARNING, "could not add FileHandler to Logger", e);
-		}
 
-		ToolTipManager.sharedInstance().setInitialDelay(200);
+		ToolTipManager.sharedInstance().setInitialDelay(1000);
 		ToolTipManager.sharedInstance().setDismissDelay(60000);
+
+		// add feedback panel
+		logger.addHandler(feedback);
 
 		// create JFrame
 		frame = new JFrame(settings.getArtifact_id() + "-" + settings.getVersion());
@@ -111,8 +117,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 
 		// create canvas
 		canvas = new Canvas(size, settings.getDefaultFractal());
-		for (Fractal f : fractals)
-			f.setCanvas(canvas);
+
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 
 		// create right panel (containing logger and jpi)
@@ -122,6 +127,11 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 
 		// create interface panel
 		jpi = new JPInterface(size, this, canvas, settings);
+
+		for (Fractal f : fractals) {
+			f.setCanvas(canvas);
+			f.setJPI(jpi);
+		}
 
 		// add jpi to canvas
 		canvas.setJPI(jpi);

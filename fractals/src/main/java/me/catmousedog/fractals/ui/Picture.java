@@ -33,6 +33,8 @@ public class Picture {
 	 * The {@link Settings} instance.
 	 */
 	private final Settings settings;
+	
+	private final RenderWorker renderer = RenderWorker.getInstance();
 
 	private boolean generating = false;
 
@@ -67,10 +69,12 @@ public class Picture {
 			public void run() {
 				Field field = new Field(width, height);
 
-				RenderWorker.getInstance().newRender(field, fractal, filter, () -> {
+				renderer.newRender(field, fractal, filter, () -> {
 					settings.addImage(field.getImg(), ext, fractal);
 					jpi.postRender();
 					generating = false;
+					renderer.runScheduledGenerator();
+					renderer.runScheduledPainter();
 				});
 
 			}

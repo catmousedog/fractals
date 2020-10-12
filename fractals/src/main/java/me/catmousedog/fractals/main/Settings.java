@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
@@ -51,6 +53,8 @@ public class Settings {
 
 	private boolean render_on_changes = true;
 
+	private Logger logger = Logger.getLogger("fractals");
+
 	/**
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
@@ -68,12 +72,20 @@ public class Settings {
 	public Settings(Main main) {
 		this.main = main;
 
+		// create directories
+		File images = new File("./images");
+		if (!images.exists())
+			images.mkdir();
+		File logs = new File("./logs");
+		if (!logs.exists())
+			logs.mkdirs();
+
 		// pom.xml
 		Properties project = new Properties();
 		try {
 			project.load(main.getClass().getClassLoader().getResourceAsStream("project.properties"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "project.properties exception", e);
 		}
 		artifact_id = project.getProperty("artifactId");
 		version = project.getProperty("version");
@@ -81,24 +93,15 @@ public class Settings {
 		try {
 			initSettings();
 		} catch (IOException e) {
-			System.err.println("Settings.initSettings IOException");
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "iniSettings exception", e);
 		}
 
 		try {
 			initFractals();
 		} catch (IOException e) {
-			System.err.println("Settings.initFractals IOException");
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "initFractals exception", e);
 		}
 
-		// create images folder
-		if (!images.exists())
-			images.mkdir();
-
-		File logs = new File("./logs");
-		if (!logs.exists())
-			logs.mkdirs();
 	}
 
 	/**
@@ -146,15 +149,6 @@ public class Settings {
 	 *                     {@link Properties} could not be loaded.
 	 */
 	private void initFractals() throws IOException {
-		// create 'concrete_fractals' directory
-//		File con = new File("./concrete_fractals");
-//		if (!con.exists())
-//			con.mkdir();
-//		// create 'locations' directory
-//		File loc = new File("./locations");
-//		if (!loc.exists())
-//			loc.mkdir();
-
 		// scan and copy resources inside 'conrete_fractals' resource
 
 		for (Fractal fractal : allFractals) {
@@ -261,7 +255,7 @@ public class Settings {
 
 			fractal.setProperties(properties);
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			logger.log(Level.CONFIG, fractal.fileName() + " default settings parsing exception", e);
 		}
 
 		// initialise locations
@@ -287,7 +281,7 @@ public class Settings {
 					// add new location
 					temp.add(fractal.new Location(key, dx, dy, m, n, rot, iter));
 				} catch (NumberFormatException e) {
-					e.printStackTrace();
+					logger.log(Level.CONFIG, fractal.fileName() + " location file exception", e);
 				}
 			}
 		}
@@ -297,8 +291,6 @@ public class Settings {
 
 		fractal.setLocations(l);
 	}
-
-	private File images = new File("./images");
 
 	/**
 	 * Creates a new image in the <code>images</code> folder with a unique name.<br>
@@ -310,21 +302,24 @@ public class Settings {
 	 * @param fractal The {@link Fractal} with which this image was created.
 	 */
 	public void addImage(@NotNull BufferedImage img, @NotNull String ext, @NotNull Fractal fractal) {
-		String imageName = fractal.fileName() + "_" + fractal.getTransform().toString();
-		String path = images.getAbsolutePath() + "/" + imageName;
-		File f;
+		String dirPath = "./images/" + fractal.fileName();
+		File dir = new File(dirPath);
+		if (!dir.exists())
+			dir.mkdir();
+
+		String imageName = fractal.getTransform().toString();
+		File imageFile; // actual imageFile with edited path
 
 		for (int i = 1;; i++) {
-			f = new File(String.format("%s_%d.%s", path, i, ext));
-			if (!f.exists())
+			imageFile = new File(String.format("%s/%d_%s.%s", dirPath, i, imageName, ext));
+			if (!imageFile.exists())
 				break;
 		}
 
 		try {
-			ImageIO.write(img, ext, f);
+			ImageIO.write(img, ext, imageFile);
 		} catch (IOException e) {
-			System.err.println("Settings.addImage IOException");
-			e.printStackTrace();
+			logger.log(Level.WARNING, "failed to write image at " + imageFile.getPath(), e);
 		}
 	}
 

@@ -97,6 +97,15 @@ public class Canvas extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(field.getImg(), 0, 0, null);
+		if (allowPainter) {
+			allowPainter = false;
+			renderer.runScheduledPainter();
+		}
+		if (allowRender) {
+			allowRender = false;
+			renderer.runScheduledGenerator();
+			renderer.runScheduledPainter();
+		}
 	}
 
 	/**
@@ -109,11 +118,17 @@ public class Canvas extends JPanel {
 	 */
 	public void render() {
 		renderer.newRender(field, fractal.clone(), fractal.getFilter().clone(), () -> {
+			allowRender = true;
 			repaint();
-			jpi.postRender();
+			if (!renderer.isGeneratorScheduled() && !renderer.isPainterScheduled())
+				jpi.postRender();
 		});
 	}
-	
+
+	private boolean allowRender = false;
+
+	private boolean allowPainter = false;
+
 	/**
 	 * Colours the current <code>fractal</code> and paints it using the
 	 * {@link Painter}.
@@ -126,11 +141,12 @@ public class Canvas extends JPanel {
 	 */
 	public void paint() {
 		renderer.newPainter(field, fractal.getFilter().clone(), () -> {
+			allowPainter = true;
 			repaint();
 			jpi.postRender();
 		});
 	}
-
+	
 	/**
 	 * Sets the size of the canvas and all of its components reliant on that
 	 * size.<br>

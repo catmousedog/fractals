@@ -68,7 +68,7 @@ public class GUI {
 	 */
 	private final Picture picture;
 
-	private final RenderWorker renderer = RenderWorker.getInstance();
+	private final RenderWorker RENDER = RenderWorker.getInstance();
 
 	public GUI(Main main, Canvas canvas, JPInterface jpi, Settings settings) {
 		this.canvas = canvas;
@@ -122,7 +122,7 @@ public class GUI {
 				.setAction(a -> location(a)).setTip("<html>A set of interesting locations</html>").build();
 
 		undojb = new Button.Builder("Undo").setAction(a -> undo()).setTip(
-				"<html>Go back to the previous location, fractal and filter<br>Does not revert any changes made to the filter.</html>")
+				"<html>Go back to the previous location, fractal and filter<br>Does not revert any changes made to the fractal or filter.</html>")
 				.setDefault(false).build();
 
 		/**
@@ -283,7 +283,7 @@ public class GUI {
 	 * cancel button
 	 */
 	private void cancel() {
-		if (renderer.cancel()) {
+		if (RENDER.cancel()) {
 			if (picture.isGenerating()) {
 				picture.setGenerating(false);
 				feedback.setProgress("cancelled image", 0);

@@ -18,18 +18,25 @@ public class RenderWorker {
 	 * The singleton instance of this class.
 	 */
 	@NotNull
-	private final static RenderWorker WORKER = new RenderWorker();
+	private final static RenderWorker RENDER = new RenderWorker();
 
 	/**
-	 * @return the {@link RenderWorker#WORKER}
+	 * @return the {@link RenderWorker#RENDER}
 	 */
 	@NotNull
 	public static RenderWorker getInstance() {
-		return WORKER;
+		return RENDER;
 	}
 
 	private RenderWorker() {
 	}
+
+	/**
+	 * A <code>boolean</code> to determine if a renderer is working. <br>
+	 * If a renderer is working no other <code>generators</code> or
+	 * <code>painters</code> can be scheduled until it has finished.
+	 */
+	private boolean rendering = false;
 
 	/**
 	 * The <code>Generator</code> that is currently in use. This could either be
@@ -79,84 +86,131 @@ public class RenderWorker {
 	private Painter scheduledPainter;
 
 	/**
-	 * Puts a new render request in queue. <br>
-	 * If there is no <code>Generator</code> working, this can immediately execute.
-	 * Otherwise it will become the new {@link RenderWorker#scheduledGenerator}.
+	 * Queues a new <code>renderer</code>.<br>
+	 * If a <code>generator</code> is already working this will schedule to work
+	 * next.
 	 * <p>
-	 * This method will attempt to start a <code>Generator</code> and sequentially a
-	 * <code>Painter</code> and will place any <code>Generator</code> as scheduled
-	 * until it is finished.
+	 * The <code>renderer</code> will block any new <code>generators</code> or
+	 * <code>painters</code> that try to execute until it has finished.
 	 * 
-	 * @param field    the reference to the <code>Field</code>.
-	 * @param fractal  a clone of the <code>Fractal</code>.
-	 * @param filter   a clone of the <code>Filter</code>.
-	 * @param runnable a <code>Runnable</code> ran after the <code>Painter</code>
-	 *                 has finished on the EDT.
+	 * @param field    a reference to the <code>Field</code> that will be used to
+	 *                 generate and paint.
+	 * @param fractal  a clone of the <code>Fractal</code> used for generating the
+	 *                 <code>field</code>.
+	 * @param filter   a clone of the <code>Filter</code> used for painting the
+	 *                 <code>field</code>.
+	 * @param runnable a <code>Runnable</code> ran when the painter has finished.
+	 *                 <br>
+	 *                 This must call {@link RenderWorker#runScheduledGenerator()}
+	 *                 and {@link RenderWorker#runScheduledPainter()} when a new
+	 *                 <code>generator</code> and <code>painter</code> can be
+	 *                 started.
 	 */
-	public void newRender(@NotNull Field field, @NotNull Fractal fractal, @NotNull Filter filter,
-			@Nullable Runnable runnable) {
-		generator(field, fractal, () -> {
-			newPainter(field, filter, () -> {
-				if (runnable != null)
-					runnable.run();
-				runScheduledGenerator();
-			});
-		});
+	public synchronized void newRender(@NotNull Field field, @NotNull Fractal fractal, @NotNull Filter filter,
+			@NotNull Runnable runnable) {
+
+		rendering = true; // block new generators and painters
+
+		// This does not check if there are any painters active when starting the
+		// generator. This shouldn't cause too much trouble as the render request will
+		// repaint anyway. Worst case scenario is that the user will see some artifacts
+		// whilst this render request is working.
+		generator(field, fractal, () -> painter(field, filter, () -> {
+			runnable.run();
+			rendering = false;
+		}, true), true);
 	}
 
 	/**
-	 * Puts a new <code>Generator</code> in queue.<br>
-	 * If there is no <code>Generator</code> working, this can immediately execute.
-	 * Otherwise it will become the new {@link RenderWorker#scheduledGenerator}.
+	 * Queues a new <code>generator</code>.<br>
+	 * If a <code>generator</code> is already working this will schedule to work
+	 * next.
+	 * <p>
+	 * The <code>generator</code> can be overridden if another
+	 * <code>generator</code> schedules before this one gets to execute.
 	 * 
-	 * @param field    the reference to the <code>Field</code>.
-	 * @param fractal  a clone of the <code>Fractal</code>.
-	 * @param runnable a <code>Runnable</code> ran after the <code>Generator</code>
-	 *                 has finished on the EDT.
+	 * @param field    a reference to the <code>Field</code> that will be used to
+	 *                 generate and paint.
+	 * @param filter   a clone of the <code>Filter</code> used for painting the
+	 *                 <code>field</code>.
+	 * @param runnable a <code>Runnable</code> ran when the generator has finished.
+	 *                 <br>
+	 *                 This must call {@link RenderWorker#runScheduledGenerator()}
+	 *                 when a new <code>generator</code> can be started.
 	 */
-	public void newGenerator(@NotNull Field field, @NotNull Fractal fractal, @Nullable Runnable runnable) {
-		generator(field, fractal, () -> {
-			if (runnable != null)
-				runnable.run();
-			runScheduledGenerator();
-		});
+
+	public synchronized void newGenerator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
+		generator(field, fractal, runnable, false);
 	}
 
-	private synchronized void generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable r) {
+	/**
+	 * Starts a <code>generator</code> or schedules it if there's already one
+	 * working.
+	 * 
+	 * @param field        a reference to the <code>Field</code> that will be used
+	 *                     to generate and paint.
+	 * @param filter       a clone of the <code>Filter</code> used for painting the
+	 *                     <code>field</code>.
+	 * @param runnable     a <code>Runnable</code> ran when the generator has
+	 *                     finished. <br>
+	 *                     This must call
+	 *                     {@link RenderWorker#runScheduledGenerator()} when a new
+	 *                     <code>generator</code> can be started.
+	 * @param ignoreRender if true it will not be blocked by the active renderer.
+	 */
+	private synchronized void generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable,
+			boolean ignoreRender) {
 		if (generatorReady) {
 			generatorReady = false;
-			currentGenerator = new Generator(field, fractal, r);
+			currentGenerator = new Generator(field, fractal, runnable);
 			currentGenerator.execute();
-		} else {
-			scheduledGenerator = new Generator(field, fractal, r);
+		} else if (ignoreRender || !rendering) {
+			scheduledGenerator = new Generator(field, fractal, runnable);
 		}
 	}
 
 	/**
-	 * Puts a new <code>Painter</code> in queue.<br>
-	 * If there is no <code>Painter</code> working, this can immediately execute.
-	 * Otherwise it will become the new {@link RenderWorker#scheduledPainter}.
+	 * Queues a new <code>painter</code>.<br>
+	 * If a <code>painter</code> is already working this will schedule to work next.
+	 * <p>
+	 * The <code>painter</code> can be overridden if another <code>painter</code>
+	 * schedules before this one gets to execute.
 	 * 
-	 * @param field    the reference to the <code>Field</code>.
-	 * @param filter   a clone of the <code>Filter</code>.
-	 * @param runnable a <code>Runnable</code> ran after the <code>Painter</code>
-	 *                 has finished on the EDT. <br>
+	 * @param field    a reference to the <code>Field</code> that will be used to
+	 *                 generate and paint.
+	 * @param fractal  a clone of the <code>Fractal</code> used for generating the
+	 *                 <code>field</code>.
+	 * @param runnable a <code>Runnable</code> ran when the painter has finished.
+	 *                 <br>
+	 *                 This must call {@link RenderWorker#runScheduledPainter()}
+	 *                 when a new <code>painter</code> can be started.
 	 */
-	public void newPainter(@NotNull Field field, @NotNull Filter filter, @Nullable Runnable runnable) {
-		painter(field, filter, () -> {
-			if (runnable != null)
-				runnable.run();
-			runScheduledPainter();
-		});
+	public synchronized void newPainter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable) {
+		painter(field, filter, runnable, false);
 	}
 
-	private synchronized void painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable r) {
+	/**
+	 * Starts a <code>painter</code> or schedules it if one there's already one
+	 * working.
+	 * 
+	 * @param field        a reference to the <code>Field</code> that will be used
+	 *                     to generate and paint.
+	 * @param fractal      a clone of the <code>Fractal</code> used for generating
+	 *                     the <code>field</code>.
+	 * @param runnable     a <code>Runnable</code> ran when the painter has
+	 *                     finished. <br>
+	 *                     This must call {@link RenderWorker#runScheduledPainter()}
+	 *                     when a new <code>painter</code> can be started.
+	 * @param ignoreRender if true it will not be blocked by the active renderer.
+	 */
+	private synchronized void painter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable,
+			boolean ignoreRender) {
 		if (painterReady) {
 			painterReady = false;
-			currentPainter = new Painter(field, filter, r);
+			currentPainter = new Painter(field, filter, runnable);
 			currentPainter.execute();
-		} else {
-			scheduledPainter = new Painter(field, filter, r);
+		} else if (ignoreRender || !rendering) {
+			scheduledPainter = new Painter(field, filter, runnable);
 		}
 	}
 
@@ -169,7 +223,7 @@ public class RenderWorker {
 	 * <p>
 	 * This should only be run when the <code>currentGenerator</code> has finished.
 	 */
-	synchronized void runScheduledGenerator() {
+	public synchronized void runScheduledGenerator() {
 		if (scheduledGenerator != null) {
 			generatorReady = false;
 			currentGenerator = scheduledGenerator;
@@ -189,7 +243,7 @@ public class RenderWorker {
 	 * <p>
 	 * This should only be run when the <code>currentPainter</code> has finished.
 	 */
-	synchronized void runScheduledPainter() {
+	public synchronized void runScheduledPainter() {
 		if (scheduledPainter != null) {
 			painterReady = false; // should already be false
 			currentPainter = scheduledPainter; // recursively start another painter
@@ -218,4 +272,35 @@ public class RenderWorker {
 
 		return out;
 	}
+
+	/**
+	 * @return true if the <code>generator</code> is finished and there are no
+	 *         scheduled <code>generators</code> left.
+	 */
+	public boolean isGeneratorReady() {
+		return generatorReady;
+	}
+
+	/**
+	 * @return true if there is a <code>scheduledGenerator</code>.
+	 */
+	public boolean isGeneratorScheduled() {
+		return scheduledGenerator != null;
+	}
+
+	/**
+	 * @return true if the <code>painter</code> is finished and there are no
+	 *         scheduled <code>painters</code> left.
+	 */
+	public boolean isPainterReady() {
+		return painterReady;
+	}
+
+	/**
+	 * @return true if there is a <code>scheduledPainter</code>.
+	 */
+	public boolean isPainterScheduled() {
+		return scheduledPainter != null;
+	}
+
 }
