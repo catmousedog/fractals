@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class GlobalWorker extends SwingWorker<Void, Void> implements PropertyChangeListener {
 
-//	protected boolean ready = false;
-
 	/**
 	 * The <code>Runnable</code> that is run after the <code>SwingWorker</code> is
 	 * done.
@@ -21,22 +19,8 @@ public abstract class GlobalWorker extends SwingWorker<Void, Void> implements Pr
 		this();
 		this.runnable = runnable;
 	}
-	
+
 	protected GlobalWorker() {
 		addPropertyChangeListener(this);
 	}
-
-//	public boolean isReady() {
-//		return ready;
-//	}
-
-	/**
-	 * Cancels the {@link SwingWorker} and sets {@link GlobalWorker#ready} to true.
-	 * 
-	 * @return {@link SwingWorker#cancel(boolean)}
-	 */
-//	public boolean cancel() {
-//		ready = true;
-//		return super.cancel(true);
-//	}
 }

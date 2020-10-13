@@ -1,6 +1,6 @@
 # TODO
 
-## [0.2] - minor fixes stable
+## [0.2] - workers package
 - [x] make FeedbackPanel into a singleton
 - [x] UIConsoleHandler -> make complex logging to file and System.out but simple logs to UI
 - [x] make uncatched exceptions go to logger
@@ -9,15 +9,17 @@
 - [x] fix painter artifacts
 - [x] update comments on 'fractals.workers' package
 - [x] make only one *global* generator / painter work (so canvas and Picture can not do work at the same time?)
-- [ ] settings for disabling scheduled workers
-- [ ] two progress bars for painter and generator? Maybe part of GlobalWorker class?
-- [ ] make Settings a singleton?
-- [ ] copy and paste for colours
-- [ ] dropdown like 'locations' for unique colours
+- [x] settings for disabling scheduled workers
+- [x] two progress bars for painter and generator
+- [x] make Settings a singleton
+- [x] change folder hierarchy to a single folder with all fractals in their subtype folder. Inside those folders are the *settings*, *locations*, etc. keep images separate though
+- [x] create fractal properties files and location if not found
+- [ ] make abstract fractals (Mandelbrot, Julia, etc.) and extend these to the IterativeMandelbrot, ...
 - [ ] keylistener
 - [ ] make logger messages fade
-- [ ] create fractal properties files and location if not found
 - [ ] julia default fixed point settings
 - [ ] advanced setting -> overlay for overlaying mandelbrot over julia set
-- [ ] checkbox advanced settings (offset in normalized fractals i.e. + 1, intertior algorithm, etc.)
+- [ ] checkbox advanced settings (intertior algorithm, etc.)
 - [ ] fix and add concrete locations and settings for all the fractals
+- [ ] gridbaglayout + option to change JPI width
+- [ ] wide combobox for long fractal names

@@ -58,7 +58,8 @@ public class PotentialMandelbrot extends Fractal implements Savable {
 				+ "<br>This allows for smooth pictures but longer generating times."
 				+ "<br>This generation type is very similar to the 'normalized iteration count', "
 				+ "<br>but tends to major its frequency in deep zooms."
-				+ "<br>Not great for deep zooms as the value quickly approaches zero in deep zooms.</html>";
+				+ "<br>Not great for deep zooms as the value quickly approaches zero"
+				+ "<br>and the double precision fails.</html>";
 	}
 
 	@Override

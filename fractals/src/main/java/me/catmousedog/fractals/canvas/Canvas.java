@@ -146,7 +146,7 @@ public class Canvas extends JPanel {
 			jpi.postRender();
 		});
 	}
-	
+
 	/**
 	 * Sets the size of the canvas and all of its components reliant on that
 	 * size.<br>
@@ -258,6 +258,14 @@ public class Canvas extends JPanel {
 	@NotNull
 	public Fractal getFractal() {
 		return fractal;
+	}
+
+	/**
+	 * @return the {@link Canvas#mouse} <code>MouseListener</code> and
+	 *         <code>MouseMotionListener</code>.
+	 */
+	public Mouse getMouse() {
+		return mouse;
 	}
 
 	/**

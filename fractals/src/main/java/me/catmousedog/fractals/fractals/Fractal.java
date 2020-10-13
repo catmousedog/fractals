@@ -370,6 +370,14 @@ public abstract class Fractal implements SafeSavable {
 	}
 
 	/**
+	 * @return true if the {@link MouseMotionListener} is enabled for this
+	 *         <code>Fractal</code>.
+	 */
+	public boolean isMouseEnabled() {
+		return mouse != null;
+	}
+
+	/**
 	 * @return Get the final {@link LinearTransform} of this {@link Fractal}
 	 */
 	@NotNull
@@ -446,8 +454,6 @@ public abstract class Fractal implements SafeSavable {
 	public Filter getFilter() {
 		return filter;
 	}
-
-//	public String
 
 	/**
 	 * Class used to store an immutable location. A <code>Location</code> should

@@ -42,12 +42,16 @@ public class FeedbackPanel extends Handler {
 	/**
 	 * <code>JLabel</code> above the progress bar.
 	 */
-	private final JLabel progress;
+	private final JLabel lblGenerator;
 
 	/**
 	 * The progress bar at the bottom of the feedback panel.
 	 */
-	private final JProgressBar jpb;
+	private final JProgressBar jpbGenerator;
+
+	private final JLabel lblPainter;
+
+	private final JProgressBar jpbPainter;
 
 	/**
 	 * Maximum amount of logged messages displayed.
@@ -115,31 +119,53 @@ public class FeedbackPanel extends Handler {
 
 		panel.add(Box.createVerticalStrut(5));
 
-		// progress label
-		progress = new JLabel();
-		progress.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		panel.add(progress);
+		// generator
+		lblGenerator = new JLabel("not generated");
+		lblGenerator.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		panel.add(lblGenerator);
 
 		panel.add(Box.createVerticalStrut(2));
 
-		// progress bar
-		jpb = new JProgressBar();
-		panel.add(jpb);
+		jpbGenerator = new JProgressBar();
+		panel.add(jpbGenerator);
 
-		setProgress("no calculations", 0);
+		// painter
+		lblPainter = new JLabel("not painted");
+		lblPainter.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		panel.add(lblPainter);
+
+		panel.add(Box.createVerticalStrut(2));
+
+		jpbPainter = new JProgressBar();
+		panel.add(jpbPainter);
+
+		setGeneratorProgress("no calculations", 0);
 	}
 
 	/**
-	 * sets the progress message and the progress bar value.<br>
+	 * sets the progress message and the progress bar value for the <code>generator</code>.<br>
 	 * Must be run on the EDT.
 	 * 
 	 * @param progressMessage the message above the progress bar without the
 	 *                        progress value
 	 * @param p               percentage of the progress bar
 	 */
-	public void setProgress(@NotNull String progressMessage, int p) {
-		jpb.setValue(p);
-		progress.setText(String.format("%s - %d%s", progressMessage, p, "%"));
+	public void setGeneratorProgress(@NotNull String progressMessage, int p) {
+		jpbGenerator.setValue(p);
+		lblGenerator.setText(String.format("%s - %d%%", progressMessage, p));
+	}
+
+	/**
+	 * sets the progress message and the progress bar value for the <code>painter</code>.<br>
+	 * Must be run on the EDT.
+	 * 
+	 * @param progressMessage the message above the progress bar without the
+	 *                        progress value
+	 * @param p               percentage of the progress bar
+	 */
+	public void setPainterProgress(@NotNull String progressMessage, int p) {
+		jpbPainter.setValue(p);
+		lblPainter.setText(String.format("%s - %d%%", progressMessage, p));
 	}
 
 	/**

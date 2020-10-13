@@ -61,7 +61,7 @@ public class GUI {
 
 	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
 
-	private final Settings settings;
+	private final Settings settings = Settings.getInstance();
 
 	/**
 	 * Class used for generating images.
@@ -70,10 +70,9 @@ public class GUI {
 
 	private final RenderWorker RENDER = RenderWorker.getInstance();
 
-	public GUI(Main main, Canvas canvas, JPInterface jpi, Settings settings) {
+	public GUI(Main main, Canvas canvas, JPInterface jpi) {
 		this.canvas = canvas;
 		this.jpi = jpi;
-		this.settings = settings;
 		picture = new Picture(canvas, jpi, settings);
 
 		Padding p5 = new Padding(5);
@@ -286,11 +285,13 @@ public class GUI {
 		if (RENDER.cancel()) {
 			if (picture.isGenerating()) {
 				picture.setGenerating(false);
-				feedback.setProgress("cancelled image", 0);
+				feedback.setGeneratorProgress("cancelled generator", 0);
+				feedback.setPainterProgress("cancelled painter", 0);
 			} else {
 				jpi.allowUndo(false);
 				canvas.undo();
-				feedback.setProgress("cancelled render", 0);
+				feedback.setGeneratorProgress("cancelled generator", 0);
+				feedback.setPainterProgress("cancelled painter", 0);
 			}
 		}
 		jpi.update();

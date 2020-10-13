@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import me.catmousedog.fractals.canvas.Field;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.main.Settings;
 
 /**
  * A class used for managing the global {@link Generator} and {@link Painter}.
@@ -29,7 +30,13 @@ public class RenderWorker {
 	}
 
 	private RenderWorker() {
+		scheduled_workers = Settings.getInstance().isScheduled_workers();
 	}
+
+	/**
+	 * The boolean from {@link Settings#isScheduled_workers()}.
+	 */
+	private boolean scheduled_workers;
 
 	/**
 	 * A <code>boolean</code> to determine if a renderer is working. <br>
@@ -224,7 +231,7 @@ public class RenderWorker {
 	 * This should only be run when the <code>currentGenerator</code> has finished.
 	 */
 	public synchronized void runScheduledGenerator() {
-		if (scheduledGenerator != null) {
+		if (scheduled_workers && scheduledGenerator != null) {
 			generatorReady = false;
 			currentGenerator = scheduledGenerator;
 			scheduledGenerator = null;
@@ -244,7 +251,7 @@ public class RenderWorker {
 	 * This should only be run when the <code>currentPainter</code> has finished.
 	 */
 	public synchronized void runScheduledPainter() {
-		if (scheduledPainter != null) {
+		if (scheduled_workers && scheduledPainter != null) {
 			painterReady = false; // should already be false
 			currentPainter = scheduledPainter; // recursively start another painter
 			scheduledPainter = null;
@@ -282,10 +289,12 @@ public class RenderWorker {
 	}
 
 	/**
-	 * @return true if there is a <code>scheduledGenerator</code>.
+	 * @return true if there is a <code>scheduledGenerator</code><br>
+	 *         false if not scheduled or {@link Settings#isScheduled_workers()} is
+	 *         false.
 	 */
 	public boolean isGeneratorScheduled() {
-		return scheduledGenerator != null;
+		return scheduled_workers && scheduledGenerator != null;
 	}
 
 	/**
@@ -297,10 +306,12 @@ public class RenderWorker {
 	}
 
 	/**
-	 * @return true if there is a <code>scheduledPainter</code>.
+	 * @return true if there is a <code>scheduledPainter</code><br>
+	 *         false if not scheduled or {@link Settings#isScheduled_workers()} is
+	 *         false.
 	 */
 	public boolean isPainterScheduled() {
-		return scheduledPainter != null;
+		return scheduled_workers && scheduledPainter != null;
 	}
 
 }

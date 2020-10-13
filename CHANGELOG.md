@@ -254,11 +254,16 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - **GlobalWorker** abstract class
 - **RenderWorker** class singleton for calling the global Generator and Painter. 
 - UncaughtExceptionhandler
+- two progress bars for the painter and generator.
+- **Julia** abstract fractal
 
 ### Changed
 - folder for each fractal type (locations, settings)
 - folder for each fractal (images)
 - finally fixed the painting artifacts. Painters and Generators are now sequential.
+- made **Settings** a singleton.
+- made fractals with mouse listeners able to zoom whilst dragging if mouse listener is disabled.
+- moved *properties* files to ordered hierarchy of files
 
 
 ### Removed

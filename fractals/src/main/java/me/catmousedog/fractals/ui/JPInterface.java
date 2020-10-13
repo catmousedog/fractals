@@ -1,7 +1,6 @@
 package me.catmousedog.fractals.ui;
 
 import java.awt.Dimension;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -14,10 +13,8 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
-import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.utils.FeedbackPanel;
 
 /**
  * Class used to interact the user entered data via the {@link GUI} class and
@@ -39,19 +36,14 @@ public class JPInterface extends JPanel implements Savable {
 	private final Canvas canvas;
 
 	/**
-	 * The {@link FeedbackPanel} instance.
-	 */
-	private final Logger logger = Logger.getLogger("fractals");
-
-	/**
 	 * user data from the user interface
 	 */
 	private final GUI gui;
 
-	public JPInterface(InitialSize size, Main main, Canvas canvas, Settings settings) {
+	public JPInterface(InitialSize size, Main main, Canvas canvas) {
 		this.main = main;
 		this.canvas = canvas;
-		gui = new GUI(main, canvas, this, settings);
+		gui = new GUI(main, canvas, this);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));
@@ -75,12 +67,6 @@ public class JPInterface extends JPanel implements Savable {
 	 * Must be run on the EDT
 	 */
 	public void render() {
-		// already rendering
-		if (!gui.getRenderjb().saveAndGet()) {
-			logger.finer("already rendering...");
-			return;
-		}
-
 		preRender();
 
 		save();

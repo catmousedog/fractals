@@ -1,6 +1,5 @@
 package me.catmousedog.fractals.workers;
 
-import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,7 +41,7 @@ public class Generator extends GlobalWorker {
 	 * Atomic counters for keeping calculation progress when using parallel streams.
 	 */
 	private AtomicInteger i, q;
-
+	
 	/**
 	 * Creates a new {@link Painter} that changes the {@link Field}'s
 	 * {@link BufferedImage}.
@@ -63,6 +62,8 @@ public class Generator extends GlobalWorker {
 		transform = fractal.getTransform();
 	}
 
+	private long ms;
+	
 	/**
 	 * Will generate the image by applying the fractal function
 	 * {@link Fractal#get(double, double)} and save to the given {@link Field}.
@@ -101,9 +102,7 @@ public class Generator extends GlobalWorker {
 		long e = System.nanoTime();
 
 		// log time
-		EventQueue.invokeLater(() -> {
-			feedback.setGenerated((e - b) / 1000000);
-		});
+		ms = (e - b) / 1000000;
 
 		return null;
 	}
@@ -119,10 +118,12 @@ public class Generator extends GlobalWorker {
 		if (super.isCancelled())
 			return;
 
-		if (evt.getNewValue() instanceof Integer)
-			feedback.setProgress("calculating fractal", (Integer) evt.getNewValue());
-		else if (evt.getNewValue().equals(StateValue.DONE)) {
+		if (evt.getNewValue() instanceof Integer) {
+			feedback.setGeneratorProgress("generating fractal", (Integer) evt.getNewValue());
+		} else if (evt.getNewValue().equals(StateValue.DONE)) {
 			runnable.run();
+			feedback.setGenerated(ms);
+			feedback.setGeneratorProgress("done!", 100);
 		}
 	}
 }

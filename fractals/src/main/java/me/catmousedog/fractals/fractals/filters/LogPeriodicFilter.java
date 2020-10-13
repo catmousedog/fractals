@@ -209,22 +209,22 @@ public class LogPeriodicFilter extends Filter {
 
 		rdjtf = new TextFieldDouble.Builder().setLabel("red offset").setTip(tipRd).build();
 
-		rdjs = new SliderDouble.Builder().setTip(tipRd).setMax(Math.PI*2).setChange(c -> changeRd()).build();
-		
+		rdjs = new SliderDouble.Builder().setTip(tipRd).setMax(Math.PI * 2).setChange(c -> changeRd()).build();
+
 		String tipGd = "<html>The offset for the green component</html>";
 
 		gdjtf = new TextFieldDouble.Builder().setLabel("green offset").setTip(tipGd).build();
 
-		gdjs = new SliderDouble.Builder().setTip(tipGd).setMax(Math.PI*2).setChange(c -> changeGd()).build();
-		
+		gdjs = new SliderDouble.Builder().setTip(tipGd).setMax(Math.PI * 2).setChange(c -> changeGd()).build();
+
 		String tipBd = "<html>The offset for the red component</html>";
 
 		bdjtf = new TextFieldDouble.Builder().setLabel("blue offset").setTip(tipBd).build();
 
-		bdjs = new SliderDouble.Builder().setTip(tipBd).setMax(Math.PI*2).setChange(c -> changeBd()).build();
+		bdjs = new SliderDouble.Builder().setTip(tipBd).setMax(Math.PI * 2).setChange(c -> changeBd()).build();
 
 		items = new Item[] { rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs, p5, kjtf, kjs, p5, rajtf, rajs, p5, gajtf, gajs,
-				p5, bajtf, bajs, p5, rdjtf, rdjs, p5, gdjtf, gdjs, p5, bdjtf, bdjs};
+				p5, bajtf, bajs, p5, rdjtf, rdjs, p5, gdjtf, gdjs, p5, bdjtf, bdjs };
 	}
 
 	private void changeR() {
@@ -261,17 +261,17 @@ public class LogPeriodicFilter extends Filter {
 		bajtf.setData(bajs.saveAndGet());
 		fractal.saveAndColour();
 	}
-	
+
 	private void changeRd() {
 		rdjtf.setData(rdjs.saveAndGet());
 		fractal.saveAndColour();
 	}
-	
+
 	private void changeGd() {
 		gdjtf.setData(gdjs.saveAndGet());
 		fractal.saveAndColour();
 	}
-	
+
 	private void changeBd() {
 		bdjtf.setData(bdjs.saveAndGet());
 		fractal.saveAndColour();

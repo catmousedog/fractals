@@ -40,7 +40,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseReleased(MouseEvent me) {
-		if (canvas.getFractal().getMouse() != null && !isStationary)
+		if (canvas.getFractal().isMouseEnabled() && !isStationary)
 			return;
 
 		me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);

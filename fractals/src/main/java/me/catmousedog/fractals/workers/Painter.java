@@ -1,6 +1,5 @@
 package me.catmousedog.fractals.workers;
 
-import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,6 +56,8 @@ public class Painter extends GlobalWorker {
 		this.filter = filter;
 	}
 
+	private long ms;
+
 	/**
 	 * Will apply the {@link Filter#get(Number)} to each {@link Pixel} in
 	 * {@link Canvas#pixels} to colour the image.
@@ -84,9 +85,8 @@ public class Painter extends GlobalWorker {
 		long e = System.nanoTime();
 
 		// log time
-		EventQueue.invokeLater(() -> {
-			feedback.setColoured((e - b) / 1000000);
-		});
+		ms = (e - b) / 1000000;
+		
 		return null;
 	}
 
@@ -102,10 +102,11 @@ public class Painter extends GlobalWorker {
 			return;
 
 		if (evt.getNewValue() instanceof Integer) {
-			feedback.setProgress("colouring fractal", (Integer) evt.getNewValue());
+			feedback.setPainterProgress("colouring fractal", (Integer) evt.getNewValue());
 		} else if (evt.getNewValue().equals(StateValue.DONE)) {
 			runnable.run();
-			feedback.setProgress("done!", 100);
+			feedback.setColoured(ms);
+			feedback.setPainterProgress("done!", 100);
 		}
 	}
 

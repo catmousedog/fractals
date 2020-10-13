@@ -32,6 +32,7 @@ import me.catmousedog.fractals.fractals.types.normalized.NormalizedJulia;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
 import me.catmousedog.fractals.fractals.types.potential.PotentialInverseMandelbrot;
+import me.catmousedog.fractals.fractals.types.potential.PotentialJulia;
 import me.catmousedog.fractals.fractals.types.potential.PotentialMandelbrot;
 import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
 import me.catmousedog.fractals.utils.OrderedProperties;
@@ -41,7 +42,11 @@ import me.catmousedog.fractals.utils.OrderedProperties;
  */
 public class Settings {
 
-	private final Main main;
+	private static Settings SETTINGS = new Settings();
+
+	public static Settings getInstance() {
+		return SETTINGS;
+	}
 
 	private String artifact_id;
 
@@ -53,15 +58,20 @@ public class Settings {
 
 	private boolean render_on_changes = true;
 
+	private boolean scheduled_workers = true;
+
 	private Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
-	private final Fractal[] allFractals = new Fractal[] { new IterativeMandelbrot(this), new NormalizedMandelbrot(this),
-			new PotentialMandelbrot(this), new IterativeJulia(this), new NormalizedJulia(this), new IterativeShip(this),
-			new NormalizedShip(this), new PotentialShip(this), new IterativeInverseMandelbrot(this),
-			new NormalizedInverseMandelbrot(this), new PotentialInverseMandelbrot(this), new TestFractal(this) };
+	private Fractal[] allFractals = new Fractal[] { //
+			new IterativeMandelbrot(this), new NormalizedMandelbrot(this), new PotentialMandelbrot(this), //
+			new IterativeJulia(this), new NormalizedJulia(this), new PotentialJulia(this), //
+			new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this), //
+			new IterativeInverseMandelbrot(this), new NormalizedInverseMandelbrot(this),
+			new PotentialInverseMandelbrot(this), //
+			new TestFractal(this) };
 
 	/**
 	 * property in the settings.properties, if not enabled this is the first fractal
@@ -69,8 +79,7 @@ public class Settings {
 	 */
 	private Fractal defaultFractal;
 
-	public Settings(Main main) {
-		this.main = main;
+	private Settings() {
 
 		// create directories
 		File images = new File("./images");
@@ -83,7 +92,7 @@ public class Settings {
 		// pom.xml
 		Properties project = new Properties();
 		try {
-			project.load(main.getClass().getClassLoader().getResourceAsStream("project.properties"));
+			project.load(getClass().getClassLoader().getResourceAsStream("project.properties"));
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "project.properties exception", e);
 		}
@@ -117,8 +126,7 @@ public class Settings {
 	private void initSettings() throws IOException {
 		// create file and load defaults
 		File f = new File("./settings.properties");
-		InputStream settingsStream = main.getClass().getClassLoader()
-				.getResourceAsStream("default_settings.properties");
+		InputStream settingsStream = getClass().getClassLoader().getResourceAsStream("default_settings.properties");
 		if (!f.exists()) {
 			Files.copy(settingsStream, Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -131,6 +139,7 @@ public class Settings {
 
 		// render_on_changes
 		render_on_changes = Boolean.parseBoolean(settings.getProperty("render_on_change"));
+		scheduled_workers = Boolean.parseBoolean(settings.getProperty("scheduled_workers"));
 		// intial size
 		try {
 			width = Integer.parseInt(settings.getProperty("width"));
@@ -155,59 +164,71 @@ public class Settings {
 			// filename
 			String filename = fractal.fileName();
 
-			// subtype/filename.properties
-			String resource = fractal.groupName() + "/" + filename + ".properties";
+			// the path to the fractal folder in the resources
+			String resource = "fractals/" + fractal.groupName() + "/" + filename;
 
 			// path to fractal resource
-			String fractalResourcePath = "concrete_fractals/" + resource;
+			String settingsResourcePath = resource + "/settings.properties";
 
 			// path to location resource
-			String locationResourcePath = "locations/" + resource;
+			String locationsResourcePath = resource + "/locations.properties";
 
 			// path to fractal file
-			String fractalFilePath = "./" + fractalResourcePath;
+			String settingsFilePath = "./" + settingsResourcePath;
 
 			// path to location file
-			String locationFilePath = "./" + locationResourcePath;
+			String locationsFilePath = "./" + locationsResourcePath;
 
 			// "true" if this fractal should be used
 			String enabled = settings.getProperty(filename);
 
-			InputStream fractalStream = main.getClass().getClassLoader().getResourceAsStream(fractalResourcePath);
-			File fractalFile = new File(fractalFilePath);
-			// make sure directory is created
-			fractalFile.getParentFile().mkdirs();
-
-			// if 'properties' resource exists and file doesn't copy over
-			if (fractalStream != null && !fractalFile.exists())
-				Files.copy(fractalStream, Paths.get(fractalFilePath), StandardCopyOption.REPLACE_EXISTING);
-
-			InputStream locationStream = main.getClass().getClassLoader().getResourceAsStream(locationResourcePath);
-			File locationFile = new File(locationFilePath);
-			// make sure directory is created
-			locationFile.getParentFile().mkdirs();
-
-			// if 'location' resource exists and file doesn't copy over
-			if (locationStream != null && !locationFile.exists())
-				Files.copy(locationStream, Paths.get(locationFilePath), StandardCopyOption.REPLACE_EXISTING);
-
 			if (enabled.equalsIgnoreCase("true")) {
+
+				// make directory
+				File fractalDirectory = new File("./" + resource);
+				if (!fractalDirectory.exists())
+					fractalDirectory.mkdirs();
+
+				// settings.properties resource for this fractal
+				InputStream settingsStream = getClass().getClassLoader().getResourceAsStream(settingsResourcePath);
+
+				// settings.properties file for this fractal
+				File settingsFile = new File(settingsFilePath);
+
+				// if 'properties' resource exists and file doesn't copy over
+				if (settingsStream == null)
+					logger.log(Level.SEVERE, "missing settings resource for " + resource);
+				else if (!settingsFile.exists())
+					Files.copy(settingsStream, Paths.get(settingsFilePath), StandardCopyOption.REPLACE_EXISTING);
+
+				// locations.properties resource for this fractal
+				InputStream locationsStream = getClass().getClassLoader().getResourceAsStream(locationsResourcePath);
+
+				// locations.properties file for this fractal
+				File locationsFile = new File(locationsFilePath);
+
+				// if 'location' resource exists and file doesn't copy over
+				if (locationsStream == null)
+					logger.log(Level.SEVERE, "missing locations resource for " + resource);
+				else if (!locationsFile.exists())
+					Files.copy(locationsStream, Paths.get(locationsFilePath), StandardCopyOption.REPLACE_EXISTING);
+
 				// create properties
 				Properties defaultP = new Properties();
-				if (fractalStream != null)
-					defaultP.load(fractalStream);
+				if (settingsStream != null)
+					defaultP.load(settingsStream);
 				Properties p = new Properties(defaultP);
-				if (fractalFile.exists()) {
-					p.load(new FileInputStream(fractalFilePath));
+				if (settingsFile.exists()) {
+					p.load(new FileInputStream(settingsFilePath));
 				}
 
 				// create locations
 				OrderedProperties defaultL = new OrderedProperties();
-				if (locationStream != null)
-					defaultL.load(locationStream);
+				if (locationsStream != null)
+					defaultL.load(locationsStream);
 				OrderedProperties l = new OrderedProperties(defaultL);
-				if (locationFile.exists()) {
-					l.load(new FileInputStream(locationFilePath));
+				if (locationsFile.exists()) {
+					l.load(new FileInputStream(locationsFilePath));
 				}
 
 				setProperties(fractal, p, l);
@@ -224,6 +245,8 @@ public class Settings {
 				break;
 			}
 		}
+
+		allFractals = null; // free memory
 	}
 
 	/**
@@ -341,6 +364,10 @@ public class Settings {
 
 	public boolean isRender_on_changes() {
 		return render_on_changes;
+	}
+
+	public boolean isScheduled_workers() {
+		return scheduled_workers;
 	}
 
 	private List<Fractal> fractals = new ArrayList<Fractal>();

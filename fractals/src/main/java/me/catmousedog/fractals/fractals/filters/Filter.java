@@ -47,12 +47,15 @@ public abstract class Filter implements Savable {
 	protected Fractal fractal;
 
 	/**
-	 * Creates a new {@link Filter}, should only be used once for each
-	 * {@link Filter}.
+	 * Creates a new <code>Filter</code>, should only be used once for each
+	 * <code>Filter</code> of each <code>Fractal</code>.
 	 * <p>
 	 * This constructor should initialise all of the fields that are copied when
 	 * {@link Filter#clone()} is called. <br>
 	 * These fields should <b>NOT</b> be given a default value any other way.
+	 * 
+	 * @param fractal the <code>Fractal</code> to which this <code>Filter</code>
+	 *                belongs.
 	 */
 	protected Filter(@NotNull Fractal fractal) {
 		this.fractal = fractal;
@@ -102,14 +105,14 @@ public abstract class Filter implements Savable {
 	protected abstract void initPanel();
 
 	private Label fi = new Label("Filter", "Settings for the current filter.", Font.BOLD, 12);
-	
+
 	/**
 	 * Adds all the necessary components to a given {@link JPanel} on the
 	 * {@link JPInterface}.
 	 * 
 	 * @param jp The JPanel to add the {@link Item}s to.
 	 */
-	 public void addPanel(@NotNull JPanel jp) {
+	public void addPanel(@NotNull JPanel jp) {
 		jp.add(fi.panel());
 		for (Item i : items)
 			jp.add(i.panel());

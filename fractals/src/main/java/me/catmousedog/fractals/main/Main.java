@@ -48,7 +48,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	/**
 	 * Settings object for storing all the settings stored outside the application.
 	 */
-	private final Settings settings = new Settings(this);
+	private final Settings settings = Settings.getInstance();
 
 	/**
 	 * Array of all enabled fractals
@@ -126,7 +126,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		rpanel.setLayout(new BorderLayout());
 
 		// create interface panel
-		jpi = new JPInterface(size, this, canvas, settings);
+		jpi = new JPInterface(size, this, canvas);
 
 		for (Fractal f : fractals) {
 			f.setCanvas(canvas);
