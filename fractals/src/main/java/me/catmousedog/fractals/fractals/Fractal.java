@@ -46,7 +46,7 @@ public abstract class Fractal implements SafeSavable {
 	 * Settings object to access user settings
 	 */
 	@NotNull
-	protected final Settings settings;
+	protected final Settings settings = Settings.getInstance();
 
 	/**
 	 * The {@link LinearTransform} used to represent the location
@@ -143,8 +143,7 @@ public abstract class Fractal implements SafeSavable {
 	 * 
 	 * @param settings
 	 */
-	public Fractal(Settings settings) {
-		this.settings = settings;
+	public Fractal() {
 		mouse = null;
 		transform = new LinearTransform();
 		initFractal();
@@ -152,14 +151,12 @@ public abstract class Fractal implements SafeSavable {
 
 	/**
 	 * Creates a new {@link Fractal} without calling {@link Fractal#initFractal()}
-	 * that is an exact copy but has no reference (except for
-	 * {@link Fractal#settings}) to the original {@link Fractal}.
+	 * that is an exact copy but has no reference to the original {@link Fractal}.
 	 * <code>filter</code>.
 	 * 
 	 * @param filter
 	 */
-	protected Fractal(Settings settings, Fractal fractal) {
-		this.settings = settings;
+	protected Fractal(Fractal fractal) {
 		mouse = null;
 		transform = fractal.getTransform().clone();
 		filter = fractal.getFilter().clone();
@@ -440,11 +437,11 @@ public abstract class Fractal implements SafeSavable {
 	 * {@link Filter#getClass()} equals a {@link Filter#getClass()} inside
 	 * {@link Fractal#filters}.
 	 * 
-	 * @param filter
+	 * @param clazz
 	 */
-	public void pickFilter(Filter filter) {
+	public void pickFilter(Class<? extends Filter> clazz) {
 		for (Filter f : filters) {
-			if (f.getClass().equals(filter.getClass())) {
+			if (f.getClass().equals(clazz)) {
 				this.filter = f;
 				return;
 			}

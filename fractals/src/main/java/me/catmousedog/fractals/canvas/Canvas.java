@@ -198,7 +198,7 @@ public class Canvas extends JPanel {
 	 */
 	public void undo() {
 		Fractal fractal = prevConfig.getFractal();
-		fractal.pickFilter(prevConfig.getFilter());
+		fractal.pickFilter(prevConfig.getFilter().getClass());
 		if (fractal.getFilter().getClass().equals(prevConfig.getFilter().getClass())) {
 			fractal.getFilter().setFilter(prevConfig.getFilter());
 		}

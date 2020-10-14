@@ -4,19 +4,18 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 /**
  * Number = Integer
  */
 public final class IterativeShip extends Fractal {
 
-	public IterativeShip(Settings settings) {
-		super(settings);
+	public IterativeShip() {
+		super();
 	}
 
-	private IterativeShip(Settings settings, Fractal fractal) {
-		super(settings, fractal);
+	private IterativeShip(Fractal fractal) {
+		super(fractal);
 	}
 
 	/**
@@ -68,6 +67,6 @@ public final class IterativeShip extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new IterativeShip(settings, this);
+		return new IterativeShip(this);
 	}
 }

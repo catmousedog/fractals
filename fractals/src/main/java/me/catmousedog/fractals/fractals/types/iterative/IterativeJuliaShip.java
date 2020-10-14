@@ -7,16 +7,15 @@ import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 public class IterativeJuliaShip extends Julia {
 
-	public IterativeJuliaShip(Settings settings) {
-		super(settings);
+	public IterativeJuliaShip() {
+		super();
 	}
 
-	private IterativeJuliaShip(Settings settings, Fractal fractal, double jx, double jy) {
-		super(settings, fractal, jx, jy);
+	private IterativeJuliaShip(Fractal fractal, double jx, double jy) {
+		super(fractal, jx, jy);
 	}
 
 	@Override
@@ -65,7 +64,7 @@ public class IterativeJuliaShip extends Julia {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new IterativeJuliaShip(settings, this, jx, jy);
+		return new IterativeJuliaShip(this, jx, jy);
 	}
 
 }

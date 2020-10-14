@@ -5,19 +5,17 @@ import java.util.Properties;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.Savable;
 
 public class NormalizedMandelbrot extends Fractal {
 
 	private int offset;
 
-	public NormalizedMandelbrot(Settings settings) {
-		super(settings);
+	public NormalizedMandelbrot() {
+		super();
 	}
 
-	private NormalizedMandelbrot(Settings settings, Fractal fractal, int offset) {
-		super(settings, fractal);
+	private NormalizedMandelbrot(Fractal fractal, int offset) {
+		super(fractal);
 		this.offset = offset;
 	}
 
@@ -65,7 +63,7 @@ public class NormalizedMandelbrot extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new NormalizedMandelbrot(settings, this, offset);
+		return new NormalizedMandelbrot(this, offset);
 	}
 
 	@Override

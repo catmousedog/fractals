@@ -4,19 +4,18 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 /**
  * Number = Integer
  */
 public final class IterativeInverseMandelbrot extends Fractal {
 
-	public IterativeInverseMandelbrot(Settings settings) {
-		super(settings);
+	public IterativeInverseMandelbrot() {
+		super();
 	}
-
-	private IterativeInverseMandelbrot(Settings settings, Fractal fractal) {
-		super(settings, fractal);
+	
+	private IterativeInverseMandelbrot(Fractal fractal) {
+		super(fractal);
 	}
 
 	@Override
@@ -68,6 +67,6 @@ public final class IterativeInverseMandelbrot extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new IterativeInverseMandelbrot(settings, this);
+		return new IterativeInverseMandelbrot(this);
 	}
 }

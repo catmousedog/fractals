@@ -9,7 +9,6 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.CheckBox;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
@@ -19,12 +18,12 @@ public class TestFractal extends Fractal {
 
 	private double jx, jy;
 
-	public TestFractal(Settings settings) {
-		super(settings);
+	public TestFractal() {
+		super();
 	}
 
-	private TestFractal(Settings settings, Fractal fractal, double jx, double jy) {
-		super(settings, fractal);
+	private TestFractal(Fractal fractal, double jx, double jy) {
+		super(fractal);
 		this.jx = jx;
 		this.jy = jy;
 	}
@@ -36,17 +35,16 @@ public class TestFractal extends Fractal {
 		double t1, t2;
 
 		for (int i = 0; i < iterations; i++) {
-			tx = x;
-
 			t1 = x * x;
 			t2 = y * y;
 
 			if (t1 + t2 > bailout)
 				return 255 * (iterations - i) / iterations;
 
-			x = t1 - t2 + jx;
-			y = Math.abs(2 * tx * y) + jy;
-
+			tx = x;
+			x = Math.exp(x) * Math.cos(y) + jx;
+			y = Math.exp(tx) * Math.sin(y) + jy;
+			
 		}
 		return 0;
 	}
@@ -129,7 +127,7 @@ public class TestFractal extends Fractal {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new TestFractal(settings, this, jx, jy);
+		return new TestFractal(this, jx, jy);
 	}
 
 }

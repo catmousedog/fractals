@@ -100,7 +100,6 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		if (middleMouse) {
 			me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
 
-			tip.hide();
 			displayTip(me.getX(), me.getY());
 		}
 	}
@@ -126,6 +125,8 @@ public class Mouse implements MouseListener, MouseMotionListener {
 	private boolean middleMouse = false;
 
 	private void displayTip(int x, int y) {
+		if (tip != null)
+			tip.hide();
 		PopupFactory popupFactory = PopupFactory.getSharedInstance();
 		Point screenLocation = canvas.getLocationOnScreen();
 		Point location = new Point(screenLocation.x + x, screenLocation.y + y - 20);

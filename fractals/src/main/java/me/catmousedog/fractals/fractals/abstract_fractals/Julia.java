@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.CheckBox;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
@@ -14,12 +13,12 @@ public abstract class Julia extends Fractal {
 
 	protected double jx, jy;
 
-	public Julia(Settings settings) {
-		super(settings);
+	public Julia() {
+		super();
 	}
 
-	protected Julia(Settings settings, Fractal fractal, double jx, double jy) {
-		super(settings, fractal);
+	protected Julia(Fractal fractal, double jx, double jy) {
+		super(fractal);
 		this.jx = jx;
 		this.jy = jy;
 	}

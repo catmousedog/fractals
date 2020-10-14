@@ -10,15 +10,15 @@ import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 /**
  * Number = Integer
  */
-public final class PotentialJulia extends Julia {
+public final class PotentialJuliaShip extends Julia {
 
 	private int offset;
 
-	public PotentialJulia() {
+	public PotentialJuliaShip() {
 		super();
 	}
 
-	private PotentialJulia(Fractal fractal, double jx, double jy, int offset) {
+	private PotentialJuliaShip(Fractal fractal, double jx, double jy, int offset) {
 		super(fractal, jx, jy);
 		this.offset = offset;
 	}
@@ -43,26 +43,24 @@ public final class PotentialJulia extends Julia {
 			}
 
 			x = t1 - t2 + jx;
-			y = 2 * tx * y + jy;
+			y = Math.abs(2 * tx * y) + jy;
 		}
 		return 0;
 	}
 
 	@Override
 	public String informalName() {
-		return "Potential Julia Set";
+		return "Potential Julia Ship";
 	}
 
 	@Override
 	public String fileName() {
-		return "PotentialJulia";
+		return "PotentialJuliaShip";
 	}
 
 	@Override
 	public String getTip() {
-		return "<html>The second order julia set (<i>z²+c<i/>) generated using an electro static approximation."
-				+ "<br>This doesn't allows for very deep zooms and is slower."
-				+ "<br>Dragging the mouse will change the fixed point used to generate this set.</html>";
+		return "<html>TODO</html>";
 	}
 
 	@Override
@@ -80,6 +78,6 @@ public final class PotentialJulia extends Julia {
 
 	@Override
 	public Fractal clone() {
-		return new PotentialJulia(this, jx, jy, offset);
+		return new PotentialJuliaShip(this, jx, jy, offset);
 	}
 }

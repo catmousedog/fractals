@@ -5,18 +5,17 @@ import java.util.Properties;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 public class NormalizedShip extends Fractal {
 
 	private int offset;
 
-	public NormalizedShip(Settings settings) {
-		super(settings);
+	public NormalizedShip() {
+		super();
 	}
 
-	private NormalizedShip(Settings settings, Fractal fractal, int offset) {
-		super(settings, fractal);
+	private NormalizedShip(Fractal fractal, int offset) {
+		super(fractal);
 		this.offset = offset;
 	}
 
@@ -75,6 +74,6 @@ public class NormalizedShip extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new NormalizedShip(settings, this, offset);
+		return new NormalizedShip(this, offset);
 	}
 }

@@ -8,18 +8,17 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 public class NormalizedJuliaShip extends Julia {
 
 	private int offset;
 
-	public NormalizedJuliaShip(Settings settings) {
-		super(settings);
+	public NormalizedJuliaShip() {
+		super();
 	}
 
-	private NormalizedJuliaShip(Settings settings, Fractal fractal, double jx, double jy, int offset) {
-		super(settings, fractal, jx, jy);
+	private NormalizedJuliaShip(Fractal fractal, double jx, double jy, int offset) {
+		super(fractal, jx, jy);
 		this.offset = offset;
 	}
 
@@ -78,7 +77,7 @@ public class NormalizedJuliaShip extends Julia {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new NormalizedJuliaShip(settings, this, jx, jy, offset);
+		return new NormalizedJuliaShip(this, jx, jy, offset);
 	}
 
 }

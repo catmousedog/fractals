@@ -5,19 +5,18 @@ import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 /**
  * Number = Integer
  */
 public final class IterativeJulia extends Julia {
 
-	public IterativeJulia(Settings settings) {
-		super(settings);
+	public IterativeJulia() {
+		super();
 	}
 
-	private IterativeJulia(Settings settings, Fractal fractal, double jx, double jy) {
-		super(settings, fractal, jx, jy);
+	private IterativeJulia(Fractal fractal, double jx, double jy) {
+		super(fractal, jx, jy);
 	}
 
 	@Override
@@ -68,6 +67,6 @@ public final class IterativeJulia extends Julia {
 
 	@Override
 	public Fractal clone() {
-		return new IterativeJulia(settings, this, jx, jy);
+		return new IterativeJulia(this, jx, jy);
 	}
 }

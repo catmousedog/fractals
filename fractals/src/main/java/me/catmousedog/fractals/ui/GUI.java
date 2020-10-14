@@ -319,7 +319,7 @@ public class GUI {
 		if (f.getClass().equals(canvas.getFractal().getFilter().getClass()))
 			return;
 		jpi.save();
-		canvas.getFractal().pickFilter(f);
+		canvas.getFractal().pickFilter(f.getClass());
 		jpi.updateFractal();
 		jpi.update();
 		canvas.getFractal().saveAndColour();

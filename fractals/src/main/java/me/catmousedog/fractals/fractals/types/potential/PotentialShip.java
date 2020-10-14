@@ -3,16 +3,15 @@ package me.catmousedog.fractals.fractals.types.potential;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 public class PotentialShip extends Fractal {
 
-	public PotentialShip(Settings settings) {
-		super(settings);
+	public PotentialShip() {
+		super();
 	}
 
-	private PotentialShip(Settings settings, Fractal fractal) {
-		super(settings, fractal);
+	private PotentialShip(Fractal fractal) {
+		super(fractal);
 	}
 
 	@Override
@@ -68,6 +67,6 @@ public class PotentialShip extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new PotentialShip(settings, this);
+		return new PotentialShip(this);
 	}
 }

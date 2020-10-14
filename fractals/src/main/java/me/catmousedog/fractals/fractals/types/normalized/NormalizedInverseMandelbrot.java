@@ -5,7 +5,6 @@ import java.util.Properties;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 
 /**
  * Number = Integer
@@ -13,14 +12,13 @@ import me.catmousedog.fractals.main.Settings;
 public final class NormalizedInverseMandelbrot extends Fractal {
 
 	private int offset;
-
-	public NormalizedInverseMandelbrot(Settings settings) {
-		super(settings);
-
+	
+	public NormalizedInverseMandelbrot() {
+		super();
 	}
 
-	private NormalizedInverseMandelbrot(Settings settings, Fractal fractal, int offset) {
-		super(settings, fractal);
+	private NormalizedInverseMandelbrot(Fractal fractal, int offset) {
+		super(fractal);
 		this.offset = offset;
 	}
 
@@ -84,6 +82,6 @@ public final class NormalizedInverseMandelbrot extends Fractal {
 
 	@Override
 	public Fractal clone() {
-		return new NormalizedInverseMandelbrot(settings, this, offset);
+		return new NormalizedInverseMandelbrot(this, offset);
 	}
 }

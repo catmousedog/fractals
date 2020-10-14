@@ -3,17 +3,16 @@ package me.catmousedog.fractals.fractals.types.potential;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
-import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 
 public class PotentialMandelbrot extends Fractal implements Savable {
 
-	public PotentialMandelbrot(Settings settings) {
-		super(settings);
+	public PotentialMandelbrot() {
+		super();
 	}
 
-	private PotentialMandelbrot(Settings settings, Fractal fractal) {
-		super(settings, fractal);
+	private PotentialMandelbrot(Fractal fractal) {
+		super(fractal);
 	}
 
 	@Override
@@ -70,6 +69,6 @@ public class PotentialMandelbrot extends Fractal implements Savable {
 
 	@Override
 	public Fractal clone() {
-		return new PotentialMandelbrot(settings, this);
+		return new PotentialMandelbrot(this);
 	}
 }

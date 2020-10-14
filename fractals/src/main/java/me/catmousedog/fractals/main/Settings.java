@@ -35,6 +35,7 @@ import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
 import me.catmousedog.fractals.fractals.types.potential.PotentialInverseMandelbrot;
 import me.catmousedog.fractals.fractals.types.potential.PotentialJulia;
+import me.catmousedog.fractals.fractals.types.potential.PotentialJuliaShip;
 import me.catmousedog.fractals.fractals.types.potential.PotentialMandelbrot;
 import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
 import me.catmousedog.fractals.utils.OrderedProperties;
@@ -68,13 +69,13 @@ public class Settings {
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
 	private Fractal[] allFractals = new Fractal[] { //
-			new IterativeMandelbrot(this), new NormalizedMandelbrot(this), new PotentialMandelbrot(this), //
-			new IterativeJulia(this), new NormalizedJulia(this), new PotentialJulia(this), //
-			new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this), //
-			new IterativeJuliaShip(this), new NormalizedJuliaShip(this), //
-			new IterativeInverseMandelbrot(this), new NormalizedInverseMandelbrot(this),
-			new PotentialInverseMandelbrot(this), //
-			new TestFractal(this) };
+			new IterativeMandelbrot(), new NormalizedMandelbrot(), new PotentialMandelbrot(), //
+			new IterativeJulia(), new NormalizedJulia(), new PotentialJulia(), //
+			new IterativeShip(), new NormalizedShip(), new PotentialShip(), //
+			new IterativeJuliaShip(), new NormalizedJuliaShip(), new PotentialJuliaShip(), //
+			new IterativeInverseMandelbrot(), new NormalizedInverseMandelbrot(),
+			new PotentialInverseMandelbrot(), //
+			new TestFractal() };
 
 	/**
 	 * property in the settings.properties, if not enabled this is the first fractal
