@@ -24,11 +24,13 @@ import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeInverseMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeJulia;
+import me.catmousedog.fractals.fractals.types.iterative.IterativeJuliaShip;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
 import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
 import me.catmousedog.fractals.fractals.types.iterative.TestFractal;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedInverseMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedJulia;
+import me.catmousedog.fractals.fractals.types.normalized.NormalizedJuliaShip;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
 import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
 import me.catmousedog.fractals.fractals.types.potential.PotentialInverseMandelbrot;
@@ -69,6 +71,7 @@ public class Settings {
 			new IterativeMandelbrot(this), new NormalizedMandelbrot(this), new PotentialMandelbrot(this), //
 			new IterativeJulia(this), new NormalizedJulia(this), new PotentialJulia(this), //
 			new IterativeShip(this), new NormalizedShip(this), new PotentialShip(this), //
+			new IterativeJuliaShip(this), new NormalizedJuliaShip(this), //
 			new IterativeInverseMandelbrot(this), new NormalizedInverseMandelbrot(this),
 			new PotentialInverseMandelbrot(this), //
 			new TestFractal(this) };

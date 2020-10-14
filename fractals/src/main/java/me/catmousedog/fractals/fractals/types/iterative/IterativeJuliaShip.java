@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.fractals.types.iterative;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
 import me.catmousedog.fractals.fractals.filters.Filter;
@@ -7,16 +9,13 @@ import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
 import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 
-/**
- * Number = Integer
- */
-public final class IterativeJulia extends Julia {
+public class IterativeJuliaShip extends Julia {
 
-	public IterativeJulia(Settings settings) {
+	public IterativeJuliaShip(Settings settings) {
 		super(settings);
 	}
 
-	private IterativeJulia(Settings settings, Fractal fractal, double jx, double jy) {
+	private IterativeJuliaShip(Settings settings, Fractal fractal, double jx, double jy) {
 		super(settings, fractal, jx, jy);
 	}
 
@@ -36,7 +35,7 @@ public final class IterativeJulia extends Julia {
 				return 255 * (iterations - i) / iterations;
 
 			x = t1 - t2 + jx;
-			y = 2 * tx * y + jy;
+			y = Math.abs(2 * tx * y) + jy;
 
 		}
 		return 0;
@@ -50,24 +49,23 @@ public final class IterativeJulia extends Julia {
 	}
 
 	@Override
-	public String informalName() {
-		return "Iterative Julia Set";
+	public @NotNull String informalName() {
+		return "Iterative Julia Ship";
 	}
 
 	@Override
-	public String fileName() {
-		return "IterativeJulia";
+	public @NotNull String fileName() {
+		return "IterativeJuliaShip";
 	}
 
 	@Override
-	public String getTip() {
-		return "<html>The second order julia set (<i>z²+c<i/>) generated using an escape time algorithm."
-				+ "<br>This allows for deep zooms but creates aliasing effects, generally has the shortest generating time."
-				+ "<br>Dragging the mouse will change the fixed point used to generate this set.</html>";
+	public @NotNull String getTip() {
+		return "<html>TODO</html>";
 	}
 
 	@Override
-	public Fractal clone() {
-		return new IterativeJulia(settings, this, jx, jy);
+	public @NotNull Fractal clone() {
+		return new IterativeJuliaShip(settings, this, jx, jy);
 	}
+
 }

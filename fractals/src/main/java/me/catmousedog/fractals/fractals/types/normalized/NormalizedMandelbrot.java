@@ -8,7 +8,7 @@ import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
 
-public class NormalizedMandelbrot extends Fractal implements Savable {
+public class NormalizedMandelbrot extends Fractal {
 
 	private int offset;
 

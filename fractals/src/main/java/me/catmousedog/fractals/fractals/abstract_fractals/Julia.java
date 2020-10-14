@@ -4,8 +4,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.CheckBox;
@@ -48,8 +46,6 @@ public abstract class Julia extends Fractal {
 
 	@Override
 	protected void initFractal() {
-		filters = new Filter[] { new LogPeriodicFilter(this) };
-		filter = filters[0];
 		mouse = new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {

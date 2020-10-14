@@ -34,6 +34,7 @@
 ### Added
 - Generator class (SwingWorker) for calculating the fractal asynchronously  
 - Added MouseListener to Canvas and fixed mirror bug (retained java axis orientation, might change this later)
+- **JuliaShip** fractals
 
 ### Changed
 - Moved all swing components to EDT

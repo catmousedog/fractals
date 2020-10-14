@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 
 /**
@@ -64,6 +66,13 @@ public final class NormalizedJulia extends Julia {
 				+ "<br>Dragging the mouse will change the fixed point used to generate this set.</html>";
 	}
 
+	@Override
+	protected void initFractal() {
+		filters = new Filter[] { new LogPeriodicFilter(this) };
+		filter = filters[0];
+		super.initFractal();
+	}
+	
 	@Override
 	public void setProperties(Properties properties) {
 		super.setProperties(properties);

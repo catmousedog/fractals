@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
 
 /**
@@ -62,6 +64,13 @@ public final class PotentialJulia extends Julia {
 		return "<html>The second order julia set (<i>z²+c<i/>) generated using an electro static approximation."
 				+ "<br>This doesn't allows for very deep zooms and is slower."
 				+ "<br>Dragging the mouse will change the fixed point used to generate this set.</html>";
+	}
+
+	@Override
+	protected void initFractal() {
+		filters = new Filter[] { new LogPeriodicFilter(this) };
+		filter = filters[0];
+		super.initFractal();
 	}
 
 	@Override

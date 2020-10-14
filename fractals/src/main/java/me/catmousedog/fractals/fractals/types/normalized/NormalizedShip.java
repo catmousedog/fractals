@@ -6,9 +6,8 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.Savable;
 
-public class NormalizedShip extends Fractal implements Savable {
+public class NormalizedShip extends Fractal {
 
 	private int offset;
 
