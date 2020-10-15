@@ -26,13 +26,31 @@ public abstract class Function<N extends Number> implements Savable {
 	public void update() {
 		filter.update();
 	}
-	
+
 	public Filter[] getFilters() {
 		return filters;
 	}
-	
+
+	/**
+	 * Sets the {@link Fractal#filter} to the given if and only if the given
+	 * {@link Filter#getClass()} equals a {@link Filter#getClass()} inside
+	 * {@link Fractal#filters}.
+	 * 
+	 * @param clazz
+	 */
+	public void pickFilter(Class<? extends Filter> clazz) {
+		for (Filter f : filters) {
+			if (f.getClass().equals(clazz)) {
+				this.filter = f;
+				return;
+			}
+		}
+	}
+
 	public Filter getFilter() {
 		return filter;
 	}
+
+	
 
 }

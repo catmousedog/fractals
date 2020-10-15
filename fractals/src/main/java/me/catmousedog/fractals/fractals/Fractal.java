@@ -17,7 +17,6 @@ import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.SafeSavable;
-import me.catmousedog.fractals.ui.Savable;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Label;
@@ -56,7 +55,7 @@ public abstract class Fractal implements SafeSavable {
 	 * is already used by the {@link Mouse}.
 	 * <p>
 	 * Null if this <code>Fractal</code> does not have a
-	 * <code>MouseMotionListener</code>.
+	 * <code>MouseMotionListener</code> or belonging to a clone.
 	 * <p>
 	 * It is effectively final after being assigned its value.
 	 */
@@ -96,24 +95,8 @@ public abstract class Fractal implements SafeSavable {
 	protected Location[] locations;
 
 	protected Function<? extends Number>[] functions;
-	
+
 	protected Function<? extends Number> function;
-	
-//	/**
-//	 * The array of {@link Filter}s, only not null for the original {@link Fractal}
-//	 * created in the {@link Settings}s.
-//	 * <p>
-//	 * It is effectively final after being assigned its value through
-//	 * {@link Fractal#initFractal()} and it is null for all clones.
-//	 */
-//	@Nullable
-//	protected Filter[] filters;
-//
-//	/**
-//	 * The current {@link Filter}, an element from {@link Fractal#filters}.
-//	 */
-//	@NotNull
-//	protected Filter filter;
 
 	/**
 	 * Array of all {@link Item}s in order of addition.<br>
@@ -133,7 +116,7 @@ public abstract class Fractal implements SafeSavable {
 	 * is stopped. Each {@link Fractal} might use this differently.
 	 */
 	protected double bailout = 100;
-	
+
 	/**
 	 * from {@link Settings#isRender_on_changes()}
 	 */
@@ -164,7 +147,6 @@ public abstract class Fractal implements SafeSavable {
 		mouse = null;
 		transform = fractal.getTransform().clone();
 		function = fractal.getFunction();
-//		filter = fractal.getFilter().clone();
 		iterations = fractal.iterations;
 		bailout = fractal.bailout;
 		render_on_changes = fractal.render_on_changes;
@@ -438,34 +420,10 @@ public abstract class Fractal implements SafeSavable {
 	public Function<? extends Number>[] getFunctions() {
 		return functions;
 	}
-	
+
 	public Function<? extends Number> getFunction() {
 		return function;
 	}
-	
-//	public Filter[] getFilters() {
-//		return filters;
-//	}
-//
-//	/**
-//	 * Sets the {@link Fractal#filter} to the given if and only if the given
-//	 * {@link Filter#getClass()} equals a {@link Filter#getClass()} inside
-//	 * {@link Fractal#filters}.
-//	 * 
-//	 * @param clazz
-//	 */
-//	public void pickFilter(Class<? extends Filter> clazz) {
-//		for (Filter f : filters) {
-//			if (f.getClass().equals(clazz)) {
-//				this.filter = f;
-//				return;
-//			}
-//		}
-//	}
-//
-//	public Filter getFilter() {
-//		return filter;
-//	}
 
 	/**
 	 * Class used to store an immutable location. A <code>Location</code> should
