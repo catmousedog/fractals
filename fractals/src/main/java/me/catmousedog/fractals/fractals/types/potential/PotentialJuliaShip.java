@@ -2,10 +2,13 @@ package me.catmousedog.fractals.fractals.types.potential;
 
 import java.util.Properties;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
+import me.catmousedog.fractals.main.Settings;
 
 /**
  * Number = Integer
@@ -71,8 +74,8 @@ public final class PotentialJuliaShip extends Julia {
 	}
 
 	@Override
-	public void setProperties(Properties properties) {
-		super.setProperties(properties);
+	public void setProperties(@NotNull Settings settings, @NotNull Properties properties) {
+		super.setProperties(settings, properties);
 		offset = Integer.parseInt(properties.getProperty("offset"));
 	}
 

@@ -43,12 +43,6 @@ import me.catmousedog.fractals.ui.components.concrete.Label;
 public abstract class Fractal implements SafeSavable {
 
 	/**
-	 * Settings object to access user settings
-	 */
-	@NotNull
-	protected final Settings settings = Settings.getInstance();
-
-	/**
 	 * The {@link LinearTransform} used to represent the location
 	 */
 	@NotNull
@@ -134,6 +128,11 @@ public abstract class Fractal implements SafeSavable {
 	 * is stopped. Each {@link Fractal} might use this differently.
 	 */
 	protected double bailout = 100;
+	
+	/**
+	 * from {@link Settings#isRender_on_changes()}
+	 */
+	protected boolean render_on_changes = false;
 
 	/**
 	 * Constructor used to initialise the {@link Fractal}.<br>
@@ -160,8 +159,9 @@ public abstract class Fractal implements SafeSavable {
 		mouse = null;
 		transform = fractal.getTransform().clone();
 		filter = fractal.getFilter().clone();
-		iterations = fractal.getIterations();
-		bailout = fractal.getBailout();
+		iterations = fractal.iterations;
+		bailout = fractal.bailout;
+		render_on_changes = fractal.render_on_changes;
 	}
 
 	/**
@@ -241,7 +241,7 @@ public abstract class Fractal implements SafeSavable {
 	public void saveAndColour() {
 		if (allowListener) {
 			save();
-			if (settings.isRender_on_changes())
+			if (render_on_changes)
 				canvas.paint();
 		}
 	}
@@ -287,9 +287,10 @@ public abstract class Fractal implements SafeSavable {
 	 * 
 	 * @param properties
 	 */
-	public void setProperties(Properties properties) {
+	public void setProperties(@NotNull Settings settings, @NotNull Properties properties) {
 		iterations = Integer.parseInt(properties.getProperty("default_iter"));
 		bailout = Double.parseDouble(properties.getProperty("bailout"));
+		render_on_changes = settings.isRender_on_changes();
 	}
 
 	/**

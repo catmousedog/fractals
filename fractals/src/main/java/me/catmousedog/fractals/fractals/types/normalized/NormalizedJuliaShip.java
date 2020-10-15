@@ -8,6 +8,7 @@ import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Julia;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
+import me.catmousedog.fractals.main.Settings;
 
 public class NormalizedJuliaShip extends Julia {
 
@@ -55,8 +56,8 @@ public class NormalizedJuliaShip extends Julia {
 	}
 
 	@Override
-	public void setProperties(Properties properties) {
-		super.setProperties(properties);
+	public void setProperties(@NotNull Settings settings, @NotNull Properties properties) {
+		super.setProperties(settings, properties);
 		offset = Integer.parseInt(properties.getProperty("offset"));
 	}
 

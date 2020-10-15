@@ -45,7 +45,7 @@ import me.catmousedog.fractals.utils.OrderedProperties;
  */
 public class Settings {
 
-	private static Settings SETTINGS = new Settings();
+	private static final Settings SETTINGS = new Settings();
 
 	public static Settings getInstance() {
 		return SETTINGS;
@@ -63,19 +63,12 @@ public class Settings {
 
 	private boolean scheduled_workers = true;
 
-	private Logger logger = Logger.getLogger("fractals");
+	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
 	 */
-	private Fractal[] allFractals = new Fractal[] { //
-			new IterativeMandelbrot(), new NormalizedMandelbrot(), new PotentialMandelbrot(), //
-			new IterativeJulia(), new NormalizedJulia(), new PotentialJulia(), //
-			new IterativeShip(), new NormalizedShip(), new PotentialShip(), //
-			new IterativeJuliaShip(), new NormalizedJuliaShip(), new PotentialJuliaShip(), //
-			new IterativeInverseMandelbrot(), new NormalizedInverseMandelbrot(),
-			new PotentialInverseMandelbrot(), //
-			new TestFractal() };
+	private Fractal[] allFractals;
 
 	/**
 	 * property in the settings.properties, if not enabled this is the first fractal
@@ -162,6 +155,15 @@ public class Settings {
 	 *                     {@link Properties} could not be loaded.
 	 */
 	private void initFractals() throws IOException {
+		
+		allFractals = new Fractal[] { //
+				new IterativeMandelbrot(), new NormalizedMandelbrot(), new PotentialMandelbrot(), //
+				new IterativeJulia(), new NormalizedJulia(), new PotentialJulia(), //
+				new IterativeShip(), new NormalizedShip(), new PotentialShip(), //
+				new IterativeJuliaShip(), new NormalizedJuliaShip(), new PotentialJuliaShip(), //
+				new IterativeInverseMandelbrot(), new NormalizedInverseMandelbrot(), new PotentialInverseMandelbrot(), //
+				new TestFractal() };
+
 		// scan and copy resources inside 'conrete_fractals' resource
 
 		for (Fractal fractal : allFractals) {
@@ -280,7 +282,7 @@ public class Settings {
 			double rot = Double.parseDouble(properties.getProperty("default_rot"));
 			transform.setRot(rot);
 
-			fractal.setProperties(properties);
+			fractal.setProperties(this, properties);
 		} catch (NumberFormatException e) {
 			logger.log(Level.CONFIG, fractal.fileName() + " default settings parsing exception", e);
 		}

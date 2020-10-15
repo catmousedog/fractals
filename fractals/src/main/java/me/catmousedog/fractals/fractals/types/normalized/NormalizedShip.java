@@ -2,9 +2,12 @@ package me.catmousedog.fractals.fractals.types.normalized;
 
 import java.util.Properties;
 
+import org.jetbrains.annotations.NotNull;
+
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
+import me.catmousedog.fractals.main.Settings;
 
 public class NormalizedShip extends Fractal {
 
@@ -67,8 +70,8 @@ public class NormalizedShip extends Fractal {
 	}
 
 	@Override
-	public void setProperties(Properties properties) {
-		super.setProperties(properties);
+	public void setProperties(@NotNull Settings settings, @NotNull Properties properties) {
+		super.setProperties(settings, properties);
 		offset = Integer.parseInt(properties.getProperty("offset"));
 	}
 

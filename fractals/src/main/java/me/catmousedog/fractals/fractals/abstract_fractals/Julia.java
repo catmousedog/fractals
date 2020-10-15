@@ -54,7 +54,7 @@ public abstract class Julia extends Fractal {
 			public void mouseDragged(MouseEvent e) {
 				if (mousejcx.saveAndGet()) {
 					double[] t = transform.apply(e.getX(), e.getY());
-					jpi.renderWithout(settings.isRender_on_changes(), () -> {
+					jpi.renderWithout(render_on_changes, () -> {
 						jx = t[0];
 						jy = t[1];
 					});
