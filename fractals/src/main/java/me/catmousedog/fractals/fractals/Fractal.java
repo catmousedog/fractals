@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.canvas.Mouse;
 import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.SafeSavable;
@@ -94,21 +95,25 @@ public abstract class Fractal implements SafeSavable {
 	@NotNull
 	protected Location[] locations;
 
-	/**
-	 * The array of {@link Filter}s, only not null for the original {@link Fractal}
-	 * created in the {@link Settings}s.
-	 * <p>
-	 * It is effectively final after being assigned its value through
-	 * {@link Fractal#initFractal()} and it is null for all clones.
-	 */
-	@Nullable
-	protected Filter[] filters;
-
-	/**
-	 * The current {@link Filter}, an element from {@link Fractal#filters}.
-	 */
-	@NotNull
-	protected Filter filter;
+	protected Function<? extends Number>[] functions;
+	
+	protected Function<? extends Number> function;
+	
+//	/**
+//	 * The array of {@link Filter}s, only not null for the original {@link Fractal}
+//	 * created in the {@link Settings}s.
+//	 * <p>
+//	 * It is effectively final after being assigned its value through
+//	 * {@link Fractal#initFractal()} and it is null for all clones.
+//	 */
+//	@Nullable
+//	protected Filter[] filters;
+//
+//	/**
+//	 * The current {@link Filter}, an element from {@link Fractal#filters}.
+//	 */
+//	@NotNull
+//	protected Filter filter;
 
 	/**
 	 * Array of all {@link Item}s in order of addition.<br>
@@ -158,7 +163,8 @@ public abstract class Fractal implements SafeSavable {
 	protected Fractal(Fractal fractal) {
 		mouse = null;
 		transform = fractal.getTransform().clone();
-		filter = fractal.getFilter().clone();
+		function = fractal.getFunction();
+//		filter = fractal.getFilter().clone();
 		iterations = fractal.iterations;
 		bailout = fractal.bailout;
 		render_on_changes = fractal.render_on_changes;
@@ -196,7 +202,7 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void save() {
-		filter.save();
+		function.save();
 	}
 
 	/**
@@ -204,7 +210,7 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void update() {
-		filter.update();
+		function.update();
 	}
 
 	/**
@@ -212,7 +218,7 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void preRender() {
-		filter.preRender();
+		function.getFilter().preRender();
 		if (items != null) {
 			for (Item item : items)
 				item.preRender();
@@ -224,7 +230,7 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void postRender() {
-		filter.postRender();
+		function.getFilter().postRender();
 		if (items != null) {
 			for (Item item : items)
 				item.postRender();
@@ -232,7 +238,7 @@ public abstract class Fractal implements SafeSavable {
 	}
 
 	/**
-	 * Saves all data through {@link Savable#save()} and colours the image through
+	 * Saves all data through {@link Fractal#save()} and colours the image through
 	 * {@link Canvas#paint()} if {@link Settings#isRender_on_changes()}.
 	 * 
 	 * @return true if the canvas successfully called {@link Canvas#paint()}, false
@@ -277,7 +283,7 @@ public abstract class Fractal implements SafeSavable {
 				jp.add(i.panel());
 		}
 
-		filter.addPanel(jp);
+		function.getFilter().addPanel(jp);
 	}
 
 	/**
@@ -429,29 +435,37 @@ public abstract class Fractal implements SafeSavable {
 		return locations;
 	}
 
-	public Filter[] getFilters() {
-		return filters;
+	public Function<? extends Number>[] getFunctions() {
+		return functions;
 	}
-
-	/**
-	 * Sets the {@link Fractal#filter} to the given if and only if the given
-	 * {@link Filter#getClass()} equals a {@link Filter#getClass()} inside
-	 * {@link Fractal#filters}.
-	 * 
-	 * @param clazz
-	 */
-	public void pickFilter(Class<? extends Filter> clazz) {
-		for (Filter f : filters) {
-			if (f.getClass().equals(clazz)) {
-				this.filter = f;
-				return;
-			}
-		}
+	
+	public Function<? extends Number> getFunction() {
+		return function;
 	}
-
-	public Filter getFilter() {
-		return filter;
-	}
+	
+//	public Filter[] getFilters() {
+//		return filters;
+//	}
+//
+//	/**
+//	 * Sets the {@link Fractal#filter} to the given if and only if the given
+//	 * {@link Filter#getClass()} equals a {@link Filter#getClass()} inside
+//	 * {@link Fractal#filters}.
+//	 * 
+//	 * @param clazz
+//	 */
+//	public void pickFilter(Class<? extends Filter> clazz) {
+//		for (Filter f : filters) {
+//			if (f.getClass().equals(clazz)) {
+//				this.filter = f;
+//				return;
+//			}
+//		}
+//	}
+//
+//	public Filter getFilter() {
+//		return filter;
+//	}
 
 	/**
 	 * Class used to store an immutable location. A <code>Location</code> should
