@@ -11,6 +11,7 @@ import me.catmousedog.fractals.canvas.Field;
 import me.catmousedog.fractals.canvas.Pixel;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.utils.FeedbackPanel;
 
@@ -86,11 +87,13 @@ public class Generator extends GlobalWorker {
 		i = new AtomicInteger();
 		q = new AtomicInteger();
 
+		Function function = fractal.getFunction();
+		
 		// for each in field, calculate fractal value 'v'
 		Stream.of(pixels).parallel().forEach(p -> {
 
 			if (!super.isCancelled())
-				p.v = fractal.get(p.tx, p.ty);
+				p.v = function.apply(fractal.get(p.tx, p.ty));
 
 			// each 100th of all pixels the progress bar updates
 			if (i.incrementAndGet() % (pixels.length / 100) == 0)

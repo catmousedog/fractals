@@ -42,7 +42,7 @@ public class LogPeriodicFilter extends Filter {
 	}
 
 	@Override
-	public int get(Number v) {
+	public int apply(Number v) {
 		int cr = curve(r, rf, rd, v.doubleValue());
 		int cg = curve(g, gf, gd, v.doubleValue());
 		int cb = curve(b, bf, bd, v.doubleValue());

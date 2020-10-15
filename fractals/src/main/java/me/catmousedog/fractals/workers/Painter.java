@@ -45,7 +45,7 @@ public class Painter extends GlobalWorker {
 	 * @param field    the {@link Field} used for storing the {@link BufferedImage}
 	 *                 and the {@link Pixel}s.
 	 * @param filter   a clone of the {@link Filter} containing the
-	 *                 {@link Filter#get(Number)}.
+	 *                 {@link Filter#apply(Number)}.
 	 * @param runnable the {@link Runnable} run when the {@link Painter} is done.
 	 *                 Run on the EDT.
 	 */
@@ -59,7 +59,7 @@ public class Painter extends GlobalWorker {
 	private long ms;
 
 	/**
-	 * Will apply the {@link Filter#get(Number)} to each {@link Pixel} in
+	 * Will apply the {@link Filter#apply(Number)} to each {@link Pixel} in
 	 * {@link Canvas#pixels} to colour the image.
 	 * 
 	 * @return null
@@ -74,7 +74,7 @@ public class Painter extends GlobalWorker {
 
 		Stream.of(pixels).parallel().forEach(p -> {
 			if (!super.isCancelled())
-				img.setRGB(p.x, p.y, filter.get(p.v));
+				img.setRGB(p.x, p.y, filter.apply(p.v));
 
 			// each 100th of all pixels the progress bar updates
 			if (i.incrementAndGet() % (pixels.length / 100) == 0)

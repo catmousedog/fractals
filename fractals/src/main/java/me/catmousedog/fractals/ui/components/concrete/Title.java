@@ -19,6 +19,11 @@ public class Title extends Item {
 		jl.setFont(new Font(null, Font.BOLD, 15));
 		jl.setAlignmentX(0);
 	}
+	
+	public Title(String text, String tip) {
+		this(text);
+		jl.setToolTipText(tip);
+	}
 
 	@Override
 	public Component panel() {

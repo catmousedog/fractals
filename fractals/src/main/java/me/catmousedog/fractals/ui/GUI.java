@@ -28,7 +28,6 @@ import me.catmousedog.fractals.ui.components.concrete.ComboBoxList;
 import me.catmousedog.fractals.ui.components.concrete.Label;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.Panel;
-import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 import me.catmousedog.fractals.ui.components.concrete.Title;
@@ -147,27 +146,32 @@ public class GUI {
 				"<html>Cancel the current generator or painter.<br>This also includes the generation of images.</html>")
 				.build();
 
-		/**
-		 * Fractal
-		 */
-		Title fractal = new Title("Fractal");
-
-		Label fractaljl = new Label("fractals", "List of fractals that were enabled in the 'settings.properties'");
-
-		fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> fractal()).build();
-
-		Label filterjl = new Label("filters", "List of filters to be used with this fractal.");
-
-		filterjcb = new ComboBoxItem.Builder(canvas.getFractal().getFilters()).setAction(a -> filter()).build();
-
 		repaintjb = new Button.Builder("Repaint").setAction(a -> repaint()).setTip(
 				"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
 				.build();
 
-		SubTitle specific = new SubTitle("Fractal Specific",
-				"<html>This section contains the fractal specific settings.</html>");
+		/**
+		 * Fractal
+		 */
+		Title fractal = new Title("Fractal", "<html>Section containing all the settings regarding the fractal</html>");
+
+		Label fractaljl = new Label("fractal", "<html>All the fractal specific settings<html/>");
+
+		fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> fractal()).build();
 
 		fractaljp = new Panel();
+
+		Label functionjl = new Label("function", "<html>All the function specific settings</html>");
+
+		functionjcb = new ComboBoxItem.Builder(null).setAction(a -> function()).build();
+
+		functionjp = new Panel();
+
+		Label filterjl = new Label("filter", "<html>All the filter specific settings</html>");
+
+		filterjcb = new ComboBoxItem.Builder(null).setAction(a -> filter()).build();
+
+		filterjp = new Panel();
 
 		/**
 		 * Picture
@@ -196,8 +200,8 @@ public class GUI {
 
 		all = new Item[] { p20, window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
 				njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, iterjtf, p5,
-				zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljl, fractaljcb, p5,
-				filterjl, filterjcb, p5, repaintjb, p5, specific, p5, fractaljp, p20, picture, p10, picturesizejcb, p5,
+				zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, repaintjb, p20, fractal, p10, fractaljl, fractaljcb,
+				fractaljp, p5, functionjl, functionjcb, p5, filterjl, filterjcb, p20, picture, p10, picturesizejcb, p5,
 				picturewjtf, p5, picturehjtf, p5, picturejb, p5, picturejcb };
 	}
 
@@ -299,6 +303,14 @@ public class GUI {
 	}
 
 	/**
+	 * repaintjb
+	 */
+	private void repaint() {
+		canvas.getFractal().saveAndColour();
+		jpi.update();
+	}
+
+	/**
 	 * fractaljcb
 	 */
 	private void fractal() {
@@ -312,25 +324,24 @@ public class GUI {
 	}
 
 	/**
+	 * functionjcb
+	 */
+	private void function() {
+
+	}
+
+	/**
 	 * filterjcb
 	 */
 	private void filter() {
 		Filter f = (Filter) getFilterjcb().saveAndGet();
-		if (f.getClass().equals(canvas.getFractal().getFilter().getClass()))
+		if (f.getClass().equals(canvas.getFractal().getFunction().getFilter().getClass()))
 			return;
 		jpi.save();
-		canvas.getFractal().pickFilter(f.getClass());
+		canvas.getFractal().getFunction().pickFilter(f.getClass());
 		jpi.updateFractal();
 		jpi.update();
 		canvas.getFractal().saveAndColour();
-	}
-
-	/**
-	 * repaintjb
-	 */
-	private void repaint() {
-		canvas.getFractal().saveAndColour();
-		jpi.update();
 	}
 
 	/**
@@ -460,10 +471,34 @@ public class GUI {
 		return canceljb;
 	}
 
+	private final Button repaintjb;
+
+	public Data<Boolean> getRepaintjb() {
+		return repaintjb;
+	}
+
 	private final ComboBoxItem fractaljcb;
 
 	public ComboBoxItem getFractaljcb() {
 		return fractaljcb;
+	}
+
+	private final Panel fractaljp;
+
+	public Panel getFractaljp() {
+		return fractaljp;
+	}
+
+	private final ComboBoxItem functionjcb;
+
+	public ComboBoxItem getFunctionjcb() {
+		return functionjcb;
+	}
+
+	private final Panel functionjp;
+
+	public Panel getFunctionjp() {
+		return functionjp;
 	}
 
 	private final ComboBoxItem filterjcb;
@@ -472,16 +507,10 @@ public class GUI {
 		return filterjcb;
 	}
 
-	private final Button repaintjb;
+	private final Panel filterjp;
 
-	public Data<Boolean> getRepaintjb() {
-		return repaintjb;
-	}
-
-	private final Panel fractaljp;
-
-	public Panel getFractaljp() {
-		return fractaljp;
+	public Panel getFilterjp() {
+		return filterjp;
 	}
 
 	private final ComboBoxItem picturesizejcb;

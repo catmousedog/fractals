@@ -117,7 +117,7 @@ public class Canvas extends JPanel {
 	 * true before starting a new <code>Generator</code>.
 	 */
 	public void render() {
-		renderer.newRender(field, fractal.clone(), fractal.getFilter().clone(), () -> {
+		renderer.newRender(field, fractal.clone(), fractal.getFunction().getFilter().clone(), () -> {
 			allowRender = true;
 			repaint();
 			if (!renderer.isGeneratorScheduled() && !renderer.isPainterScheduled())
@@ -140,7 +140,7 @@ public class Canvas extends JPanel {
 	 * @return true if a new {@link Painter} was successfully executed.
 	 */
 	public void paint() {
-		renderer.newPainter(field, fractal.getFilter().clone(), () -> {
+		renderer.newPainter(field, fractal.getFunction().getFilter().clone(), () -> {
 			allowPainter = true;
 			repaint();
 			jpi.postRender();
@@ -198,9 +198,9 @@ public class Canvas extends JPanel {
 	 */
 	public void undo() {
 		Fractal fractal = prevConfig.getFractal();
-		fractal.pickFilter(prevConfig.getFilter().getClass());
-		if (fractal.getFilter().getClass().equals(prevConfig.getFilter().getClass())) {
-			fractal.getFilter().setFilter(prevConfig.getFilter());
+		fractal.getFunction().pickFilter(prevConfig.getFilter().getClass());
+		if (fractal.getFunction().getFilter().getClass().equals(prevConfig.getFilter().getClass())) {
+			fractal.getFunction().getFilter().setFilter(prevConfig.getFilter());
 		}
 		fractal.getTransform().set(prevConfig.getTransform());
 		fractal.setIterations(prevConfig.getIterations());
@@ -322,7 +322,7 @@ public class Canvas extends JPanel {
 		/**
 		 * A clone of the current {@link Filter}.
 		 */
-		private final Filter filter;
+		private final Filter<? extends Number> filter;
 
 		/**
 		 * A clone of the current {@link LinearTransform}.
@@ -345,7 +345,7 @@ public class Canvas extends JPanel {
 			return fractal;
 		}
 
-		public Filter getFilter() {
+		public Filter<? extends Number> getFilter() {
 			return filter;
 		}
 

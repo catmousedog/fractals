@@ -3,7 +3,7 @@ package me.catmousedog.fractals.fractals.functions;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.utils.FractalValue;
+import me.catmousedog.fractals.fractals.FractalValue;
 
 public class Mandelbrot {
 

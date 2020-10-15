@@ -11,7 +11,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 /**
  * A {@link Filter} designed to be used with iterative {@link Fractal}s. The
- * {@link Filter#get(Number)} takes integers ranging from 0 to 255.<br>
+ * {@link Filter#apply(Number)} takes integers ranging from 0 to 255.<br>
  * The colour pattern is periodic, using a different frequency for red, green
  * and blue.
  */
@@ -48,7 +48,7 @@ public class IterativePeriodicFilter extends Filter {
 	}
 
 	@Override
-	public int get(Number V) {
+	public int apply(Number V) {
 		int v = V.intValue();
 		if (inverted)
 			v = 255 - v;

@@ -264,7 +264,7 @@ public class JPInterface extends JPanel implements Savable {
 
 		/* Fractal */
 		gui.getFractaljcb().setDataSafe(canvas.getFractal());
-		gui.getFilterjcb().setDataSafe(canvas.getFractal().getFilter());
+		gui.getFilterjcb().setDataSafe(canvas.getFractal().getFunction().getFilter());
 		// specific
 		canvas.getFractal().safeUpdate();
 
@@ -292,8 +292,8 @@ public class JPInterface extends JPanel implements Savable {
 
 		/* Fractal */
 		gui.getFractaljcb().getComponent().setToolTipText(canvas.getFractal().getTip());
-		gui.getFilterjcb().getComponent().setToolTipText(canvas.getFractal().getFilter().getTip());
-		gui.getFilterjcb().setItems(canvas.getFractal().getFilters());
+		gui.getFilterjcb().getComponent().setToolTipText(canvas.getFractal().getFunction().getFilter().getTip());
+		gui.getFilterjcb().setItems(canvas.getFractal().getFunction().getFilters());
 		// colour
 		canvas.getFractal().setPanel(gui.getFractaljp().getPanel());
 	}

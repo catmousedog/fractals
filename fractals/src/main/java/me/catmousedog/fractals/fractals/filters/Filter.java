@@ -1,20 +1,14 @@
 package me.catmousedog.fractals.fractals.filters;
 
-import java.awt.Font;
-
-import javax.swing.JPanel;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Savable;
-import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.ui.components.concrete.Label;
+import me.catmousedog.fractals.ui.components.UI;
 
 /**
- * An abstract colour {@link Filter} including the {@link Filter#get(Number)}
+ * An abstract colour {@link Filter} including the {@link Filter#apply(Number)}
  * function.
  * <p>
  * Each implementation of this class must define:
@@ -23,21 +17,14 @@ import me.catmousedog.fractals.ui.components.concrete.Label;
  * in the initialising constructor.
  * <li>The initialising constructor for creating the {@link Filter}.
  * <li>The constructor for cloning, taking a {@link Filter} as parameter.
- * <li>The colour function {@link Filter#get(Number)}
+ * <li>The colour function {@link Filter#apply(Number)}
  * <li>{@link Filter#setFilter(Filter)} for cloning.
  * <li>All methods from the {@link Savable} interface.
  * <li>The {@link Filter#clone()} method
  * <li>The {@link Filter#initPanel()} and all of its components.
  * </ul>
  */
-public abstract class Filter implements Savable {
-
-	/**
-	 * Array of all {@link Item}s in order of addition.<br>
-	 * Only not null for the original {@link Filter}, not a clone of it.
-	 */
-	@Nullable
-	protected Item[] items;
+public abstract class Filter extends UI implements Savable {
 
 	/**
 	 * The {@link Fractal} to which this {@link Filter} belongs to.<br>
@@ -77,9 +64,10 @@ public abstract class Filter implements Savable {
 	 * rgb value.
 	 * 
 	 * @param v value calculated by the fractal
+	 * 
 	 * @return the rgb value as an integer
 	 */
-	public abstract int get(@NotNull Number v);
+	public abstract int apply(@NotNull Number v);
 
 	/**
 	 * Change this {@link Filter} to equal the given <code>filter</code>.
@@ -103,40 +91,6 @@ public abstract class Filter implements Savable {
 	 * <code>Filter</code> is cloned.
 	 */
 	protected abstract void initPanel();
-
-	private Label fi = new Label("Filter", "Settings for the current filter.", Font.BOLD, 12);
-
-	/**
-	 * Adds all the necessary components to a given {@link JPanel} on the
-	 * {@link JPInterface}.
-	 * 
-	 * @param jp The JPanel to add the {@link Item}s to.
-	 */
-	public void addPanel(@NotNull JPanel jp) {
-		jp.add(fi.panel());
-		for (Item i : items)
-			jp.add(i.panel());
-	}
-
-	/**
-	 * Calls the {@link Savable#preRender()} for all {@link Item}s inside
-	 * {@link Filter#items}.
-	 */
-	@Override
-	public void preRender() {
-		for (Item i : items)
-			i.preRender();
-	}
-
-	/**
-	 * Calls the {@link Savable#postRender()} for all {@link Item}s inside
-	 * {@link Filter#items}.
-	 */
-	@Override
-	public void postRender() {
-		for (Item i : items)
-			i.postRender();
-	}
 
 	/**
 	 * @return A {@link String} used as a tooltip for the user to read.

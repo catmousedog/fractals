@@ -1,6 +1,5 @@
 package me.catmousedog.fractals.fractals;
 
-import java.awt.Font;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Properties;
@@ -19,7 +18,7 @@ import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.SafeSavable;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.ui.components.concrete.Label;
+import me.catmousedog.fractals.ui.components.UI;
 
 /**
  * Represents a fractal including its fractal function
@@ -40,7 +39,7 @@ import me.catmousedog.fractals.ui.components.concrete.Label;
  * <li>{@link Fractal#clone()} method with the cloning constructor.
  * </ul>
  */
-public abstract class Fractal implements SafeSavable {
+public abstract class Fractal extends UI implements SafeSavable {
 
 	/**
 	 * The {@link LinearTransform} used to represent the location
@@ -94,17 +93,9 @@ public abstract class Fractal implements SafeSavable {
 	@NotNull
 	protected Location[] locations;
 
-	protected Function<? extends Number>[] functions;
+	protected Function[] functions;
 
-	protected Function<? extends Number> function;
-
-	/**
-	 * Array of all {@link Item}s in order of addition.<br>
-	 * Only not null for the original <code>Fractal</code> if defined in
-	 * {@link Fractal#initFractal()}.
-	 */
-	@Nullable
-	protected Item[] items;
+	protected Function function;
 
 	/**
 	 * The amount of iterations. Each {@link Fractal} might use this differently.
@@ -126,14 +117,18 @@ public abstract class Fractal implements SafeSavable {
 	 * Constructor used to initialise the {@link Fractal}.<br>
 	 * Only used once for each {@link Fractal} in the {@link Settings}.
 	 * <p>
-	 * This constructor also calls {@link Fractal#initFractal()}.
+	 * This constructor should initialise
+	 * <ul>
+	 * <li>the {@link UI#items}
+	 * <li>the {@link Fractal#functions} and the {@link Fractal#function}
+	 * <li>the {@link Fractal#mouse}
+	 * </ul>
 	 * 
 	 * @param settings
 	 */
 	public Fractal() {
 		mouse = null;
 		transform = new LinearTransform();
-		initFractal();
 	}
 
 	/**
@@ -159,31 +154,14 @@ public abstract class Fractal implements SafeSavable {
 	 * @param cy the y coordinate of the point
 	 * @return the value the fractal function returns
 	 */
-	public abstract Number get(double cx, double cy);
-
-	/**
-	 * Initialises the {@link Fractal#filters} array, the {@link Fractal#filter},
-	 * the {@link Fractal#mouse} and the {@link Fractal#items} array. The latter two
-	 * may be <code>null</code> if not implemented.
-	 * <p>
-	 * Only done once when the <code>Fractal</code> is created, not for clones of
-	 * <code>Fractals</code>.
-	 */
-	protected abstract void initFractal();
-
-	/**
-	 * Whether or not the listeners in the {@link Fractal#setPanel(JPanel)}
-	 * {@link JPanel} are allowed to fire.
-	 * <p>
-	 * Only stops listeners from calling {@link Fractal#saveAndColour()}.
-	 */
-	private boolean allowListener = false;
+	public abstract FractalValue get(double cx, double cy);
 
 	/**
 	 * Calls {@link Filter#save()}.
 	 */
 	@Override
 	public void save() {
+		super.save();
 		function.save();
 	}
 
@@ -192,6 +170,7 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void update() {
+		super.update();
 		function.update();
 	}
 
@@ -200,11 +179,8 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void preRender() {
-		function.getFilter().preRender();
-		if (items != null) {
-			for (Item item : items)
-				item.preRender();
-		}
+		super.preRender();
+		function.preRender();
 	}
 
 	/**
@@ -212,11 +188,8 @@ public abstract class Fractal implements SafeSavable {
 	 */
 	@Override
 	public void postRender() {
-		function.getFilter().postRender();
-		if (items != null) {
-			for (Item item : items)
-				item.postRender();
-		}
+		super.postRender();
+		function.postRender();
 	}
 
 	/**
@@ -227,28 +200,12 @@ public abstract class Fractal implements SafeSavable {
 	 *         otherwise
 	 */
 	public void saveAndColour() {
-		if (allowListener) {
+		if (allowListeners) {
 			save();
 			if (render_on_changes)
 				canvas.paint();
 		}
 	}
-
-	/**
-	 * Updates the panel using {@link Fractal#update()} but doesn't allow the
-	 * listeners to trigger when changing the data inside them. This method should
-	 * always be used when updating the data the user can interact with.
-	 * <p>
-	 * This only works if the listeners contain {@link Fractal#saveAndColour()}.
-	 */
-	@Override
-	public void safeUpdate() {
-		allowListener = false;
-		update();
-		allowListener = true;
-	}
-
-	private Label fr = new Label("Fractal", "Settings for the current fractal.", Font.BOLD, 12);
 
 	/**
 	 * Removes all current components and adds all the necessary components to a
@@ -257,15 +214,8 @@ public abstract class Fractal implements SafeSavable {
 	 * @param jp The JPanel to add the {@link Item}s to.
 	 */
 	public void setPanel(@NotNull JPanel jp) {
-		jp.removeAll();
-
-		if (items != null) {
-			jp.add(fr.panel());
-			for (Item i : items)
-				jp.add(i.panel());
-		}
-
-		function.getFilter().addPanel(jp);
+		super.setPanel(jp);
+		function.getFilter().setPanel(jp);
 	}
 
 	/**
@@ -417,11 +367,11 @@ public abstract class Fractal implements SafeSavable {
 		return locations;
 	}
 
-	public Function<? extends Number>[] getFunctions() {
+	public Function[] getFunctions() {
 		return functions;
 	}
 
-	public Function<? extends Number> getFunction() {
+	public Function getFunction() {
 		return function;
 	}
 

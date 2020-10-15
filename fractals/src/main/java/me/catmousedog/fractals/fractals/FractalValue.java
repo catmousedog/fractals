@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.utils;
+package me.catmousedog.fractals.fractals;
 
 public class FractalValue {
 
