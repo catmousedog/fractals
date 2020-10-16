@@ -5,18 +5,16 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.FractalValue;
 
-public class Mandelbrot {
-
-	private int iterations = 100;
-
-	private int bailout = 100;
-	
-	protected Function<? extends Number>[] functions;
-	
-	protected Function<? extends Number> function;
+public class Mandelbrot extends Fractal {
 
 	public Mandelbrot() {
+		super(null, null);
+		functions = new Function[] {};
+		function = functions[0];
+	}
 
+	private Mandelbrot(Fractal fractal) {
+		super(fractal);
 	}
 
 	public FractalValue get(double cx, double cy) {
@@ -31,17 +29,17 @@ public class Mandelbrot {
 			t2 = y * y;
 
 			if (t1 + t2 > bailout)
-				return new FractalValue(x, y);
+				return new FractalValue(i, iterations);
 
 			x = t1 - t2 + cx;
 			y = 2 * tx * y + cy;
 
 		}
-		return new FractalValue(0, 0);
+		return new FractalValue();
 	}
 
 	protected void initFractal() {
-		
+
 	}
 
 	public @NotNull String informalName() {

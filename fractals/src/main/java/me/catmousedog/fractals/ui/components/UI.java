@@ -14,16 +14,33 @@ public abstract class UI implements SafeSavable {
 
 	/**
 	 * The array of <code>Items</code> in order of addition.<br>
-	 * It is effectively final after being assigned and is null otherwise.
+	 * Null for clones.
 	 */
 	@Nullable
-	protected Item[] items;
+	protected final Item[] items;
 
 	/**
 	 * Used for disabling listeners in update calls. When a listener is fired it
 	 * should always check this first to make sure it is allowed to fire.
 	 */
 	protected boolean allowListeners = true;
+
+	/**
+	 * Constructor used to initialise the object including the <code>Items</code>
+	 * array.
+	 * 
+	 * @param items the array of <code>Items</code>.
+	 */
+	public UI(@Nullable Item[] items) {
+		this.items = items;
+	}
+
+	/**
+	 * Constructor used for cloning, leaves the <code>Items</code> as null.
+	 */
+	public UI() {
+		items = null;
+	}
 
 	@Override
 	public void save() {
@@ -65,14 +82,12 @@ public abstract class UI implements SafeSavable {
 	}
 
 	/**
-	 * CLears the <code>jp</code> and adds all the <code>Items</code> from
-	 * {@link UI#items}.
+	 * Adds all the <code>Items</code> from {@link UI#items} to the <code>jp</code>.
 	 * 
 	 * @param jp the <code>JPanel</code> to which the <code>Items</code> should be
 	 *           added.
 	 */
-	public void setPanel(@NotNull JPanel jp) {
-		jp.removeAll();
+	public void addPanel(@NotNull JPanel jp) {
 		if (items != null) {
 			for (Item i : items)
 				jp.add(i.panel());

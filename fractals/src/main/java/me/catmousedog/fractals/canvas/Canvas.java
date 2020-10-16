@@ -13,12 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.workers.RenderWorker;
 import me.catmousedog.fractals.workers.Generator;
 import me.catmousedog.fractals.workers.Painter;
+import me.catmousedog.fractals.workers.RenderWorker;
 
 /**
  * Represents a 2D plane of processed values by the function
@@ -117,7 +118,7 @@ public class Canvas extends JPanel {
 	 * true before starting a new <code>Generator</code>.
 	 */
 	public void render() {
-		renderer.newRender(field, fractal.clone(), fractal.getFunction().getFilter().clone(), () -> {
+		renderer.newRender(field, fractal, () -> {
 			allowRender = true;
 			repaint();
 			if (!renderer.isGeneratorScheduled() && !renderer.isPainterScheduled())
@@ -197,14 +198,13 @@ public class Canvas extends JPanel {
 	 * time {@link Canvas#savePrevConfig()} was called.
 	 */
 	public void undo() {
-		Fractal fractal = prevConfig.getFractal();
-		fractal.getFunction().pickFilter(prevConfig.getFilter().getClass());
-		if (fractal.getFunction().getFilter().getClass().equals(prevConfig.getFilter().getClass())) {
-			fractal.getFunction().getFilter().setFilter(prevConfig.getFilter());
-		}
-		fractal.getTransform().set(prevConfig.getTransform());
-		fractal.setIterations(prevConfig.getIterations());
-		zoomFactor = prevConfig.getZoomFactor();
+		Fractal fractal = prevConfig.fractal;
+		fractal.pickFunction(prevConfig.function.getClass());
+		fractal.getFunction().pickFilter(prevConfig.filter.getClass());
+
+		fractal.getTransform().set(prevConfig.transform);
+		fractal.setIterations(prevConfig.iterations);
+		zoomFactor = prevConfig.zoomFactor;
 		setFractal(fractal);
 	}
 
@@ -246,8 +246,8 @@ public class Canvas extends JPanel {
 	 */
 	public void setFractal(@NotNull Fractal fractal) {
 		super.removeMouseMotionListener(this.fractal.getMouse());
-		this.fractal = fractal;
 		super.addMouseMotionListener(fractal.getMouse());
+		this.fractal = fractal;
 		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
 		jpi.updateFractal();
 	}
@@ -301,28 +301,29 @@ public class Canvas extends JPanel {
 
 	/**
 	 * A class to store the configuration of the canvas, such as the position and
-	 * the iteration count.<br>
-	 * Used for saving previous {@link Configuration}s and reverting.
-	 * <p>
-	 * This class holds clones except for {@link Configuration#fractal} which is a
-	 * reference to the original {@link Fractal}.
+	 * <code>Function</code> used.
 	 */
 	private class Configuration {
 
 		/**
-		 * A reference to the {@link Fractal} of this {@link Configuration}. The fields
-		 * inside this fractal don't matter for this class since the
-		 * {@link LinearTransform} and iterations are stored in this class.
-		 * <p>
-		 * This field is only used to reference which {@link Fractal} was used in
-		 * {@link Canvas#undo()}.
+		 * A reference to the <code>Fractal</code> of this <code>Configuration</code>.
+		 * The fields inside this fractal don't matter for this class since the values
+		 * of those are stored in this class.
 		 */
+		@NotNull
 		private final Fractal fractal;
 
 		/**
-		 * A clone of the current {@link Filter}.
+		 * A clone of the current <code>Function</code>.
 		 */
-		private final Filter<? extends Number> filter;
+		@NotNull
+		private final Function function;
+
+		/**
+		 * A clone of the current <code>Filter</code>.
+		 */
+		@NotNull
+		private final Filter filter;
 
 		/**
 		 * A clone of the current {@link LinearTransform}.
@@ -335,31 +336,36 @@ public class Canvas extends JPanel {
 
 		public Configuration(Fractal fractal, double zoomFactor) {
 			this.fractal = fractal;
-			filter = fractal.getFilter().clone();
+			function = fractal.getFunction().clone();
+			filter = fractal.getFunction().getFilter().clone();
 			transform = fractal.getTransform().clone();
 			iterations = fractal.getIterations();
 			this.zoomFactor = zoomFactor;
 		}
 
-		public Fractal getFractal() {
-			return fractal;
-		}
-
-		public Filter<? extends Number> getFilter() {
-			return filter;
-		}
-
-		public LinearTransform getTransform() {
-			return transform;
-		}
-
-		public int getIterations() {
-			return iterations;
-		}
-
-		public double getZoomFactor() {
-			return zoomFactor;
-		}
+//		public Fractal getFractal() {
+//			return fractal;
+//		}
+//
+//		public Function getFunction() {
+//			return function;
+//		}
+//
+//		public Filter getFilter() {
+//			return filter;
+//		}
+//
+//		public LinearTransform getTransform() {
+//			return transform;
+//		}
+//
+//		public int getIterations() {
+//			return iterations;
+//		}
+//
+//		public double getZoomFactor() {
+//			return zoomFactor;
+//		}
 	}
 
 }

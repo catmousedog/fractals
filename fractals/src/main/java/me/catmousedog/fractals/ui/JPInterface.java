@@ -287,15 +287,23 @@ public class JPInterface extends JPanel implements Savable {
 	 * {@link JPInterface#update()} cycle.
 	 */
 	public void updateFractal() {
-		/* Location */
-		gui.getLocationjcb().setDataSafe(canvas.getFractal().getLocations());
+		Fractal fractal = canvas.getFractal();
 
-		/* Fractal */
-		gui.getFractaljcb().getComponent().setToolTipText(canvas.getFractal().getTip());
-		gui.getFilterjcb().getComponent().setToolTipText(canvas.getFractal().getFunction().getFilter().getTip());
-		gui.getFilterjcb().setItems(canvas.getFractal().getFunction().getFilters());
-		// colour
-		canvas.getFractal().setPanel(gui.getFractaljp().getPanel());
+		gui.getLocationjcb().setDataSafe(fractal.getLocations());
+
+		// fractal
+		gui.getFractaljcb().getComponent().setToolTipText(fractal.getTip());
+		fractal.addPanel(gui.getFractaljp().getPanel());
+
+		// function
+		gui.getFunctionjcb().setItems(fractal.getFunctions());
+		gui.getFunctionjcb().getComponent().setToolTipText(fractal.getFunction().getTip());
+		fractal.getFunction().addPanel(gui.getFunctionjp().getPanel());
+
+		// filter
+		gui.getFilterjcb().setItems(fractal.getFunction().getFilters());
+		gui.getFilterjcb().getComponent().setToolTipText(fractal.getFunction().getFilter().getTip());
+		fractal.getFunction().getFilter().addPanel(gui.getFilterjp().getPanel());
 	}
 
 	/**

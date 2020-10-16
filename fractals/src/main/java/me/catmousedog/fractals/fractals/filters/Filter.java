@@ -4,7 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.functions.Function;
+import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.Savable;
+import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.UI;
 
 /**
@@ -27,36 +30,57 @@ import me.catmousedog.fractals.ui.components.UI;
 public abstract class Filter extends UI implements Savable {
 
 	/**
-	 * The {@link Fractal} to which this {@link Filter} belongs to.<br>
-	 * Only not null for the original {@link Filter}, not a clone of it.
+	 * The <code>Fractal</code> to which this <code>Filter</code> belongs to.
+	 * <p>
+	 * Null for clones.
+	 * 
 	 */
 	@Nullable
 	protected Fractal fractal;
 
+//	/**
+//	 * Creates a new <code>Filter</code>, should only be used once for each
+//	 * <code>Filter</code> of each <code>Fractal</code>.
+//	 * <p>
+//	 * This constructor should initialise all of the fields that are copied when
+//	 * {@link Filter#clone()} is called. <br>
+//	 * These fields should <b>NOT</b> be given a default value any other way.
+//	 * 
+//	 * @param fractal the <code>Fractal</code> to which this <code>Filter</code>
+//	 *                belongs.
+//	 */
+//	protected Filter(@NotNull Fractal fractal) {
+//		this.fractal = fractal;
+//		initPanel();
+//	}
+	
 	/**
-	 * Creates a new <code>Filter</code>, should only be used once for each
-	 * <code>Filter</code> of each <code>Fractal</code>.
+	 * Constructor used to initialise the <code>Function</code>.<br>
+	 * Only used once for each <code>Function</code> in the {@link Settings}.
 	 * <p>
-	 * This constructor should initialise all of the fields that are copied when
-	 * {@link Filter#clone()} is called. <br>
-	 * These fields should <b>NOT</b> be given a default value any other way.
+	 * This constructor should initialise
+	 * <ul>
+	 * <li>the {@link UI#items}
+	 * <li>the {@link Function#filters} and the {@link Function#filter}
+	 * </ul>
 	 * 
-	 * @param fractal the <code>Fractal</code> to which this <code>Filter</code>
-	 *                belongs.
+	 * @param settings
 	 */
-	protected Filter(@NotNull Fractal fractal) {
+	protected Filter(@NotNull Fractal fractal, @NotNull Item[] items) {
+		super(items);
 		this.fractal = fractal;
-		initPanel();
 	}
 
 	/**
-	 * Creates a new {@link Filter} without calling {@link Filter#initPanel()} that
-	 * is an exact copy but has no reference to the original <code>filter</code>.
+	 * Constructor used to create a clone.<br>
+	 * This constructor must be overridden in the child class so it takes itself as
+	 * the parameter <code>function</code>. This way it can make an exact copy
+	 * without any reference to the original <code>Function</code>.
 	 * 
-	 * @param filter
+	 * @param function the <code>Function</code> it should copy.
 	 */
 	protected Filter(@NotNull Filter filter) {
-		setFilter(filter);
+		super();
 	}
 
 	/**
@@ -83,14 +107,6 @@ public abstract class Filter extends UI implements Savable {
 	 */
 	@Override
 	public abstract Filter clone();
-
-	/**
-	 * Initialises the <code>Filter's</code> panel. This includes creating all the
-	 * <code>JComponents</code> and creating the {@link Filter#items}.<br>
-	 * This is only done once for each <code>Filter</code>, so not when the
-	 * <code>Filter</code> is cloned.
-	 */
-	protected abstract void initPanel();
 
 	/**
 	 * @return A {@link String} used as a tooltip for the user to read.

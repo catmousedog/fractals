@@ -8,7 +8,6 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.canvas.Field;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.workers.Generator;
 import me.catmousedog.fractals.workers.Painter;
@@ -57,8 +56,7 @@ public class Picture {
 
 		jpi.preRender();
 
-		Fractal fractal = canvas.getFractal().clone();
-		Filter filter = canvas.getFractal().getFilter().clone();
+		Fractal fractal = canvas.getFractal();
 		LinearTransform transform = fractal.getTransform();
 		transform.setOrigin(width / 2, height / 2);
 		double a = Math.max((double) canvas.getPanelHeight() / height, (double) canvas.getPanelWidth() / width);
@@ -69,7 +67,7 @@ public class Picture {
 			public void run() {
 				Field field = new Field(width, height);
 
-				renderer.newRender(field, fractal, filter, () -> {
+				renderer.newRender(field, fractal, () -> {
 					settings.addImage(field.getImg(), ext, fractal);
 					jpi.postRender();
 					generating = false;

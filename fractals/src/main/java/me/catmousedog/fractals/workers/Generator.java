@@ -12,7 +12,6 @@ import me.catmousedog.fractals.canvas.Pixel;
 import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
 import me.catmousedog.fractals.fractals.functions.Function;
-import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.utils.FeedbackPanel;
 
 /**
@@ -26,10 +25,14 @@ public class Generator extends GlobalWorker {
 	private final Pixel[] pixels;
 
 	/**
-	 * A clone of the {@link Fractal} containing the fractal function,
-	 * {@link Fractal#get(double, double)}.
+	 * A clone of the <code>Fractal</code>.
 	 */
 	private final Fractal fractal;
+
+	/**
+	 * A clone of the <code>Function</code>.s
+	 */
+	private final Function function;
 
 	/**
 	 * The {@link LinearTransform} of the cloned {@link Fractal}.
@@ -42,29 +45,30 @@ public class Generator extends GlobalWorker {
 	 * Atomic counters for keeping calculation progress when using parallel streams.
 	 */
 	private AtomicInteger i, q;
-	
+
 	/**
 	 * Creates a new {@link Painter} that changes the {@link Field}'s
 	 * {@link BufferedImage}.
 	 * 
-	 * @param field    The reference to the {@link Field} used for storing the
+	 * @param field    The reference to the <code>Field</code> used for storing the
 	 *                 {@link Pixel}s that will be edited.
-	 * @param fractal  A clone of the {@link Fractal} containing the
-	 *                 {@link Fractal#get(double, double)}
-	 * @param runnable The {@link Runnable} run when the {@link Generator} is done
-	 *                 and wans't cancelled.
-	 * @param jpi      The {@link JPInterface} instance.
-	 * @param logger   The {@link FeedbackPanel} instance.
+	 * @param fractal  a clone of the <code>Fractal</code>.
+	 * @param function a clone of the <code>Function</code>.
+	 * @param runnable The <code>Runnable</code> run when this
+	 *                 <code>Generator</code> is done and wans't cancelled.
+	 * @param jpi      The <code>JPInterface</code> instance.
+	 * @param logger   The <code>FeedbackPanel</code> instance.
 	 */
-	Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
+	Generator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Function function, @NotNull Runnable runnable) {
 		super(runnable);
 		pixels = field.getPixels();
 		this.fractal = fractal;
+		this.function = function;
 		transform = fractal.getTransform();
 	}
 
 	private long ms;
-	
+
 	/**
 	 * Will generate the image by applying the fractal function
 	 * {@link Fractal#get(double, double)} and save to the given {@link Field}.
@@ -87,8 +91,6 @@ public class Generator extends GlobalWorker {
 		i = new AtomicInteger();
 		q = new AtomicInteger();
 
-		Function function = fractal.getFunction();
-		
 		// for each in field, calculate fractal value 'v'
 		Stream.of(pixels).parallel().forEach(p -> {
 

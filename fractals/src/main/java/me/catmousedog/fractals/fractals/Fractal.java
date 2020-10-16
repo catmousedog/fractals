@@ -19,6 +19,7 @@ import me.catmousedog.fractals.ui.SafeSavable;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.UI;
+import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 
 /**
  * Represents a fractal including its fractal function
@@ -42,12 +43,6 @@ import me.catmousedog.fractals.ui.components.UI;
 public abstract class Fractal extends UI implements SafeSavable {
 
 	/**
-	 * The {@link LinearTransform} used to represent the location
-	 */
-	@NotNull
-	protected final LinearTransform transform;
-
-	/**
 	 * A {@link MouseMotionListener} for <code>Fractals</code> that allow mouse
 	 * motion input. <br>
 	 * A <code>Fractal</code> can not have a regular {@link MouseListener} as this
@@ -55,47 +50,39 @@ public abstract class Fractal extends UI implements SafeSavable {
 	 * <p>
 	 * Null if this <code>Fractal</code> does not have a
 	 * <code>MouseMotionListener</code> or belonging to a clone.
-	 * <p>
-	 * It is effectively final after being assigned its value.
 	 */
 	@Nullable
-	protected MouseMotionListener mouse;
+	protected final MouseMotionListener mouse;
 
 	/**
-	 * The instance of the canvas, used to call {@link Canvas#paint()} when
-	 * {@link Data} changes.
+	 * The {@link LinearTransform} used to represent the location
+	 */
+	@NotNull
+	protected final LinearTransform transform;
+
+	/**
+	 * All the <code>Functions</code> belonging to this <code>Fractal</code>.
 	 * <p>
-	 * It is effectively final after being assigned its value through
-	 * {@link Fractal#setCanvas()}.
+	 * Null for clones.
 	 */
 	@Nullable
-	protected Canvas canvas;
-
-	/**
-	 * The instance of the <code>JPInterface</code>, used to call
-	 * {@link JPInterface#renderNow()}.
-	 * <p>
-	 * It is effectively final after being assigned its value through
-	 * {@link Fractal#setJPI()}.
-	 */
-	@NotNull
-	protected JPInterface jpi;
-
-	/**
-	 * Array of all locations used by this {@link Fractal}.<br>
-	 * This array is created at
-	 * {@link Fractal#setProperties(Properties, Properties)} or when the
-	 * {@link Fractal} is cloned.
-	 * <p>
-	 * It is effectively final after being assigned its value through
-	 * {@link Fractal#setProperties(Properties, Properties)}.
-	 */
-	@NotNull
-	protected Location[] locations;
-
 	protected Function[] functions;
 
+	/**
+	 * The current <code>Function</code>.
+	 */
 	protected Function function;
+
+	/**
+	 * Array of <code>Items</code> that are common to all <code>Fractals</code>,
+	 * hence not fractal-specific. <br>
+	 * Examples include: <br>
+	 * <i>iterations, bailout, etc.</i>
+	 * <p>
+	 * Null for clones.
+	 */
+	@NotNull
+	private final Item[] commonItems;
 
 	/**
 	 * The amount of iterations. Each {@link Fractal} might use this differently.
@@ -114,8 +101,37 @@ public abstract class Fractal extends UI implements SafeSavable {
 	protected boolean render_on_changes = false;
 
 	/**
-	 * Constructor used to initialise the {@link Fractal}.<br>
-	 * Only used once for each {@link Fractal} in the {@link Settings}.
+	 * Array of all locations used by this {@link Fractal}.<br>
+	 * This array is created at
+	 * {@link Fractal#setProperties(Properties, Properties)} or when the
+	 * {@link Fractal} is cloned.
+	 * <p>
+	 * Null for clones.
+	 */
+	@NotNull
+	protected Location[] locations;
+
+	/**
+	 * The instance of the canvas, used to call {@link Canvas#paint()} when
+	 * {@link Data} changes.
+	 * <p>
+	 * Null for clones.
+	 */
+	@Nullable
+	protected Canvas canvas;
+
+	/**
+	 * The instance of the <code>JPInterface</code>, used to call
+	 * {@link JPInterface#renderNow()}.
+	 * <p>
+	 * Null for clones.
+	 */
+	@NotNull
+	protected JPInterface jpi;
+
+	/**
+	 * Constructor used to initialise the <code>Fractal</code>.<br>
+	 * Only used once for each <code>Fractal</code> in the {@link Settings}.
 	 * <p>
 	 * This constructor should initialise
 	 * <ul>
@@ -124,24 +140,40 @@ public abstract class Fractal extends UI implements SafeSavable {
 	 * <li>the {@link Fractal#mouse}
 	 * </ul>
 	 * 
-	 * @param settings
+	 * @param items the {@link UI#items} for this <code>Fractal</code>.
+	 * @param mouse the <code>MouseMotionListener</code> for this
+	 *              <code>Fractal</code>.
 	 */
-	public Fractal() {
-		mouse = null;
+	protected Fractal(@NotNull Item[] items, @Nullable MouseMotionListener mouse) {
+		super(items);
+		this.mouse = mouse;
 		transform = new LinearTransform();
+
+//		Padding p5 = new Padding(5);
+		TextFieldInteger iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
+				.setTip("<html>The iteration count. Each fractal can use this differently."
+						+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
+				.setMin(0).build();
+
+		commonItems = new Item[] { iterjtf };
 	}
 
 	/**
-	 * Creates a new {@link Fractal} without calling {@link Fractal#initFractal()}
-	 * that is an exact copy but has no reference to the original {@link Fractal}.
-	 * <code>filter</code>.
+	 * Constructor used to create a clone.<br>
+	 * This constructor must be overridden in the child class so it takes itself as
+	 * the parameter <code>fractal</code>. This way it can make an exact copy
+	 * without any reference to the original <code>Fractal</code>.
 	 * 
-	 * @param filter
+	 * @param fractal the <code>Fractal</code> it should copy.
 	 */
-	protected Fractal(Fractal fractal) {
+	protected Fractal(@NotNull Fractal fractal) {
+		super();
 		mouse = null;
-		transform = fractal.getTransform().clone();
-		function = fractal.getFunction();
+		commonItems = null;
+		locations = null;
+		functions = null;
+		function = fractal.function.clone();
+		transform = fractal.transform.clone();
 		iterations = fractal.iterations;
 		bailout = fractal.bailout;
 		render_on_changes = fractal.render_on_changes;
@@ -208,14 +240,15 @@ public abstract class Fractal extends UI implements SafeSavable {
 	}
 
 	/**
-	 * Removes all current components and adds all the necessary components to a
-	 * given {@link JPanel} on the {@link JPInterface}.
-	 * 
-	 * @param jp The JPanel to add the {@link Item}s to.
+	 * Adds all the {@link Fractal#commonItems} and the {@link UI#items} to the
+	 * <code>jp</code>.
 	 */
-	public void setPanel(@NotNull JPanel jp) {
-		super.setPanel(jp);
-		function.getFilter().setPanel(jp);
+	public void addPanel(@NotNull JPanel jp) {
+		if (commonItems != null) {
+			for (Item item : commonItems)
+				jp.add(item.panel());
+		}
+		super.addPanel(jp);
 	}
 
 	/**
@@ -229,6 +262,21 @@ public abstract class Fractal extends UI implements SafeSavable {
 		iterations = Integer.parseInt(properties.getProperty("default_iter"));
 		bailout = Double.parseDouble(properties.getProperty("bailout"));
 		render_on_changes = settings.isRender_on_changes();
+	}
+
+	/**
+	 * Sets the {@link Fractal#function} to the <code>Function</code> whose class
+	 * equals the given <code>clazz</code>.
+	 * 
+	 * @param clazz the <code>Class</code> of the <code>Function</code>.
+	 */
+	public void pickFunction(Class<? extends Function> clazz) {
+		for (Function f : functions) {
+			if (f.getClass().equals(clazz)) {
+				function = f;
+				return;
+			}
+		}
 	}
 
 	/**

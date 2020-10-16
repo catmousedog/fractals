@@ -1,9 +1,8 @@
 package me.catmousedog.fractals.fractals.types.iterative;
 
 import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
-import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
+import me.catmousedog.fractals.fractals.FractalValue;
+import me.catmousedog.fractals.fractals.functions.Function;
 
 /**
  * Number = Integer
@@ -11,7 +10,9 @@ import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
 public final class IterativeMandelbrot extends Fractal {
 
 	public IterativeMandelbrot() {
-		super();
+		super(null, null);
+		functions = new Function[] {};
+		function = functions[0];
 	}
 
 	private IterativeMandelbrot(Fractal fractal) {
@@ -19,7 +20,7 @@ public final class IterativeMandelbrot extends Fractal {
 	}
 
 	@Override
-	public Number get(double cx, double cy) {
+	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
 		double tx;
 		double t1, t2;
@@ -54,12 +55,6 @@ public final class IterativeMandelbrot extends Fractal {
 	public String getTip() {
 		return "<html>The second order mandelbrot (<i>z²+c<i/>) generated using an escape time algorithm."
 				+ "<br>This allows for deep zooms but creates aliasing effects, generally has the shortest generating time.</html>";
-	}
-
-	@Override
-	protected void initFractal() {
-		filters = new Filter[] { new IterativeLinearFilter(this), new IterativePeriodicFilter(this) };
-		filter = filters[0];
 	}
 
 	@Override
