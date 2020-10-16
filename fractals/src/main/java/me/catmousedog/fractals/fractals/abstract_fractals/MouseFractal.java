@@ -73,18 +73,18 @@ public abstract class MouseFractal extends Fractal {
 		return mousejcx.saveAndGet();
 	}
 
-	@Override
-	public void save() {
-		jx = jxjtf.saveAndGet();
-		jy = jyjtf.saveAndGet();
-		super.save();
-	}
-
-	@Override
-	public void update() {
-		jxjtf.setData(jx);
-		jyjtf.setData(jy);
-		super.update();
-	}
+//	@Override
+//	public void save() {
+//		jx = jxjtf.saveAndGet();
+//		jy = jyjtf.saveAndGet();
+//		super.save();
+//	}
+//
+//	@Override
+//	public void update() {
+//		jxjtf.setData(jx);
+//		jyjtf.setData(jy);
+//		super.update();
+//	}
 
 }

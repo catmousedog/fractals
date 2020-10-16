@@ -277,3 +277,4 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
 - resources names to match new hierarchy
+- fixes to **UI**

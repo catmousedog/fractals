@@ -16,6 +16,7 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
@@ -325,7 +326,10 @@ public class GUI {
 	 * functionjcb
 	 */
 	private void function() {
-
+		Function f = (Function) getFunctionjcb().saveAndGet();
+		if (canvas.getFractal().getFunction().equals(f)) {
+			
+		}
 	}
 
 	/**

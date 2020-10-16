@@ -22,9 +22,8 @@ import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.UI;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
-import me.catmousedog.fractals.utils.Nameable;
 
-public abstract class Fractal extends UI implements SafeSavable, Nameable {
+public abstract class Fractal extends UI {
 
 	/**
 	 * A <code>MouseMotionListener</code> for <code>Fractals</code> that allow mouse
@@ -257,33 +256,7 @@ public abstract class Fractal extends UI implements SafeSavable, Nameable {
 		}
 	}
 
-	/**
-	 * True if the <code>fractal</code> is the same concrete {@link Fractal}.<br>
-	 * The is achieved by checking if the {@link Fractal#fileName()}s are equal.
-	 * <p>
-	 * Keep in mind that this means two {@link Fractal}s of the same type will
-	 * return true even if they represent different locations or iterations.
-	 */
 	@Override
-	public boolean equals(Object fractal) {
-		if (fractal instanceof Fractal)
-			return ((Fractal) fractal).fileName().equals(fileName());
-		return false;
-	}
-
-	/**
-	 * Just returns {@link Fractal#informalName()}
-	 */
-	@Override
-	public String toString() {
-		return informalName();
-	}
-
-	/**
-	 * Return a copy of this {@link Fractal}.
-	 */
-	@Override
-	@NotNull
 	public abstract Fractal clone();
 
 	/**

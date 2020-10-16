@@ -6,9 +6,8 @@ import org.jetbrains.annotations.Nullable;
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.UI;
-import me.catmousedog.fractals.utils.Nameable;
 
-public abstract class Filter extends UI implements Nameable {
+public abstract class Filter extends UI {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Filter</code> belongs to.
@@ -66,17 +65,7 @@ public abstract class Filter extends UI implements Nameable {
 	 */
 	public abstract void setFilter(@NotNull Filter filter);
 
-	/**
-	 * Clones the {@link Filter}.<br>
-	 * A clone should have no reference to the original and shouldn't call
-	 * {@link Filter#initPanel()}.
-	 */
 	@Override
 	public abstract Filter clone();
-
-	@Override
-	public String toString() {
-		return informalName();
-	}
 
 }

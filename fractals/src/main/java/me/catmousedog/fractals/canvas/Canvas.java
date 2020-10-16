@@ -245,8 +245,8 @@ public class Canvas extends JPanel {
 	 * @param fractal
 	 */
 	public void setFractal(@NotNull Fractal fractal) {
-//		super.removeMouseMotionListener(this.fractal.getMouse());
-//		super.addMouseMotionListener(fractal.getMouse());
+		super.removeMouseMotionListener(this.fractal.getMouse());
+		super.addMouseMotionListener(fractal.getMouse());
 		this.fractal = fractal;
 		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
 		jpi.updateFractal();

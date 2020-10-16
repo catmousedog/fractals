@@ -23,7 +23,7 @@ public abstract class UI implements SafeSavable {
 
 	@NotNull
 	protected final Logger logger = Logger.getLogger("fractals");
-	
+
 	/**
 	 * Used for disabling listeners in update calls. When a listener is fired it
 	 * should always check this first to make sure it is allowed to fire.
@@ -87,6 +87,47 @@ public abstract class UI implements SafeSavable {
 			for (Item i : items)
 				jp.add(i.panel());
 		}
+	}
+
+	/**
+	 * @return the {@link #UI()#informalName()}.
+	 */
+	@Override
+	public String toString() {
+		return informalName();
+	}
+
+	/**
+	 * @return the <code>String</code> for the user to read. Beware that too long
+	 *         <code>Strings</code> can cause issues.
+	 */
+	public abstract String informalName();
+
+	/**
+	 * @return the file name, usually the <code>informalName</code> without spaces.
+	 */
+	public abstract String fileName();
+
+	/**
+	 * @return a description for the user to read.
+	 */
+	public abstract String getTip();
+
+	/**
+	 * @return A clone of this <code>UI</code>. <br>
+	 *         A clone should have no reference to the original.
+	 */
+	@Override
+	public abstract UI clone();
+
+	/**
+	 * True if the given <code>object</code> is of the same <code>Class</code> as
+	 * this instance. <br>
+	 * The parameter can not be null.
+	 */
+	@Override
+	public boolean equals(@NotNull Object object) {
+		return object.getClass().equals(getClass());
 	}
 
 }

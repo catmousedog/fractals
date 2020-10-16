@@ -293,16 +293,19 @@ public class JPInterface extends JPanel implements Savable {
 
 		// fractal
 		gui.getFractaljcb().getComponent().setToolTipText(fractal.getTip());
+		gui.getFractaljp().getPanel().removeAll();
 		fractal.addPanel(gui.getFractaljp().getPanel());
 
 		// function
 		gui.getFunctionjcb().setItems(fractal.getFunctions());
 		gui.getFunctionjcb().getComponent().setToolTipText(fractal.getFunction().getTip());
+		gui.getFunctionjp().getPanel().removeAll();
 		fractal.getFunction().addPanel(gui.getFunctionjp().getPanel());
 
 		// filter
 		gui.getFilterjcb().setItems(fractal.getFunction().getFilters());
 		gui.getFilterjcb().getComponent().setToolTipText(fractal.getFunction().getFilter().getTip());
+		gui.getFilterjp().getPanel().removeAll();
 		fractal.getFunction().getFilter().addPanel(gui.getFilterjp().getPanel());
 	}
 

@@ -39,6 +39,7 @@ public class CheckBox extends Data<Boolean> {
 		jcx = new JCheckBox(text);
 		jcx.setToolTipText(tip);
 		jcx.setAlignmentX(JCheckBox.LEFT_ALIGNMENT);
+		data = b;
 	}
 
 	@Override

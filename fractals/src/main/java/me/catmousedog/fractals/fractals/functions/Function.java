@@ -8,9 +8,8 @@ import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.UI;
-import me.catmousedog.fractals.utils.Nameable;
 
-public abstract class Function extends UI implements Nameable {
+public abstract class Function extends UI {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
@@ -93,17 +92,6 @@ public abstract class Function extends UI implements Nameable {
 		filter.postRender();
 	}
 
-	/**
-	 * @return the {@link Function#informalName()}.
-	 */
-	@Override
-	public String toString() {
-		return informalName();
-	}
-
-	@Override
-	public abstract Function clone();
-
 	public Filter[] getFilters() {
 		return filters;
 	}
@@ -112,6 +100,9 @@ public abstract class Function extends UI implements Nameable {
 		return filter;
 	}
 
+	@Override
+	public abstract Function clone();
+	
 	/**
 	 * Sets the {@link Function#filter} to the <code>Filter</code> whose class
 	 * equals the given <code>clazz</code>.
