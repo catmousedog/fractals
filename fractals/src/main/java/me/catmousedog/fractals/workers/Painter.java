@@ -73,8 +73,10 @@ public class Painter extends GlobalWorker {
 		q = new AtomicInteger();
 
 		Stream.of(pixels).parallel().forEach(p -> {
-			if (!super.isCancelled())
-				img.setRGB(p.x, p.y, filter.apply(p.v));
+			if (super.isCancelled())
+				return;
+
+			img.setRGB(p.x, p.y, filter.apply(p.v));
 
 			// each 100th of all pixels the progress bar updates
 			if (i.incrementAndGet() % (pixels.length / 100) == 0)
@@ -86,7 +88,7 @@ public class Painter extends GlobalWorker {
 
 		// log time
 		ms = (e - b) / 1000000;
-		
+
 		return null;
 	}
 

@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
@@ -43,7 +43,7 @@ public class JPInterface extends JPanel implements Savable {
 	public JPInterface(InitialSize size, Main main, Canvas canvas) {
 		this.main = main;
 		this.canvas = canvas;
-		gui = new GUI(main, canvas, this);
+		gui = new GUI(canvas, this);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));

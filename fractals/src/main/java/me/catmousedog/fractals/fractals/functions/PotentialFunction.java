@@ -3,35 +3,34 @@ package me.catmousedog.fractals.fractals.functions;
 import me.catmousedog.fractals.fractals.FractalValue;
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
-import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
+import me.catmousedog.fractals.fractals.filters.LogPeriodicFilter;
 
-public class IterativeFunction extends Function {
+public class PotentialFunction extends Function {
 
-	public IterativeFunction(Fractal fractal) {
+	public PotentialFunction(Fractal fractal) {
 		super(fractal);
 		items = null;
-		filters = new Filter[] { new IterativeLinearFilter(fractal), new IterativePeriodicFilter(fractal) };
+		filters = new Filter[] { new LogPeriodicFilter(fractal) };
 		filter = filters[0];
 	}
 
-	private IterativeFunction(Function function) {
+	private PotentialFunction(Function function) {
 		super(function);
 	}
 
 	@Override
-	public Integer apply(FractalValue v) {
-		return 255 * (v.I - v.i) / v.I;
+	public Double apply(FractalValue v) {
+		return Math.log(v.x * v.x + v.y * v.y) / Math.pow(2, v.i);
 	}
 
 	@Override
 	public Function clone() {
-		return new IterativeFunction(this);
+		return new PotentialFunction(this);
 	}
 
 	@Override
 	public String informalName() {
-		return "Iterative";
+		return "Potential";
 	}
 
 	@Override
@@ -43,5 +42,4 @@ public class IterativeFunction extends Function {
 	public String getTip() {
 		return "TODO";
 	}
-
 }

@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.canvas.Field;
-import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.workers.Generator;
 import me.catmousedog.fractals.workers.Painter;

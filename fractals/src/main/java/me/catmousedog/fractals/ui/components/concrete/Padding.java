@@ -9,6 +9,8 @@ import me.catmousedog.fractals.ui.components.Item;
 
 public class Padding extends Item {
 
+	public static final Padding P5 = new Padding(5);
+	
 	private int h;
 	
 	public Padding(int h) {

@@ -1,8 +1,9 @@
 package me.catmousedog.fractals.fractals.filters;
 
 import java.awt.Color;
+import java.util.logging.Level;
 
-import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
@@ -18,8 +19,73 @@ public class LogPeriodicFilter extends Filter {
 
 	private double rd, gd, bd;
 
+	private TextFieldDouble rjtf;
+	private SliderDouble rjs;
+
+	private TextFieldDouble gjtf;
+	private SliderDouble gjs;
+
+	private TextFieldDouble bjtf;
+	private SliderDouble bjs;
+
+	private TextFieldDouble kjtf;
+	private SliderDouble kjs;
+
+	private TextFieldDouble rajtf;
+	private SliderDouble rajs;
+
+	private TextFieldDouble gajtf;
+	private SliderDouble gajs;
+
+	private TextFieldDouble bajtf;
+	private SliderDouble bajs;
+
+	private TextFieldDouble rdjtf;
+	private SliderDouble rdjs;
+
+	private TextFieldDouble gdjtf;
+	private SliderDouble gdjs;
+
+	private TextFieldDouble bdjtf;
+	private SliderDouble bdjs;
+
 	public LogPeriodicFilter(Fractal fractal) {
 		super(fractal);
+
+		Padding p5 = new Padding(5);
+		String rTip = "<html>The amplitude for the red curve</html>";
+		rjtf = new TextFieldDouble.Builder().setLabel("red factor").setTip(rTip).build();
+		rjs = new SliderDouble.Builder().setTip(rTip).setChange(c -> changeR()).build();
+		String gTip = "<html>The amplitude for the green curve</html>";
+		gjtf = new TextFieldDouble.Builder().setLabel("green factor").setTip(gTip).build();
+		gjs = new SliderDouble.Builder().setTip(gTip).setChange(c -> changeG()).build();
+		String bTip = "<html>The amplitude for the blue curve</html>";
+		bjtf = new TextFieldDouble.Builder().setLabel("blue factor").setTip(bTip).build();
+		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
+		String tipK = "<html>The inverse frequency factor.<br> The close to zero this value is, the higher the frequency of the global colour filter.</html>";
+		kjtf = new TextFieldDouble.Builder().setLabel("inverse frequency").setTip(tipK).setDefault(K).build();
+		kjs = new SliderDouble.Builder().setTip(tipK).setMin(0.01).setMax(1).setChange(c -> changeK()).build();
+		String tipRa = "<html>The frequency factor for the red component</html>";
+		rajtf = new TextFieldDouble.Builder().setLabel("red frequency").setTip(tipRa).build();
+		rajs = new SliderDouble.Builder().setTip(tipRa).setChange(c -> changeRf()).build();
+		String tipGa = "<html>The frequency factor for the green component</html>";
+		gajtf = new TextFieldDouble.Builder().setLabel("green frequency").setTip(tipGa).build();
+		gajs = new SliderDouble.Builder().setTip(tipGa).setChange(c -> changeGf()).build();
+		String tipBa = "<html>The frequency factor for the blue component</html>";
+		bajtf = new TextFieldDouble.Builder().setLabel("blue frequency").setTip(tipBa).build();
+		bajs = new SliderDouble.Builder().setTip(tipBa).setChange(c -> changeBf()).build();
+		String tipRd = "<html>The offset for the red component</html>";
+		rdjtf = new TextFieldDouble.Builder().setLabel("red offset").setTip(tipRd).build();
+		rdjs = new SliderDouble.Builder().setTip(tipRd).setMax(Math.PI * 2).setChange(c -> changeRd()).build();
+		String tipGd = "<html>The offset for the green component</html>";
+		gdjtf = new TextFieldDouble.Builder().setLabel("green offset").setTip(tipGd).build();
+		gdjs = new SliderDouble.Builder().setTip(tipGd).setMax(Math.PI * 2).setChange(c -> changeGd()).build();
+		String tipBd = "<html>The offset for the red component</html>";
+		bdjtf = new TextFieldDouble.Builder().setLabel("blue offset").setTip(tipBd).build();
+		bdjs = new SliderDouble.Builder().setTip(tipBd).setMax(Math.PI * 2).setChange(c -> changeBd()).build();
+		items = new Item[] { rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs, p5, kjtf, kjs, p5, rajtf, rajs, p5, gajtf, gajs,
+				p5, bajtf, bajs, p5, rdjtf, rdjs, p5, gdjtf, gdjs, p5, bdjtf, bdjs };
+
 		r = 1;
 		g = 1;
 		b = 1;
@@ -67,6 +133,8 @@ public class LogPeriodicFilter extends Filter {
 			rd = nfilter.rd;
 			gd = nfilter.gd;
 			bd = nfilter.bd;
+		} else {
+			logger.log(Level.WARNING, this.toString() + " is not instance of " + filter.toString());
 		}
 	}
 
@@ -111,120 +179,6 @@ public class LogPeriodicFilter extends Filter {
 	@Override
 	public Filter clone() {
 		return new LogPeriodicFilter(this);
-	}
-
-	@Override
-	public String getTip() {
-		return "<html>A filter designed to be used with 'smooth' fractals.<br>"
-				+ "It uses a periodic function of the form <i>cos(ln(x))</i> for the red, green and blue components.<br>"
-				+ "This filter is best used with values close to zero i.e. 'smooth' fractals.<br>"
-				+ "Each 'curve' has its own amplitude, frequency and offset which can be changed.</html>";
-	}
-
-	@Override
-	public String toString() {
-		return "Logarithmic Periodic Filter";
-	}
-
-	/*
-	 * Panel
-	 */
-	private TextFieldDouble rjtf;
-	private SliderDouble rjs;
-
-	private TextFieldDouble gjtf;
-	private SliderDouble gjs;
-
-	private TextFieldDouble bjtf;
-	private SliderDouble bjs;
-
-	private TextFieldDouble kjtf;
-	private SliderDouble kjs;
-
-	private TextFieldDouble rajtf;
-	private SliderDouble rajs;
-
-	private TextFieldDouble gajtf;
-	private SliderDouble gajs;
-
-	private TextFieldDouble bajtf;
-	private SliderDouble bajs;
-
-	private TextFieldDouble rdjtf;
-	private SliderDouble rdjs;
-
-	private TextFieldDouble gdjtf;
-	private SliderDouble gdjs;
-
-	private TextFieldDouble bdjtf;
-	private SliderDouble bdjs;
-
-	@Override
-	protected void initPanel() {
-		Padding p5 = new Padding(5);
-
-		String rTip = "<html>The amplitude for the red curve</html>";
-
-		rjtf = new TextFieldDouble.Builder().setLabel("red factor").setTip(rTip).build();
-
-		rjs = new SliderDouble.Builder().setTip(rTip).setChange(c -> changeR()).build();
-
-		String gTip = "<html>The amplitude for the green curve</html>";
-
-		gjtf = new TextFieldDouble.Builder().setLabel("green factor").setTip(gTip).build();
-
-		gjs = new SliderDouble.Builder().setTip(gTip).setChange(c -> changeG()).build();
-
-		String bTip = "<html>The amplitude for the blue curve</html>";
-
-		bjtf = new TextFieldDouble.Builder().setLabel("blue factor").setTip(bTip).build();
-
-		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
-
-		String tipK = "<html>The inverse frequency factor.<br> The close to zero this value is, the higher the frequency of the global colour filter.</html>";
-
-		kjtf = new TextFieldDouble.Builder().setLabel("inverse frequency").setTip(tipK).setDefault(K).build();
-
-		kjs = new SliderDouble.Builder().setTip(tipK).setMin(0.01).setMax(1).setChange(c -> changeK()).build();
-
-		String tipRa = "<html>The frequency factor for the red component</html>";
-
-		rajtf = new TextFieldDouble.Builder().setLabel("red frequency").setTip(tipRa).build();
-
-		rajs = new SliderDouble.Builder().setTip(tipRa).setChange(c -> changeRf()).build();
-
-		String tipGa = "<html>The frequency factor for the green component</html>";
-
-		gajtf = new TextFieldDouble.Builder().setLabel("green frequency").setTip(tipGa).build();
-
-		gajs = new SliderDouble.Builder().setTip(tipGa).setChange(c -> changeGf()).build();
-
-		String tipBa = "<html>The frequency factor for the blue component</html>";
-
-		bajtf = new TextFieldDouble.Builder().setLabel("blue frequency").setTip(tipBa).build();
-
-		bajs = new SliderDouble.Builder().setTip(tipBa).setChange(c -> changeBf()).build();
-
-		String tipRd = "<html>The offset for the red component</html>";
-
-		rdjtf = new TextFieldDouble.Builder().setLabel("red offset").setTip(tipRd).build();
-
-		rdjs = new SliderDouble.Builder().setTip(tipRd).setMax(Math.PI * 2).setChange(c -> changeRd()).build();
-
-		String tipGd = "<html>The offset for the green component</html>";
-
-		gdjtf = new TextFieldDouble.Builder().setLabel("green offset").setTip(tipGd).build();
-
-		gdjs = new SliderDouble.Builder().setTip(tipGd).setMax(Math.PI * 2).setChange(c -> changeGd()).build();
-
-		String tipBd = "<html>The offset for the red component</html>";
-
-		bdjtf = new TextFieldDouble.Builder().setLabel("blue offset").setTip(tipBd).build();
-
-		bdjs = new SliderDouble.Builder().setTip(tipBd).setMax(Math.PI * 2).setChange(c -> changeBd()).build();
-
-		items = new Item[] { rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs, p5, kjtf, kjs, p5, rajtf, rajs, p5, gajtf, gajs,
-				p5, bajtf, bajs, p5, rdjtf, rdjs, p5, gdjtf, gdjs, p5, bdjtf, bdjs };
 	}
 
 	private void changeR() {
@@ -277,4 +231,21 @@ public class LogPeriodicFilter extends Filter {
 		fractal.saveAndColour();
 	}
 
+	@Override
+	public String informalName() {
+		return "LogPeriodic";
+	}
+
+	@Override
+	public String fileName() {
+		return informalName();
+	}
+
+	@Override
+	public String getTip() {
+		return "<html>A filter designed to be used with 'smooth' fractals.<br>"
+				+ "It uses a periodic function of the form <i>cos(ln(x))</i> for the red, green and blue components.<br>"
+				+ "This filter is best used with values close to zero i.e. 'smooth' fractals.<br>"
+				+ "Each 'curve' has its own amplitude, frequency and offset which can be changed.</html>";
+	}
 }

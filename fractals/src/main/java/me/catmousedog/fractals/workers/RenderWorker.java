@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.canvas.Field;
-import me.catmousedog.fractals.fractals.Fractal;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Settings;

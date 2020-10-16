@@ -10,8 +10,8 @@ import javax.swing.JPanel;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Main.InitialSize;
@@ -245,8 +245,8 @@ public class Canvas extends JPanel {
 	 * @param fractal
 	 */
 	public void setFractal(@NotNull Fractal fractal) {
-		super.removeMouseMotionListener(this.fractal.getMouse());
-		super.addMouseMotionListener(fractal.getMouse());
+//		super.removeMouseMotionListener(this.fractal.getMouse());
+//		super.addMouseMotionListener(fractal.getMouse());
 		this.fractal = fractal;
 		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
 		jpi.updateFractal();

@@ -3,15 +3,14 @@ package me.catmousedog.fractals.fractals.functions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.fractals.Fractal;
 import me.catmousedog.fractals.fractals.FractalValue;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.Savable;
-import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.UI;
+import me.catmousedog.fractals.utils.Nameable;
 
-public abstract class Function extends UI implements Savable {
+public abstract class Function extends UI implements Nameable {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
@@ -39,16 +38,19 @@ public abstract class Function extends UI implements Savable {
 	 * Constructor used to initialise the <code>Function</code>.<br>
 	 * Only used once for each <code>Function</code> in the {@link Settings}.
 	 * <p>
-	 * This constructor should initialise
+	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
 	 * <li>the {@link UI#items}
 	 * <li>the {@link Function#filters} and the {@link Function#filter}
+	 * <li>the specific fields belonging to this <code>Function</code>
 	 * </ul>
 	 * 
-	 * @param settings
+	 * @param fractal the <code>Fractal</code> to which this <code>Function</code>
+	 *                belongs.
 	 */
-	protected Function(@NotNull Item[] items) {
-		super(items);
+	protected Function(Fractal fractal) {
+		super();
+		this.fractal = fractal;
 	}
 
 	/**
@@ -91,13 +93,23 @@ public abstract class Function extends UI implements Savable {
 		filter.postRender();
 	}
 
-	public abstract String getTip();
+	/**
+	 * @return the {@link Function#informalName()}.
+	 */
+	@Override
+	public String toString() {
+		return informalName();
+	}
 
 	@Override
 	public abstract Function clone();
 
 	public Filter[] getFilters() {
 		return filters;
+	}
+
+	public Filter getFilter() {
+		return filter;
 	}
 
 	/**
@@ -113,10 +125,6 @@ public abstract class Function extends UI implements Savable {
 				return;
 			}
 		}
-	}
-
-	public Filter getFilter() {
-		return filter;
 	}
 
 }

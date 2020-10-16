@@ -1,10 +1,9 @@
 package me.catmousedog.fractals.fractals.filters;
 
 import java.awt.Color;
+import java.util.logging.Level;
 
-import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.ui.components.ActiveData;
-import me.catmousedog.fractals.ui.components.Data;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Button;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
@@ -24,8 +23,34 @@ public class IterativeLinearFilter extends Filter {
 	private double g;
 	private double b;
 
+	private Button invertjb;
+
+	private TextFieldDouble rjtf;
+	private SliderDouble rjs;
+
+	private TextFieldDouble gjtf;
+	private SliderDouble gjs;
+
+	private TextFieldDouble bjtf;
+	private SliderDouble bjs;
+
 	public IterativeLinearFilter(Fractal fractal) {
 		super(fractal);
+
+		Padding p5 = new Padding(5);
+		invertjb = new Button.Builder("Invert").setTip("Inverts the current colours.").setAction(a -> actionInvert())
+				.build();
+		String rTip = "<html>The red brightness factor</html>";
+		rjtf = new TextFieldDouble.Builder().setLabel("red factor").setTip(rTip).build();
+		rjs = new SliderDouble.Builder().setTip(rTip).setChange(c -> changeR()).build();
+		String gTip = "<html>The green brightness factor</html>";
+		gjtf = new TextFieldDouble.Builder().setLabel("green factor").setTip(gTip).build();
+		gjs = new SliderDouble.Builder().setTip(gTip).setChange(c -> changeG()).build();
+		String bTip = "<html>The blue brightness factor</html>";
+		bjtf = new TextFieldDouble.Builder().setLabel("blue factor").setTip(bTip).build();
+		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
+		items = new Item[] { invertjb, p5, rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs };
+
 		inverted = false;
 		r = 1;
 		b = 1;
@@ -58,7 +83,7 @@ public class IterativeLinearFilter extends Filter {
 			g = nfilter.g;
 			b = nfilter.b;
 		} else {
-			System.err.println("setFilter not the same instance");
+			logger.log(Level.WARNING, this.toString() + " is not instance of " + filter.toString());
 		}
 	}
 
@@ -84,100 +109,42 @@ public class IterativeLinearFilter extends Filter {
 		return new IterativeLinearFilter(this);
 	}
 
-	@Override
-	public String getTip() {
-		return "<html>A filter designed to be used with iterative fractals."
-				+ "<br>This filter uses a linear function for the red, green and blue components.<br>"
-				+ "Each colour has its own amplitude which can be changed.</html>";
-
-	}
-
-	@Override
-	public String toString() {
-		return "Linear Filter";
-	}
-
-	/*
-	 * Panel
-	 */
-
-	private Button invertjb;
-
-	public Data<Boolean> getInvertjb() {
-		return invertjb;
-	}
-
-	private TextFieldDouble rjtf;
-
-	private SliderDouble rjs;
-
-	private ActiveData<Double> getRjs() {
-		return rjs;
-	}
-
-	private TextFieldDouble gjtf;
-
-	private SliderDouble gjs;
-
-	public ActiveData<Double> getGjs() {
-		return gjs;
-	}
-
-	private TextFieldDouble bjtf;
-
-	private SliderDouble bjs;
-
-	public ActiveData<Double> getBjs() {
-		return bjs;
-	}
-
-	@Override
-	protected void initPanel() {
-
-		Padding p5 = new Padding(5);
-
-		invertjb = new Button.Builder("Invert").setTip("Inverts the current colours.").setAction(a -> actionInvert())
-				.build();
-
-		String rTip = "<html>The red brightness factor</html>";
-
-		rjtf = new TextFieldDouble.Builder().setLabel("red factor").setTip(rTip).build();
-
-		rjs = new SliderDouble.Builder().setTip(rTip).setChange(c -> changeR()).build();
-
-		String gTip = "<html>The green brightness factor</html>";
-
-		gjtf = new TextFieldDouble.Builder().setLabel("green factor").setTip(gTip).build();
-
-		gjs = new SliderDouble.Builder().setTip(gTip).setChange(c -> changeG()).build();
-
-		String bTip = "<html>The blue brightness factor</html>";
-
-		bjtf = new TextFieldDouble.Builder().setLabel("blue factor").setTip(bTip).build();
-
-		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
-
-		items = new Item[] { invertjb, p5, rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs };
-	}
-
 	private void actionInvert() {
 		inverted = !inverted;
 		fractal.saveAndColour();
 	}
 
 	private void changeR() {
-		rjtf.setData(getRjs().saveAndGet());
+		rjtf.setData(rjs.saveAndGet());
 		fractal.saveAndColour();
 	}
 
 	private void changeG() {
-		gjtf.setData(getGjs().saveAndGet());
+		gjtf.setData(gjs.saveAndGet());
 		fractal.saveAndColour();
 	}
 
 	private void changeB() {
-		bjtf.setData(getBjs().saveAndGet());
+		bjtf.setData(bjs.saveAndGet());
 		fractal.saveAndColour();
+	}
+
+	@Override
+	public String informalName() {
+		return "Linear Filter";
+	}
+
+	@Override
+	public String fileName() {
+		return "LinearFilter";
+	}
+
+	@Override
+	public String getTip() {
+		return "<html>A filter designed to be used with iterative fractals."
+				+ "<br>This filter uses a linear function for the red, green and blue components.<br>"
+				+ "Each colour has its own amplitude which can be changed.</html>";
+
 	}
 
 }

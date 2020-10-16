@@ -13,10 +13,9 @@ import java.util.logging.Logger;
 import javax.swing.JComboBox;
 
 import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.Fractal.Location;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.components.ActiveData;
 import me.catmousedog.fractals.ui.components.Data;
@@ -69,7 +68,7 @@ public class GUI {
 
 	private final RenderWorker RENDER = RenderWorker.getInstance();
 
-	public GUI(Main main, Canvas canvas, JPInterface jpi) {
+	public GUI(Canvas canvas, JPInterface jpi) {
 		this.canvas = canvas;
 		this.jpi = jpi;
 		picture = new Picture(canvas, jpi, settings);
@@ -157,19 +156,19 @@ public class GUI {
 
 		Label fractaljl = new Label("fractal", "<html>All the fractal specific settings<html/>");
 
-		fractaljcb = new ComboBoxItem.Builder(main.getFractals()).setAction(a -> fractal()).build();
+		fractaljcb = new ComboBoxItem.Builder(settings.getFractals()).setAction(a -> fractal()).build();
 
 		fractaljp = new Panel();
 
 		Label functionjl = new Label("function", "<html>All the function specific settings</html>");
 
-		functionjcb = new ComboBoxItem.Builder(null).setAction(a -> function()).build();
+		functionjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunctions()).setAction(a -> function()).build();
 
 		functionjp = new Panel();
 
 		Label filterjl = new Label("filter", "<html>All the filter specific settings</html>");
 
-		filterjcb = new ComboBoxItem.Builder(null).setAction(a -> filter()).build();
+		filterjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunction().getFilters()).setAction(a -> filter()).build();
 
 		filterjp = new Panel();
 
@@ -319,7 +318,6 @@ public class GUI {
 			return;
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFractal(f);
-			jpi.updateFractal();
 		});
 	}
 

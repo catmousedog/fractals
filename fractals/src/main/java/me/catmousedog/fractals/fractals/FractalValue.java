@@ -20,11 +20,6 @@ public class FractalValue {
 		this.i = i;
 		this.I = I;
 	}
-	
-	public FractalValue(int i, int I) {
-		this.i = i;
-		this.I = I;
-	}
 
 	/**
 	 * Creates a <code>FractalValue</code> with all values assigned to zero.<br>

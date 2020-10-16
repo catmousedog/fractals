@@ -19,25 +19,14 @@ import javax.imageio.ImageIO;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.Fractal;
-import me.catmousedog.fractals.fractals.Fractal.Location;
 import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.types.iterative.IterativeInverseMandelbrot;
-import me.catmousedog.fractals.fractals.types.iterative.IterativeJulia;
-import me.catmousedog.fractals.fractals.types.iterative.IterativeJuliaShip;
-import me.catmousedog.fractals.fractals.types.iterative.IterativeMandelbrot;
-import me.catmousedog.fractals.fractals.types.iterative.IterativeShip;
-import me.catmousedog.fractals.fractals.types.iterative.TestFractal;
-import me.catmousedog.fractals.fractals.types.normalized.NormalizedInverseMandelbrot;
-import me.catmousedog.fractals.fractals.types.normalized.NormalizedJulia;
-import me.catmousedog.fractals.fractals.types.normalized.NormalizedJuliaShip;
-import me.catmousedog.fractals.fractals.types.normalized.NormalizedMandelbrot;
-import me.catmousedog.fractals.fractals.types.normalized.NormalizedShip;
-import me.catmousedog.fractals.fractals.types.potential.PotentialInverseMandelbrot;
-import me.catmousedog.fractals.fractals.types.potential.PotentialJulia;
-import me.catmousedog.fractals.fractals.types.potential.PotentialJuliaShip;
-import me.catmousedog.fractals.fractals.types.potential.PotentialMandelbrot;
-import me.catmousedog.fractals.fractals.types.potential.PotentialShip;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal.Location;
+import me.catmousedog.fractals.fractals.concrete_fractals.BurningShip;
+import me.catmousedog.fractals.fractals.concrete_fractals.InverseMandelbrot;
+import me.catmousedog.fractals.fractals.concrete_fractals.JuliaSet;
+import me.catmousedog.fractals.fractals.concrete_fractals.JuliaShip;
+import me.catmousedog.fractals.fractals.concrete_fractals.Mandelbrot;
 import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**
@@ -67,8 +56,15 @@ public class Settings {
 
 	/**
 	 * An array of all the fractals, even if disabled in the 'settings.properties'.
+	 * <p>
+	 * Will become null to free memory.
 	 */
 	private Fractal[] allFractals;
+
+	/**
+	 * Array of all the enabled <code>Fractals</code>.
+	 */
+	private Fractal[] fractals;
 
 	/**
 	 * property in the settings.properties, if not enabled this is the first fractal
@@ -155,14 +151,9 @@ public class Settings {
 	 *                     {@link Properties} could not be loaded.
 	 */
 	private void initFractals() throws IOException {
-		
-		allFractals = new Fractal[] { //
-				new IterativeMandelbrot(), new NormalizedMandelbrot(), new PotentialMandelbrot(), //
-				new IterativeJulia(), new NormalizedJulia(), new PotentialJulia(), //
-				new IterativeShip(), new NormalizedShip(), new PotentialShip(), //
-				new IterativeJuliaShip(), new NormalizedJuliaShip(), new PotentialJuliaShip(), //
-				new IterativeInverseMandelbrot(), new NormalizedInverseMandelbrot(), new PotentialInverseMandelbrot(), //
-				new TestFractal() };
+
+		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
+				new InverseMandelbrot() };
 
 		// scan and copy resources inside 'conrete_fractals' resource
 
@@ -171,7 +162,7 @@ public class Settings {
 			String filename = fractal.fileName();
 
 			// the path to the fractal folder in the resources
-			String resource = "fractals/" + fractal.groupName() + "/" + filename;
+			String resource = "fractals/" + filename;
 
 			// path to fractal resource
 			String settingsResourcePath = resource + "/settings.properties";
@@ -238,14 +229,14 @@ public class Settings {
 				}
 
 				setProperties(fractal, p, l);
-				fractals.add(fractal);
+				fractalList.add(fractal);
 			}
 		}
 
 		// defaultFractal
 		String d = settings.getProperty("defaultFractal");
-		defaultFractal = fractals.get(0);
-		for (Fractal f : fractals) {
+		defaultFractal = fractalList.get(0);
+		for (Fractal f : fractalList) {
 			if (f.fileName().equals(d)) {
 				defaultFractal = f;
 				break;
@@ -253,6 +244,10 @@ public class Settings {
 		}
 
 		allFractals = null; // free memory
+
+		fractals = new Fractal[fractalList.size()];
+		for (int i = 0; i < fractalList.size(); i++)
+			fractals[i] = fractalList.get(i);
 	}
 
 	/**
@@ -282,6 +277,9 @@ public class Settings {
 			double rot = Double.parseDouble(properties.getProperty("default_rot"));
 			transform.setRot(rot);
 
+			// need to pass 'this' instead of using 'getInstance' from within the fractal as
+			// this entire process is still during the initialisation of the Settings class
+			// and 'getInstance' will return null.
 			fractal.setProperties(this, properties);
 		} catch (NumberFormatException e) {
 			logger.log(Level.CONFIG, fractal.fileName() + " default settings parsing exception", e);
@@ -376,17 +374,13 @@ public class Settings {
 		return scheduled_workers;
 	}
 
-	private List<Fractal> fractals = new ArrayList<Fractal>();
+	private List<Fractal> fractalList = new ArrayList<Fractal>();
 
 	/**
-	 * @return An array of the active {@link Fractal}s
+	 * @return An array of the active <code>Fractals</code>.
 	 */
 	public Fractal[] getFractals() {
-		Fractal[] out = new Fractal[fractals.size()];
-		for (int i = 0; i < fractals.size(); i++)
-			out[i] = fractals.get(i);
-
-		return out;
+		return fractals;
 	}
 
 	/**

@@ -249,14 +249,13 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Note
 - Did some testing on the efficiency of HashSet and HashMaps for storing the Pixels, the array seems to be the fasted option for parallel execution
 
-## [0.2] - workers package
+## [0.2] - workers package (master)
 
 ### Added
 - **GlobalWorker** abstract class
 - **RenderWorker** class singleton for calling the global Generator and Painter. 
 - UncaughtExceptionhandler
 - two progress bars for the painter and generator.
-- **Julia** abstract fractal
 
 ### Changed
 - folder for each fractal type (locations, settings)
@@ -265,9 +264,16 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - made **Settings** a singleton.
 - made fractals with mouse listeners able to zoom whilst dragging if mouse listener is disabled.
 - moved *properties* files to ordered hierarchy of files
-
-
-### Removed
-
-### Note
  
+## [0.3] - Fractal Function Filter (fractal_functions)
+
+### Added
+- **Function** class
+- added the concrete fractals
+- **MouseFractal** abstract fractal
+- added **UI** abstract class and made **Fractal**, **Function** and **Filter**
+- **Nameable** interface for common *String* methods
+
+### Changed
+- ordered hierarchy Fractal -> Function -> Filter
+- resources names to match new hierarchy

@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.ui.components;
 
+import java.util.logging.Logger;
+
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +19,11 @@ public abstract class UI implements SafeSavable {
 	 * Null for clones.
 	 */
 	@Nullable
-	protected final Item[] items;
+	protected Item[] items;
 
+	@NotNull
+	protected final Logger logger = Logger.getLogger("fractals");
+	
 	/**
 	 * Used for disabling listeners in update calls. When a listener is fired it
 	 * should always check this first to make sure it is allowed to fire.
@@ -26,20 +31,10 @@ public abstract class UI implements SafeSavable {
 	protected boolean allowListeners = true;
 
 	/**
-	 * Constructor used to initialise the object including the <code>Items</code>
-	 * array.
-	 * 
-	 * @param items the array of <code>Items</code>.
+	 * Constructor used for both cloning and initialisation.<br>
+	 * The <code>items</code> array can only be null for clones.
 	 */
-	public UI(@Nullable Item[] items) {
-		this.items = items;
-	}
-
-	/**
-	 * Constructor used for cloning, leaves the <code>Items</code> as null.
-	 */
-	public UI() {
-		items = null;
+	protected UI() {
 	}
 
 	@Override

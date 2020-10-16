@@ -14,7 +14,13 @@
 - [x] make Settings a singleton
 - [x] change folder hierarchy to a single folder with all fractals in their subtype folder. Inside those folders are the *settings*, *locations*, etc. keep images separate though
 - [x] create fractal properties files and location if not found
-- [ ] combobox for each subtype of a fractal type? -> iterative, normalized...
+
+## [0.3] - Fractal Function Filter (fractal_functions)
+- [ ] ordered fractals (Fractal -> Function -> Filter)
+- [x] update resources to new hierarchy
+- [ ] update Settings to new hierarchy
+
+## Other
 - [ ] keylistener
 - [ ] make logger messages fade
 - [ ] julia default fixed point settings
