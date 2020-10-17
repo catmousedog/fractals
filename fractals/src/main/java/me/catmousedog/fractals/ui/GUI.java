@@ -163,13 +163,15 @@ public class GUI {
 
 		Label functionjl = new Label("function", "<html>All the function specific settings</html>");
 
-		functionjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunctions()).setAction(a -> function()).build();
+		functionjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunctions()).setAction(a -> function())
+				.build();
 
 		functionjp = new Panel();
 
 		Label filterjl = new Label("filter", "<html>All the filter specific settings</html>");
 
-		filterjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunction().getFilters()).setAction(a -> filter()).build();
+		filterjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunction().getFilters())
+				.setAction(a -> filter()).build();
 
 		filterjp = new Panel();
 
@@ -327,9 +329,12 @@ public class GUI {
 	 */
 	private void function() {
 		Function f = (Function) getFunctionjcb().saveAndGet();
-		if (canvas.getFractal().getFunction().equals(f)) {
-			
-		}
+		if (canvas.getFractal().getFunction().equals(f))
+			return;
+		jpi.renderWithout(settings.isRender_on_changes(), () -> {
+			canvas.setFunction(f);
+		});
+
 	}
 
 	/**
@@ -337,13 +342,16 @@ public class GUI {
 	 */
 	private void filter() {
 		Filter f = (Filter) getFilterjcb().saveAndGet();
-		if (f.getClass().equals(canvas.getFractal().getFunction().getFilter().getClass()))
+		if (canvas.getFractal().getFunction().getFilter().equals(f))
 			return;
-		jpi.save();
-		canvas.getFractal().getFunction().pickFilter(f.getClass());
-		jpi.updateFractal();
-		jpi.update();
-		canvas.getFractal().saveAndColour();
+		jpi.renderWithout(settings.isRender_on_changes(), () -> {
+			canvas.setFilter(f);
+		});
+//		jpi.save();
+//		canvas.getFractal().getFunction().pickFilter(f.getClass());
+//		jpi.updateFractal();
+//		jpi.update();
+//		canvas.getFractal().saveAndColour();
 	}
 
 	/**

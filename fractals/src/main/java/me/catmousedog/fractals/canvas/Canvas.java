@@ -241,7 +241,7 @@ public class Canvas extends JPanel {
 	}
 
 	/**
-	 * Changes the {@link Fractal} of the {@link Canvas}.
+	 * Changes the current <code>Fractal</code>
 	 * 
 	 * @param fractal
 	 */
@@ -251,6 +251,16 @@ public class Canvas extends JPanel {
 		this.fractal = fractal;
 		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
 		jpi.updateFractal();
+	}
+	
+	public void setFunction(@NotNull Function function) {
+		fractal.pickFunction(function.getClass());
+		jpi.updateFunction();
+	}
+	
+	public void setFilter(@NotNull Filter filter) {
+		fractal.getFunction().pickFilter(filter.getClass());
+		jpi.updateFilter();
 	}
 
 	/**

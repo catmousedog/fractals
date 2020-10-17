@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
 import me.catmousedog.fractals.ui.components.Data;
@@ -296,17 +297,28 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getFractaljp().getPanel().removeAll();
 		fractal.addPanel(gui.getFractaljp().getPanel());
 
+		// function & filter
+		updateFunction();
+	}
+
+	public void updateFunction() {
 		// function
+		Fractal fractal = canvas.getFractal();
 		gui.getFunctionjcb().setItems(fractal.getFunctions());
 		gui.getFunctionjcb().getComponent().setToolTipText(fractal.getFunction().getTip());
 		gui.getFunctionjp().getPanel().removeAll();
 		fractal.getFunction().addPanel(gui.getFunctionjp().getPanel());
 
 		// filter
-		gui.getFilterjcb().setItems(fractal.getFunction().getFilters());
-		gui.getFilterjcb().getComponent().setToolTipText(fractal.getFunction().getFilter().getTip());
+		updateFilter();
+	}
+
+	public void updateFilter() {
+		Function function = canvas.getFractal().getFunction();
+		gui.getFilterjcb().setItems(function.getFilters());
+		gui.getFilterjcb().getComponent().setToolTipText(function.getFilter().getTip());
 		gui.getFilterjp().getPanel().removeAll();
-		fractal.getFunction().getFilter().addPanel(gui.getFilterjp().getPanel());
+		function.getFilter().addPanel(gui.getFilterjp().getPanel());
 	}
 
 	/**

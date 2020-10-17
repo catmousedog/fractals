@@ -129,6 +129,8 @@ public abstract class PanelConstruct implements SafeSavable {
 	/**
 	 * True if the given <code>object</code> is of the same <code>Class</code> as
 	 * this instance.
+	 * 
+	 * @return true if both
 	 */
 	@Override
 	public boolean equals(@Nullable Object object) {
