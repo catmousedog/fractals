@@ -7,12 +7,17 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
+import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.ui.SafeSavable;
 
 /**
- * Represents a panel containing {@link Item}s.
+ * Represents a panel containing {@link Item}s.<br>
+ * This class forms a basis for {@link Fractal}, {@link Function} and
+ * {@link Filter}.
  */
-public abstract class UI implements SafeSavable {
+public abstract class PanelConstruct implements SafeSavable {
 
 	/**
 	 * The array of <code>Items</code> in order of addition.<br>
@@ -34,7 +39,7 @@ public abstract class UI implements SafeSavable {
 	 * Constructor used for both cloning and initialisation.<br>
 	 * The <code>items</code> array can only be null for clones.
 	 */
-	protected UI() {
+	protected PanelConstruct() {
 	}
 
 	@Override
@@ -77,7 +82,8 @@ public abstract class UI implements SafeSavable {
 	}
 
 	/**
-	 * Adds all the <code>Items</code> from {@link UI#items} to the <code>jp</code>.
+	 * Adds all the <code>Items</code> from {@link PanelConstruct#items} to the
+	 * <code>jp</code>.
 	 * 
 	 * @param jp the <code>JPanel</code> to which the <code>Items</code> should be
 	 *           added.
@@ -118,15 +124,16 @@ public abstract class UI implements SafeSavable {
 	 *         A clone should have no reference to the original.
 	 */
 	@Override
-	public abstract UI clone();
+	public abstract PanelConstruct clone();
 
 	/**
 	 * True if the given <code>object</code> is of the same <code>Class</code> as
-	 * this instance. <br>
-	 * The parameter can not be null.
+	 * this instance.
 	 */
 	@Override
-	public boolean equals(@NotNull Object object) {
+	public boolean equals(@Nullable Object object) {
+		if (object == null)
+			return false;
 		return object.getClass().equals(getClass());
 	}
 

@@ -7,9 +7,9 @@ import me.catmousedog.fractals.fractals.FractalValue;
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.components.UI;
+import me.catmousedog.fractals.ui.components.PanelConstruct;
 
-public abstract class Function extends UI {
+public abstract class Function extends PanelConstruct {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
@@ -39,7 +39,7 @@ public abstract class Function extends UI {
 	 * <p>
 	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
-	 * <li>the {@link UI#items}
+	 * <li>the {@link PanelConstruct#items}
 	 * <li>the {@link Function#filters} and the {@link Function#filter}
 	 * <li>the specific fields belonging to this <code>Function</code>
 	 * </ul>
@@ -57,6 +57,11 @@ public abstract class Function extends UI {
 	 * This constructor must be overridden in the child class so it takes itself as
 	 * the parameter <code>function</code>. This way it can make an exact copy
 	 * without any reference to the original <code>Function</code>.
+	 * <p>
+	 * Any implementation that uses this constructor should initialise:
+	 * <ul>
+	 * <li>the specific fields belonging to this <code>Function</code>.
+	 * </ul>
 	 * 
 	 * @param function the <code>Function</code> it should copy.
 	 */
@@ -66,6 +71,7 @@ public abstract class Function extends UI {
 		filter = function.getFilter().clone();
 	}
 
+	@NotNull
 	public abstract Number apply(FractalValue v);
 
 	@Override
@@ -92,17 +98,25 @@ public abstract class Function extends UI {
 		filter.postRender();
 	}
 
+	/**
+	 * @return the array of active <code>Filters</code>.
+	 */
+	@Nullable
 	public Filter[] getFilters() {
 		return filters;
 	}
 
+	/**
+	 * @return the current <code>Filter</code>.
+	 */
+	@NotNull
 	public Filter getFilter() {
 		return filter;
 	}
 
 	@Override
 	public abstract Function clone();
-	
+
 	/**
 	 * Sets the {@link Function#filter} to the <code>Filter</code> whose class
 	 * equals the given <code>clazz</code>.

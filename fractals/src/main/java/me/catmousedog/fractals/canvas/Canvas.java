@@ -118,14 +118,15 @@ public class Canvas extends JPanel {
 	 * true before starting a new <code>Generator</code>.
 	 */
 	public void render() {
-		renderer.newRender(field, fractal, () -> {
+		renderer.newRender(field, fractal.clone(), () -> {
 			allowRender = true;
 			repaint();
 			if (!renderer.isGeneratorScheduled() && !renderer.isPainterScheduled())
 				jpi.postRender();
 		});
-	}
 
+	}
+	
 	private boolean allowRender = false;
 
 	private boolean allowPainter = false;

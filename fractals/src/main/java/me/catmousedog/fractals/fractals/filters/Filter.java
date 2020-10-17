@@ -5,9 +5,9 @@ import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.components.UI;
+import me.catmousedog.fractals.ui.components.PanelConstruct;
 
-public abstract class Filter extends UI {
+public abstract class Filter extends PanelConstruct {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Filter</code> belongs to.
@@ -23,7 +23,7 @@ public abstract class Filter extends UI {
 	 * <p>
 	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
-	 * <li>the {@link UI#items}
+	 * <li>the {@link PanelConstruct#items}
 	 * <li>the specific fields belonging to this <code>Filter</code>
 	 * </ul>
 	 * 
@@ -40,9 +40,13 @@ public abstract class Filter extends UI {
 	 * This constructor must be overridden in the child class so it takes itself as
 	 * the parameter <code>function</code>. This way it can make an exact copy
 	 * without any reference to the original <code>Function</code>.
+	 * <p>
+	 * Any implementation that uses this constructor should initialise:
+	 * <ul>
+	 * <li>the specific fields belonging to this <code>Filter</code>.
+	 * </ul>
 	 * 
-	 * @param function the <code>Function</code> it should copy.<br>
-	 *                 This parameter should
+	 * @param filter the <code>Filter</code> it should copy.
 	 */
 	protected Filter(@NotNull Filter filter) {
 		super();
@@ -57,13 +61,6 @@ public abstract class Filter extends UI {
 	 * @return the rgb value as an integer
 	 */
 	public abstract int apply(@NotNull Number v);
-
-	/**
-	 * Change this {@link Filter} to equal the given <code>filter</code>.
-	 * 
-	 * @param filter
-	 */
-	public abstract void setFilter(@NotNull Filter filter);
 
 	@Override
 	public abstract Filter clone();

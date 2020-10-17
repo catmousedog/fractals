@@ -1,7 +1,6 @@
 package me.catmousedog.fractals.fractals.filters;
 
 import java.awt.Color;
-import java.util.logging.Level;
 
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
@@ -62,8 +61,13 @@ public class IterativeLinearFilter extends Filter {
 	 * 
 	 * @param filter
 	 */
-	private IterativeLinearFilter(Filter filter) {
+	private IterativeLinearFilter(IterativeLinearFilter filter) {
 		super(filter);
+		
+		inverted = filter.inverted;
+		r = filter.r;
+		g = filter.g;
+		b = filter.b;
 	}
 
 	@Override
@@ -72,19 +76,6 @@ public class IterativeLinearFilter extends Filter {
 		if (inverted)
 			v = 255 - v;
 		return new Color((int) (v * r), (int) (v * g), (int) (v * b)).getRGB();
-	}
-
-	@Override
-	public void setFilter(Filter filter) {
-		if (filter instanceof IterativeLinearFilter) {
-			IterativeLinearFilter nfilter = (IterativeLinearFilter) filter;
-			inverted = nfilter.inverted;
-			r = nfilter.r;
-			g = nfilter.g;
-			b = nfilter.b;
-		} else {
-			logger.log(Level.WARNING, this.toString() + " is not instance of " + filter.toString());
-		}
 	}
 
 	@Override

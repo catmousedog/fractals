@@ -277,4 +277,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
 - resources names to match new hierarchy
-- fixes to **UI**
+- fixes to **UI** and renamed to **PanelConstruct**
+
+### Removed
+- *Filter.setFilter(Filter)* as this is done is the cloning constructor.

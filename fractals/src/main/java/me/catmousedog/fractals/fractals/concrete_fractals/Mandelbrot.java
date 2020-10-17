@@ -41,7 +41,7 @@ public class Mandelbrot extends Fractal {
 			y = 2 * tx * y + cy;
 
 		}
-		return new FractalValue();
+		return new FractalValue(0, 0, iterations, iterations);
 	}
 
 	public @NotNull String informalName() {

@@ -1,7 +1,6 @@
 package me.catmousedog.fractals.fractals.filters;
 
 import java.awt.Color;
-import java.util.logging.Level;
 
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
@@ -103,8 +102,19 @@ public class LogPeriodicFilter extends Filter {
 	 * 
 	 * @param filter
 	 */
-	private LogPeriodicFilter(Filter filter) {
+	private LogPeriodicFilter(LogPeriodicFilter filter) {
 		super(filter);
+
+		r = filter.r;
+		g = filter.g;
+		b = filter.b;
+		K = filter.K;
+		rf = filter.rf;
+		gf = filter.gf;
+		bf = filter.bf;
+		rd = filter.rd;
+		gd = filter.gd;
+		bd = filter.bd;
 	}
 
 	@Override
@@ -117,25 +127,6 @@ public class LogPeriodicFilter extends Filter {
 
 	private int curve(double a, double f, double d, double v) {
 		return (int) (a * 127.5 * (1.0 - Math.cos(f * Math.log(Math.abs(v)) / K - d)));
-	}
-
-	@Override
-	public void setFilter(Filter filter) {
-		if (filter instanceof LogPeriodicFilter) {
-			LogPeriodicFilter nfilter = (LogPeriodicFilter) filter;
-			r = nfilter.r;
-			g = nfilter.g;
-			b = nfilter.b;
-			K = nfilter.K;
-			rf = nfilter.rf;
-			gf = nfilter.gf;
-			bf = nfilter.bf;
-			rd = nfilter.rd;
-			gd = nfilter.gd;
-			bd = nfilter.bd;
-		} else {
-			logger.log(Level.WARNING, this.toString() + " is not instance of " + filter.toString());
-		}
 	}
 
 	@Override

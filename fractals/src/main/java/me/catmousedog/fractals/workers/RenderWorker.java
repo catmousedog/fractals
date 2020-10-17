@@ -103,12 +103,12 @@ public class RenderWorker {
 	 * next.
 	 * <p>
 	 * The scheduled <code>renderer</code> will block any new
-	 * <code>generators</code> or <code>painters</code> that try to execute until it
-	 * has finished.
+	 * <code>generators</code> or <code>painters</code> that try to schedule until
+	 * it has finished.
 	 * 
 	 * @param field    a reference to the <code>Field</code> that will be used to
 	 *                 generate and paint.
-	 * @param fractal  the reference to the <code>Fractal</code>.
+	 * @param fractal  a clone of the <code>Fractal</code>.
 	 * @param runnable a <code>Runnable</code> ran when the painter has finished.
 	 *                 <br>
 	 *                 This must call {@link RenderWorker#runScheduledGenerator()}
@@ -124,9 +124,9 @@ public class RenderWorker {
 		// generator. This shouldn't cause too much trouble as the render request will
 		// repaint anyway. Worst case scenario is that the user will see some artifacts
 		// whilst this render request is working.
-		Function function = fractal.getFunction().clone();
-		Filter filter = fractal.getFunction().getFilter().clone();
-		generator(field, fractal.clone(), function, () -> painter(field, filter, () -> {
+		Function function = fractal.getFunction();
+		Filter filter = function.getFilter();
+		generator(field, fractal, function, () -> painter(field, filter, () -> {
 			runnable.run();
 			rendering = false;
 		}, true), true);
@@ -142,16 +142,14 @@ public class RenderWorker {
 	 * 
 	 * @param field    the reference to the <code>Field</code>.
 	 * @param fractal  a clone of the <code>Fractal</code>.
-	 * @param filter   a clone of the <code>Filter</code>.
 	 * @param runnable a <code>Runnable</code> ran when the generator has finished.
 	 *                 <br>
 	 *                 This must call {@link RenderWorker#runScheduledGenerator()}
 	 *                 when a new <code>generator</code> can be started.
 	 */
 
-	public synchronized void newGenerator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Function function,
-			@NotNull Runnable runnable) {
-		generator(field, fractal, function, runnable, false);
+	public synchronized void newGenerator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
+		generator(field, fractal, fractal.getFunction(), runnable, false);
 	}
 
 	/**

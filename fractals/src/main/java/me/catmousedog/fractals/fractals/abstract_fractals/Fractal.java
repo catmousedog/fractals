@@ -17,13 +17,12 @@ import me.catmousedog.fractals.fractals.filters.Filter;
 import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.ui.SafeSavable;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.ui.components.UI;
+import me.catmousedog.fractals.ui.components.PanelConstruct;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 
-public abstract class Fractal extends UI {
+public abstract class Fractal extends PanelConstruct {
 
 	/**
 	 * A <code>MouseMotionListener</code> for <code>Fractals</code> that allow mouse
@@ -117,7 +116,7 @@ public abstract class Fractal extends UI {
 	 * <p>
 	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
-	 * <li>the {@link UI#items}
+	 * <li>the {@link PanelConstruct#items}
 	 * <li>the {@link Fractal#functions} and the {@link Fractal#function}
 	 * <li>the specific fields belonging to this <code>Function</code>
 	 * <li>the {@link Fractal#mouse}
@@ -163,6 +162,7 @@ public abstract class Fractal extends UI {
 	 * @param cy the y coordinate of the point
 	 * @return the value the fractal function returns
 	 */
+	@NotNull
 	public abstract FractalValue get(double cx, double cy);
 
 	/**
@@ -217,8 +217,8 @@ public abstract class Fractal extends UI {
 	}
 
 	/**
-	 * Adds all the {@link Fractal#commonItems} and the {@link UI#items} to the
-	 * <code>jp</code>.
+	 * Adds all the {@link Fractal#commonItems} and the {@link PanelConstruct#items}
+	 * to the <code>jp</code>.
 	 */
 	public void addPanel(@NotNull JPanel jp) {
 		if (commonItems != null) {
@@ -326,14 +326,23 @@ public abstract class Fractal extends UI {
 	/**
 	 * @return the array of {@link Location}s saved by this {@link Fractal}.
 	 */
+	@Nullable
 	public Location[] getLocations() {
 		return locations;
 	}
 
+	/**
+	 * @return the array of active <code>Functions</code>.
+	 */
+	@Nullable
 	public Function[] getFunctions() {
 		return functions;
 	}
 
+	/**
+	 * @return the current <code>Function</code>.
+	 */
+	@NotNull
 	public Function getFunction() {
 		return function;
 	}

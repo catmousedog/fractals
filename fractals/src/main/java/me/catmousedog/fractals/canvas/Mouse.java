@@ -31,7 +31,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 	private JPInterface jpi;
 
 	private final RenderWorker renderer = RenderWorker.getInstance();
-	
+
 	private boolean isStationary = true;
 
 	public Mouse(Canvas canvas) {
@@ -127,12 +127,16 @@ public class Mouse implements MouseListener, MouseMotionListener {
 	private void displayTip(int x, int y) {
 		if (tip != null)
 			tip.hide();
-		PopupFactory popupFactory = PopupFactory.getSharedInstance();
-		Point screenLocation = canvas.getLocationOnScreen();
-		Point location = new Point(screenLocation.x + x, screenLocation.y + y - 20);
+
 		Pixel pixel = canvas.getField().getPixel(x, y);
-		tip = popupFactory.getPopup(canvas, new JLabel(pixel.toString()), location.x, location.y);
-		tip.show();
+		if (pixel != null) {
+			PopupFactory popupFactory = PopupFactory.getSharedInstance();
+			Point screenLocation = canvas.getLocationOnScreen();
+			tip = popupFactory.getPopup(canvas, new JLabel(pixel.toString()), screenLocation.x + x,
+					screenLocation.y + y - 20);
+			tip.show();
+		}
+
 	}
 
 	public void setJPI(JPInterface jpi) {

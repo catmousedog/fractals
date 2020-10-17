@@ -1,7 +1,6 @@
 package me.catmousedog.fractals.fractals.filters;
 
 import java.awt.Color;
-import java.util.logging.Level;
 
 import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
@@ -89,8 +88,16 @@ public class IterativePeriodicFilter extends Filter {
 	 * 
 	 * @param filter
 	 */
-	private IterativePeriodicFilter(Filter filter) {
+	private IterativePeriodicFilter(IterativePeriodicFilter filter) {
 		super(filter);
+
+		inverted = filter.inverted;
+		r = filter.r;
+		g = filter.g;
+		b = filter.b;
+		rf = filter.rf;
+		gf = filter.gf;
+		bf = filter.bf;
 	}
 
 	@Override
@@ -103,22 +110,6 @@ public class IterativePeriodicFilter extends Filter {
 
 	private int curve(double a, double f, int v) {
 		return (int) (a * 127.5 * (1 - Math.cos(f * v)));
-	}
-
-	@Override
-	public void setFilter(Filter filter) {
-		if (filter instanceof IterativePeriodicFilter) {
-			IterativePeriodicFilter nfilter = (IterativePeriodicFilter) filter;
-			inverted = nfilter.inverted;
-			r = nfilter.r;
-			g = nfilter.g;
-			b = nfilter.b;
-			rf = nfilter.rf;
-			gf = nfilter.gf;
-			bf = nfilter.bf;
-		} else {
-			logger.log(Level.WARNING, this.toString() + " is not instance of " + filter.toString());
-		}
 	}
 
 	@Override
