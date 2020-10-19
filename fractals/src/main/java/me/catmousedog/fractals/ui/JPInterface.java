@@ -275,17 +275,10 @@ public class JPInterface extends JPanel implements Savable {
 	}
 
 	/**
-	 * Should be called when the {@link Canvas}' {@link Fractal} is changed. <br>
-	 * This includes changing the {@link Fractal}'s {@link Filter}.
-	 * <p>
-	 * This method does not change the actual {@link Fractal}, but updates any
-	 * components reliant on the {@link Fractal} or {@link Filter}. This method is
-	 * independent of {@link Canvas#setFractal(Fractal)} as the latter actually
-	 * changes the {@link Fractal}, but does get called inside
-	 * {@link Canvas#setFractal(Fractal)}.
-	 * <p>
-	 * This should only be called after the {@link Fractal} changes, not every
-	 * {@link JPInterface#update()} cycle.
+	 * Updates everything that needs to be updated if the <code>Fractal</code>
+	 * changes. <br>
+	 * This includes calling {@link JPInterface#updateFunction()} which intern also
+	 * calls {@link JPInterface#updateFilter()}.
 	 */
 	public void updateFractal() {
 		Fractal fractal = canvas.getFractal();
@@ -298,27 +291,39 @@ public class JPInterface extends JPanel implements Savable {
 		fractal.addPanel(gui.getFractaljp().getPanel());
 
 		// function & filter
+		gui.getFunctionjcb().setItems(fractal.getFunctions());
+		gui.getFunctionjcb().setDataSafe(fractal.getFunction());
 		updateFunction();
 	}
 
+	/**
+	 * Updates everything that needs to be updated if the <code>Function</code>
+	 * changes. <br>
+	 * This includes calling {@link JPInterface#updateFilter()}.
+	 */
 	public void updateFunction() {
 		// function
-		Fractal fractal = canvas.getFractal();
-		gui.getFunctionjcb().setItems(fractal.getFunctions());
-		gui.getFunctionjcb().getComponent().setToolTipText(fractal.getFunction().getTip());
+		Function function = canvas.getFractal().getFunction();
+		gui.getFunctionjcb().getComponent().setToolTipText(function.getTip());
 		gui.getFunctionjp().getPanel().removeAll();
-		fractal.getFunction().addPanel(gui.getFunctionjp().getPanel());
+		function.addPanel(gui.getFunctionjp().getPanel());
 
 		// filter
+		gui.getFilterjcb().setItems(function.getFilters());
+		gui.getFilterjcb().setDataSafe(function.getFilter());
 		updateFilter();
 	}
 
+	/**
+	 * Updates everything that needs to be updated if the <code>Filter</code>
+	 * changes.
+	 */
 	public void updateFilter() {
-		Function function = canvas.getFractal().getFunction();
-		gui.getFilterjcb().setItems(function.getFilters());
-		gui.getFilterjcb().getComponent().setToolTipText(function.getFilter().getTip());
+		// filter
+		Filter filter = canvas.getFractal().getFunction().getFilter();
+		gui.getFilterjcb().getComponent().setToolTipText(filter.getTip());
 		gui.getFilterjp().getPanel().removeAll();
-		function.getFilter().addPanel(gui.getFilterjp().getPanel());
+		filter.addPanel(gui.getFilterjp().getPanel());
 	}
 
 	/**

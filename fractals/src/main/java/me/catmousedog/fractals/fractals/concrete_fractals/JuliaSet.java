@@ -41,7 +41,7 @@ public class JuliaSet extends MouseFractal {
 			y = 2 * tx * y + jy;
 
 		}
-		return new FractalValue();
+		return new FractalValue(0, 0, iterations, iterations);
 	}
 
 	@Override

@@ -22,17 +22,6 @@ public class FractalValue {
 	}
 
 	/**
-	 * Creates a <code>FractalValue</code> with all values assigned to zero.<br>
-	 * This value is used for convergent points.
-	 */
-	public FractalValue() {
-		x = 0;
-		y = 0;
-		i = 0;
-		I = 0;
-	}
-
-	/**
 	 * @return the square of the absolute value of this complex number, the squared
 	 *         distance.
 	 */

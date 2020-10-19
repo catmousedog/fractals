@@ -56,7 +56,7 @@ public class Picture {
 
 		jpi.preRender();
 
-		Fractal fractal = canvas.getFractal();
+		Fractal fractal = canvas.getFractal().clone();
 		LinearTransform transform = fractal.getTransform();
 		transform.setOrigin(width / 2, height / 2);
 		double a = Math.max((double) canvas.getPanelHeight() / height, (double) canvas.getPanelWidth() / width);

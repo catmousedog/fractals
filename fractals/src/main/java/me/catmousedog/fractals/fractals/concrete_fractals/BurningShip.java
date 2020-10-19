@@ -14,7 +14,8 @@ public class BurningShip extends Fractal {
 	public BurningShip() {
 		super();
 		items = null;
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
+				new PotentialFunction(this) };
 		function = functions[0];
 		mouse = null;
 	}
@@ -41,7 +42,7 @@ public class BurningShip extends Fractal {
 			y = Math.abs(2 * tx * y) + cy;
 
 		}
-		return new FractalValue();
+		return new FractalValue(0, 0, iterations, iterations);
 	}
 
 	public @NotNull String informalName() {
