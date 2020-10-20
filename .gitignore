@@ -3,7 +3,7 @@ fractals/settings.properties
 
 # project files
 fractals/logs
-fractals/concrete_fractals
+fractals/fractals
 fractals/locations
 
 # Compiled class file
