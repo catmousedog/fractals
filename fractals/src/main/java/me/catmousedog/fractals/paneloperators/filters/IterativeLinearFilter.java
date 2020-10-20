@@ -1,8 +1,8 @@
-package me.catmousedog.fractals.fractals.filters;
+package me.catmousedog.fractals.paneloperators.filters;
 
 import java.awt.Color;
 
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Button;
 import me.catmousedog.fractals.ui.components.concrete.Padding;

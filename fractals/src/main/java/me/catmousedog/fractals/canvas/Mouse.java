@@ -10,7 +10,8 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 
-import me.catmousedog.fractals.fractals.LinearTransform;
+import me.catmousedog.fractals.data.LinearTransform;
+import me.catmousedog.fractals.data.Pixel;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.workers.RenderWorker;
 

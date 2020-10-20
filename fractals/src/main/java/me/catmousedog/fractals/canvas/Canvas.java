@@ -10,11 +10,12 @@ import javax.swing.JPanel;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.functions.Function;
+import me.catmousedog.fractals.data.Field;
+import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.main.Main.InitialSize;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.workers.Generator;

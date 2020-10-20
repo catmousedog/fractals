@@ -19,14 +19,14 @@ import javax.imageio.ImageIO;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal.Location;
-import me.catmousedog.fractals.fractals.concrete_fractals.BurningShip;
-import me.catmousedog.fractals.fractals.concrete_fractals.InverseMandelbrot;
-import me.catmousedog.fractals.fractals.concrete_fractals.JuliaSet;
-import me.catmousedog.fractals.fractals.concrete_fractals.JuliaShip;
-import me.catmousedog.fractals.fractals.concrete_fractals.Mandelbrot;
+import me.catmousedog.fractals.data.LinearTransform;
+import me.catmousedog.fractals.paneloperators.fractals.BurningShip;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
+import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
+import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
+import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal.Location;
 import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**

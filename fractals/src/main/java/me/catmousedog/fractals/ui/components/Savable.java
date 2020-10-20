@@ -1,6 +1,4 @@
-package me.catmousedog.fractals.ui;
-
-import me.catmousedog.fractals.ui.components.Data;
+package me.catmousedog.fractals.ui.components;
 
 /**
  * Interface representing an object that can be interacted with by the user. The

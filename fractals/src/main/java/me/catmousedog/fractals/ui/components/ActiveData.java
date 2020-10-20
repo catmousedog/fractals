@@ -4,9 +4,6 @@ import java.util.EventObject;
 
 import javax.swing.JTextField;
 
-import me.catmousedog.fractals.ui.SafeSavable;
-import me.catmousedog.fractals.ui.Savable;
-
 /**
  * Represents {@link Data} that has at least one 'active' listener.
  * <p>

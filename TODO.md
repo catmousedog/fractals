@@ -18,7 +18,7 @@
 ## [0.3] - Fractal Function Filter (fractal_functions)
 - [x] ordered fractals (Fractal -> Function -> Filter)
 - [x] update resources to new hierarchy
-- [ ] update Settings to new hierarchy
+- [x] update Settings to new hierarchy
 - [ ] start logging
 
 ## Other

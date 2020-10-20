@@ -1,13 +1,12 @@
-package me.catmousedog.fractals.fractals.concrete_fractals;
+package me.catmousedog.fractals.paneloperators.fractals;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.fractals.FractalValue;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.functions.Function;
-import me.catmousedog.fractals.fractals.functions.IterativeFunction;
-import me.catmousedog.fractals.fractals.functions.NormalizedFunction;
-import me.catmousedog.fractals.fractals.functions.PotentialFunction;
+import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.functions.Function;
+import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
+import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
+import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
 public class InverseMandelbrot extends Fractal {
 

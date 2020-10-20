@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.canvas;
+package me.catmousedog.fractals.data;
 
 import java.awt.image.BufferedImage;
 

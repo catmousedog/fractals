@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.ui;
+package me.catmousedog.fractals.ui.components;
 
 public interface SafeSavable extends Savable {
 

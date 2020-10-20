@@ -9,13 +9,14 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.functions.Function;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Main.InitialSize;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.Savable;
 
 /**
  * Class used to interact the user entered data via the {@link GUI} class and

@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.fractals.abstract_fractals;
+package me.catmousedog.fractals.paneloperators.fractals;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;

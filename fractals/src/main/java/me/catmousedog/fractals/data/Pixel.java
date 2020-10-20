@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.canvas;
+package me.catmousedog.fractals.data;
 
 /**
  * represents a pixel on the screen that points to a transformed coordinate and

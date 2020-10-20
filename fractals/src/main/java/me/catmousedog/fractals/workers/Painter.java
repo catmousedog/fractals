@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.canvas.Field;
-import me.catmousedog.fractals.canvas.Pixel;
-import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.data.Field;
+import me.catmousedog.fractals.data.Pixel;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.ui.FeedbackPanel;
 import me.catmousedog.fractals.ui.JPInterface;
-import me.catmousedog.fractals.utils.FeedbackPanel;
 
 public class Painter extends GlobalWorker {
 

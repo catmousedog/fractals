@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.ui.components;
+package me.catmousedog.fractals.paneloperators;
 
 import java.util.logging.Logger;
 
@@ -7,17 +7,18 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.functions.Function;
-import me.catmousedog.fractals.ui.SafeSavable;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.functions.Function;
+import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.SafeSavable;
 
 /**
  * Represents a panel containing {@link Item}s.<br>
  * This class forms a basis for {@link Fractal}, {@link Function} and
  * {@link Filter}.
  */
-public abstract class PanelConstruct implements SafeSavable {
+public abstract class PanelOperator implements SafeSavable {
 
 	/**
 	 * The array of <code>Items</code> in order of addition.<br>
@@ -39,7 +40,7 @@ public abstract class PanelConstruct implements SafeSavable {
 	 * Constructor used for both cloning and initialisation.<br>
 	 * The <code>items</code> array can only be null for clones.
 	 */
-	protected PanelConstruct() {
+	protected PanelOperator() {
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public abstract class PanelConstruct implements SafeSavable {
 	}
 
 	/**
-	 * Adds all the <code>Items</code> from {@link PanelConstruct#items} to the
+	 * Adds all the <code>Items</code> from {@link PanelOperator#items} to the
 	 * <code>jp</code>.
 	 * 
 	 * @param jp the <code>JPanel</code> to which the <code>Items</code> should be
@@ -124,7 +125,7 @@ public abstract class PanelConstruct implements SafeSavable {
 	 *         A clone should have no reference to the original.
 	 */
 	@Override
-	public abstract PanelConstruct clone();
+	public abstract PanelOperator clone();
 
 	/**
 	 * True if the given <code>object</code> is of the same <code>Class</code> as

@@ -7,12 +7,12 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.canvas.Field;
-import me.catmousedog.fractals.canvas.Pixel;
-import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.functions.Function;
-import me.catmousedog.fractals.utils.FeedbackPanel;
+import me.catmousedog.fractals.data.Field;
+import me.catmousedog.fractals.data.LinearTransform;
+import me.catmousedog.fractals.data.Pixel;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.functions.Function;
+import me.catmousedog.fractals.ui.FeedbackPanel;
 
 /**
  * swing worker used for generating the image and updating at the same time

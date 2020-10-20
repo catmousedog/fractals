@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.fractals;
+package me.catmousedog.fractals.data;
 
 /**
  * Represents a position on the 2D plane through a coordinate, stretch and

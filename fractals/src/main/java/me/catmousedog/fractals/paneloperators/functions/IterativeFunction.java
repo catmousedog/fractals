@@ -1,10 +1,10 @@
-package me.catmousedog.fractals.fractals.functions;
+package me.catmousedog.fractals.paneloperators.functions;
 
-import me.catmousedog.fractals.fractals.FractalValue;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.filters.IterativeLinearFilter;
-import me.catmousedog.fractals.fractals.filters.IterativePeriodicFilter;
+import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.filters.IterativeLinearFilter;
+import me.catmousedog.fractals.paneloperators.filters.IterativePeriodicFilter;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
 public class IterativeFunction extends Function {
 

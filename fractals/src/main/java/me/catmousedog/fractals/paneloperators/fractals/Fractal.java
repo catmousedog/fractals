@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.fractals.abstract_fractals;
+package me.catmousedog.fractals.paneloperators.fractals;
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -11,18 +11,18 @@ import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.canvas.Mouse;
-import me.catmousedog.fractals.fractals.FractalValue;
-import me.catmousedog.fractals.fractals.LinearTransform;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.functions.Function;
+import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.paneloperators.PanelOperator;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.ui.components.PanelConstruct;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 
-public abstract class Fractal extends PanelConstruct {
+public abstract class Fractal extends PanelOperator {
 
 	/**
 	 * A <code>MouseMotionListener</code> for <code>Fractals</code> that allow mouse
@@ -105,7 +105,7 @@ public abstract class Fractal extends PanelConstruct {
 	 * <p>
 	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
-	 * <li>the {@link PanelConstruct#items}
+	 * <li>the {@link PanelOperator#items}
 	 * <li>the {@link Fractal#functions} and the {@link Fractal#function}
 	 * <li>the specific fields belonging to this <code>Function</code>
 	 * <li>the {@link Fractal#mouse}
@@ -227,7 +227,7 @@ public abstract class Fractal extends PanelConstruct {
 	}
 
 	/**
-	 * Adds all the {@link Fractal#commonItems} and the {@link PanelConstruct#items}
+	 * Adds all the {@link Fractal#commonItems} and the {@link PanelOperator#items}
 	 * to the <code>jp</code>.
 	 */
 	public void addPanel(@NotNull JPanel jp) {

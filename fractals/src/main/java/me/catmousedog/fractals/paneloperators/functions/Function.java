@@ -1,15 +1,15 @@
-package me.catmousedog.fractals.fractals.functions;
+package me.catmousedog.fractals.paneloperators.functions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.fractals.FractalValue;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
+import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.components.PanelConstruct;
+import me.catmousedog.fractals.paneloperators.PanelOperator;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
-public abstract class Function extends PanelConstruct {
+public abstract class Function extends PanelOperator {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
@@ -39,7 +39,7 @@ public abstract class Function extends PanelConstruct {
 	 * <p>
 	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
-	 * <li>the {@link PanelConstruct#items}
+	 * <li>the {@link PanelOperator#items}
 	 * <li>the {@link Function#filters} and the {@link Function#filter}
 	 * <li>the specific fields belonging to this <code>Function</code>
 	 * </ul>

@@ -6,8 +6,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import me.catmousedog.fractals.ui.Savable;
-
 /**
  * Represents a group of {@link JComponent}s in the user interface.
  * <p>

@@ -1,13 +1,13 @@
-package me.catmousedog.fractals.fractals.filters;
+package me.catmousedog.fractals.paneloperators.filters;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
 import me.catmousedog.fractals.main.Settings;
-import me.catmousedog.fractals.ui.components.PanelConstruct;
+import me.catmousedog.fractals.paneloperators.PanelOperator;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
-public abstract class Filter extends PanelConstruct {
+public abstract class Filter extends PanelOperator {
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Filter</code> belongs to.
@@ -23,7 +23,7 @@ public abstract class Filter extends PanelConstruct {
 	 * <p>
 	 * Any implementation that uses this constructor should initialise:
 	 * <ul>
-	 * <li>the {@link PanelConstruct#items}
+	 * <li>the {@link PanelOperator#items}
 	 * <li>the specific fields belonging to this <code>Filter</code>
 	 * </ul>
 	 * 

@@ -3,11 +3,11 @@ package me.catmousedog.fractals.workers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.canvas.Field;
-import me.catmousedog.fractals.fractals.abstract_fractals.Fractal;
-import me.catmousedog.fractals.fractals.filters.Filter;
-import me.catmousedog.fractals.fractals.functions.Function;
+import me.catmousedog.fractals.data.Field;
 import me.catmousedog.fractals.main.Settings;
+import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.functions.Function;
 
 /**
  * A class used for managing the global {@link Generator} and {@link Painter}.
