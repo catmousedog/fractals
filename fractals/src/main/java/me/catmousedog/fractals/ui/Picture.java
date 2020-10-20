@@ -67,13 +67,15 @@ public class Picture {
 			public void run() {
 				Field field = new Field(width, height);
 
-				renderer.newRender(field, fractal, () -> {
+				Thread done = new Thread(() -> {
 					settings.addImage(field.getImg(), ext, fractal);
 					jpi.postRender();
 					generating = false;
 					renderer.runScheduledGenerator();
 					renderer.runScheduledPainter();
 				});
+				
+				renderer.newRender(field, fractal, () -> done.start());
 
 			}
 		});

@@ -128,11 +128,6 @@ public class GUI {
 		 */
 		Title calculations = new Title("Calculation");
 
-		iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
-				.setTip("<html>The iteration count. Each fractal can use this differently."
-						+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
-				.setMin(0).build();
-
 		zoomjtf = new TextFieldDouble.Builder().setLabel("zoom factor").setDefault(-1).setMin(1)
 				.setTip("<html>The zoom factor to multiply with on click</html>").build();
 
@@ -144,10 +139,6 @@ public class GUI {
 
 		canceljb = new Button.Builder("Cancel").setAction(a -> cancel()).setTip(
 				"<html>Cancel the current generator or painter.<br>This also includes the generation of images.</html>")
-				.build();
-
-		repaintjb = new Button.Builder("Repaint").setAction(a -> repaint()).setTip(
-				"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
 				.build();
 
 		/**
@@ -172,6 +163,10 @@ public class GUI {
 
 		filterjcb = new ComboBoxItem.Builder(settings.getDefaultFractal().getFunction().getFilters())
 				.setAction(a -> filter()).build();
+
+		repaintjb = new Button.Builder("Repaint").setAction(a -> repaint()).setTip(
+				"<html>Repaint the image without generating it again. <br>Useful for just changing colour settings</html>")
+				.build();
 
 		filterjp = new Panel();
 
@@ -201,9 +196,9 @@ public class GUI {
 				.setTip("<html>The extension of the image when generated.</html>").build();
 
 		all = new Item[] { p20, window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
-				njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, iterjtf, p5,
-				zoomjtf, p10, zoomjb, p10, renderjb, p5, canceljb, repaintjb, p20, fractal, p10, fractaljl, fractaljcb,
-				p5, fractaljp, p5, functionjl, functionjcb, p5, functionjp, p5, filterjl, filterjcb, p5, filterjp, p20,
+				njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, p5, zoomjtf, p10,
+				zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljl, fractaljcb, p5, fractaljp, p5,
+				functionjl, functionjcb, p5, functionjp, p5, filterjl, filterjcb, p5, repaintjb, p5, filterjp, p20,
 				picture, p10, picturesizejcb, p5, picturewjtf, p5, picturehjtf, p5, picturejb, p5, picturejcb };
 	}
 
@@ -347,11 +342,6 @@ public class GUI {
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFilter(f);
 		});
-//		jpi.save();
-//		canvas.getFractal().getFunction().pickFilter(f.getClass());
-//		jpi.updateFractal();
-//		jpi.update();
-//		canvas.getFractal().saveAndColour();
 	}
 
 	/**
@@ -449,12 +439,6 @@ public class GUI {
 
 	public Data<Boolean> getUndojb() {
 		return undojb;
-	}
-
-	private final TextFieldInteger iterjtf;
-
-	public Data<Integer> getIterjtf() {
-		return iterjtf;
 	}
 
 	private final TextFieldDouble zoomjtf;

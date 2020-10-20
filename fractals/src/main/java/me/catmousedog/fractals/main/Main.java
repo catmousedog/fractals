@@ -109,7 +109,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 
 		// add feedback panel
 		logger.addHandler(feedback);
-
+		
 		// create JFrame
 		frame = new JFrame(settings.getArtifact_id() + "-" + settings.getVersion());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

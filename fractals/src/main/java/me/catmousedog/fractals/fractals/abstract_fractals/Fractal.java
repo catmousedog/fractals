@@ -55,17 +55,6 @@ public abstract class Fractal extends PanelConstruct {
 	protected Function function;
 
 	/**
-	 * Array of <code>Items</code> that are common to all <code>Fractals</code>,
-	 * hence not fractal-specific. <br>
-	 * Examples include: <br>
-	 * <i>iterations, bailout, etc.</i>
-	 * <p>
-	 * Null for clones.
-	 */
-	@NotNull
-	private final Item[] commonItems;
-
-	/**
 	 * The amount of iterations. Each {@link Fractal} might use this differently.
 	 */
 	protected int iterations = 100;
@@ -126,13 +115,26 @@ public abstract class Fractal extends PanelConstruct {
 		super();
 		transform = new LinearTransform();
 
-		TextFieldInteger iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
+		iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
 				.setTip("<html>The iteration count. Each fractal can use this differently."
 						+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
 				.setMin(0).build();
 
 		commonItems = new Item[] { iterjtf };
 	}
+
+	/**
+	 * Array of <code>Items</code> that are common to all <code>Fractals</code>,
+	 * hence not fractal-specific. <br>
+	 * Examples include: <br>
+	 * <i>iterations, bailout, etc.</i>
+	 * <p>
+	 * Null for clones.
+	 */
+	@NotNull
+	private final Item[] commonItems;
+	
+	private TextFieldInteger iterjtf;
 
 	/**
 	 * Constructor used to create a clone.<br>
@@ -172,6 +174,8 @@ public abstract class Fractal extends PanelConstruct {
 	public void save() {
 		super.save();
 		function.save();
+		
+		iterations = iterjtf.saveAndGet();
 	}
 
 	/**
@@ -181,6 +185,8 @@ public abstract class Fractal extends PanelConstruct {
 	public void update() {
 		super.update();
 		function.update();
+		
+		iterjtf.setData(iterations);
 	}
 
 	/**
@@ -190,6 +196,8 @@ public abstract class Fractal extends PanelConstruct {
 	public void preRender() {
 		super.preRender();
 		function.preRender();
+		for (Item i : commonItems)
+			i.preRender();
 	}
 
 	/**
@@ -199,6 +207,8 @@ public abstract class Fractal extends PanelConstruct {
 	public void postRender() {
 		super.postRender();
 		function.postRender();
+		for (Item i : commonItems)
+			i.postRender();
 	}
 
 	/**

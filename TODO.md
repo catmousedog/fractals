@@ -16,9 +16,10 @@
 - [x] create fractal properties files and location if not found
 
 ## [0.3] - Fractal Function Filter (fractal_functions)
-- [ ] ordered fractals (Fractal -> Function -> Filter)
+- [x] ordered fractals (Fractal -> Function -> Filter)
 - [x] update resources to new hierarchy
 - [ ] update Settings to new hierarchy
+- [ ] start logging
 
 ## Other
 - [ ] keylistener

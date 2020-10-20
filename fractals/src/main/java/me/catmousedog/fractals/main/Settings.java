@@ -235,14 +235,17 @@ public class Settings {
 
 		// defaultFractal
 		String d = settings.getProperty("defaultFractal");
-		defaultFractal = fractalList.get(0);
-		for (Fractal f : fractalList) {
-			if (f.fileName().equals(d)) {
-				defaultFractal = f;
-				break;
+		if (fractalList.size() == 0) {
+			logger.log(Level.SEVERE, "fractalList.size() == 0, no active fractals!");
+		} else {
+			defaultFractal = fractalList.get(0);
+			for (Fractal f : fractalList) {
+				if (f.fileName().equals(d)) {
+					defaultFractal = f;
+					break;
+				}
 			}
 		}
-
 		allFractals = null; // free memory
 
 		fractals = new Fractal[fractalList.size()];
@@ -334,7 +337,7 @@ public class Settings {
 		if (!dir.exists())
 			dir.mkdir();
 
-		String imageName = fractal.getTransform().toString();
+		String imageName = fractal.getFunction().fileName() + "_" + fractal.getTransform().toString();
 		File imageFile; // actual imageFile with edited path
 
 		for (int i = 1;; i++) {
