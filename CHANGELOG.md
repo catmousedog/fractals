@@ -279,6 +279,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - resources names to match new hierarchy
 - fixes to **UI** and renamed to **PanelConstruct**
 - the JPI update methods (Fractal, Function and Filter)
+- GUI layout
 
 ### Removed
 - *Filter.setFilter(Filter)* as this is done is the cloning constructor.

@@ -80,49 +80,6 @@ public class GUI {
 		Padding p20 = new Padding(20);
 
 		/**
-		 * Window
-		 */
-		Title window = new Title("Window");
-
-		widthjtf = new TextFieldInteger.Builder().setLabel("width").setTip("<html>The width of the canvas</html>")
-				.setMin(100).build();
-
-		heightjtf = new TextFieldInteger.Builder().setLabel("height").setMin(100)
-				.setTip("<html>The height of the canvas</html>").build();
-
-		/**
-		 * Location
-		 */
-		Title location = new Title("Location");
-
-		xjtf = new TextFieldDouble.Builder().setLabel("x coordinate")
-				.setTip("<html>The x coordinate of the center of the screen</html>").build();
-
-		yjtf = new TextFieldDouble.Builder().setLabel("y coordinate")
-				.setTip("<html>The y coordinate of the center of the screen</html>").build();
-
-		mjtf = new TextFieldDouble.Builder().setLabel("x zoom").setTip("<html>The x scaling factor</html>").setMin(0)
-				.build();
-
-		njtf = new TextFieldDouble.Builder().setLabel("y zoom").setTip("<html>The y scaling factor</html>").setMin(0)
-				.build();
-
-		rjtf = new TextFieldDouble.Builder().setLabel("rotation").setTip("<html>The rotation in radians</html>")
-				.build();
-
-		copypastejb = new Button2.Builder("Copy", "Paste").setAction(a -> copy(), a -> paste())
-				.setTip("<html>Copy current location to clipboard</html>",
-						"<html>Paste a location from clipboard</html>")
-				.build();
-
-		locationjcb = new ComboBoxList.Builder(canvas.getFractal().getLocations()).setLabel("locations")
-				.setAction(a -> location(a)).setTip("<html>A set of interesting locations</html>").build();
-
-		undojb = new Button.Builder("Undo").setAction(a -> undo()).setTip(
-				"<html>Go back to the previous location, fractal and filter<br>Does not revert any changes made to the fractal or filter.</html>")
-				.setDefault(false).build();
-
-		/**
 		 * Calculation
 		 */
 		Title calculations = new Title("Calculation");
@@ -170,6 +127,38 @@ public class GUI {
 		filterjp = new Panel();
 
 		/**
+		 * Location
+		 */
+		Title location = new Title("Location");
+
+		xjtf = new TextFieldDouble.Builder().setLabel("x coordinate")
+				.setTip("<html>The x coordinate of the center of the screen</html>").build();
+
+		yjtf = new TextFieldDouble.Builder().setLabel("y coordinate")
+				.setTip("<html>The y coordinate of the center of the screen</html>").build();
+
+		mjtf = new TextFieldDouble.Builder().setLabel("x zoom").setTip("<html>The x scaling factor</html>").setMin(0)
+				.build();
+
+		njtf = new TextFieldDouble.Builder().setLabel("y zoom").setTip("<html>The y scaling factor</html>").setMin(0)
+				.build();
+
+		rjtf = new TextFieldDouble.Builder().setLabel("rotation").setTip("<html>The rotation in radians</html>")
+				.build();
+
+		copypastejb = new Button2.Builder("Copy", "Paste").setAction(a -> copy(), a -> paste())
+				.setTip("<html>Copy current location to clipboard</html>",
+						"<html>Paste a location from clipboard</html>")
+				.build();
+
+		locationjcb = new ComboBoxList.Builder(canvas.getFractal().getLocations()).setLabel("locations")
+				.setAction(a -> location(a)).setTip("<html>A set of interesting locations</html>").build();
+
+		undojb = new Button.Builder("Undo").setAction(a -> undo()).setTip(
+				"<html>Go back to the previous location, fractal and filter<br>Does not revert any changes made to the fractal or filter.</html>")
+				.setDefault(false).build();
+
+		/**
 		 * Picture
 		 */
 		Title picture = new Title("Picture");
@@ -194,11 +183,22 @@ public class GUI {
 		picturejcb = new ComboBoxItem.Builder(new String[] { "png", "jpg" })
 				.setTip("<html>The extension of the image when generated.</html>").build();
 
-		all = new Item[] { p20, window, p10, widthjtf, p5, heightjtf, p20, location, p10, xjtf, p5, yjtf, p5, mjtf, p5,
-				njtf, p5, rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, calculations, p10, p5, zoomjtf, p10,
-				zoomjb, p10, renderjb, p5, canceljb, p20, fractal, p10, fractaljl, fractaljcb, p5, fractaljp, p5,
-				functionjl, functionjcb, p5, functionjp, p5, filterjl, filterjcb, p5, repaintjb, p5, filterjp, p20,
-				picture, p10, picturesizejcb, p5, picturewjtf, p5, picturehjtf, p5, picturejb, p5, picturejcb };
+		/**
+		 * Window
+		 */
+		Title window = new Title("Window");
+
+		widthjtf = new TextFieldInteger.Builder().setLabel("width").setTip("<html>The width of the canvas</html>")
+				.setMin(100).build();
+
+		heightjtf = new TextFieldInteger.Builder().setLabel("height").setMin(100)
+				.setTip("<html>The height of the canvas</html>").build();
+
+		all = new Item[] { p20, calculations, p5, zoomjtf, p5, zoomjb, p5, renderjb, p5, canceljb, p20, fractal,
+				p5, fractaljl, fractaljcb, p5, fractaljp, p5, functionjl, functionjcb, p5, functionjp, p5, filterjl,
+				filterjcb, p5, repaintjb, p5, filterjp, p20, location, p5, xjtf, p5, yjtf, p5, mjtf, p5, njtf, p5,
+				rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, picture, p5, picturesizejcb, p5, picturewjtf,
+				p5, picturehjtf, p5, picturejb, p5, picturejcb, p20, window, p5, widthjtf, p5, heightjtf };
 	}
 
 	/**
