@@ -3,10 +3,12 @@ package me.catmousedog.fractals.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -16,11 +18,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import me.catmousedog.fractals.main.Settings;
 
-public class FeedbackPanel extends Handler {
+public class FeedbackPanel extends Handler implements Runnable {
 
 	private static FeedbackPanel FEEDBACK_PANEL;
 
@@ -29,31 +30,31 @@ public class FeedbackPanel extends Handler {
 	/**
 	 * The <code>JPanel</code> in which all the feedback is displayed.
 	 */
-	private final JPanel panel;
+	private JPanel panel;
 
 	/**
 	 * <code>JLabel</code> displaying the last generating time.
 	 */
-	private final JLabel generateTime;
+	private JLabel generateTime;
 
 	/**
 	 * <code>JLabel</code> displaying the last colouring time.
 	 */
-	private final JLabel colourTime;
+	private JLabel colourTime;
 
 	/**
 	 * <code>JLabel</code> above the progress bar.
 	 */
-	private final JLabel lblGenerator;
+	private JLabel lblGenerator;
 
 	/**
 	 * The progress bar at the bottom of the feedback panel.
 	 */
-	private final JProgressBar jpbGenerator;
+	private JProgressBar jpbGenerator;
 
-	private final JLabel lblPainter;
+	private JLabel lblPainter;
 
-	private final JProgressBar jpbPainter;
+	private JProgressBar jpbPainter;
 
 	/**
 	 * Maximum amount of logged messages displayed.
@@ -63,44 +64,48 @@ public class FeedbackPanel extends Handler {
 	/**
 	 * The array of JLabels representing the logged messages.
 	 */
-	private final JLabel[] logs = new JLabel[m];
+	private JLabel[] logs = new JLabel[m];
 
 	/**
 	 * <code>Vector</code> of <code>Strings</code> representing the first to last
 	 * logged messages.
 	 */
-	private final Vector<String> logMessages = new Vector<String>();
+	private Vector<String> logMessages = new Vector<String>();
 
 	/**
-	 * @return the instance of the <code>FeedbackPanel</code>.<br>
-	 *         Only not null if {@link FeedbackPanel#init(InitialSize)} was called.
+	 * @return the instance of the <code>FeedbackPanel</code>.<
 	 */
-	@Nullable
+	@NotNull
 	public static FeedbackPanel getInstance() {
-		return FEEDBACK_PANEL;
-	}
-
-	/**
-	 * Creates the feedback panel.<br>
-	 * Must be created on the EDT.
-	 * 
-	 * @param size
-	 * 
-	 * @return the static <code>FEEDBACK_PANEM</code>.
-	 */
-	public static FeedbackPanel init() {
 		if (FEEDBACK_PANEL == null)
 			FEEDBACK_PANEL = new FeedbackPanel();
 		return FEEDBACK_PANEL;
 	}
 
 	private FeedbackPanel() {
+		Logger logger = Logger.getLogger("fractals");
+		if (!EventQueue.isDispatchThread()) {
+			try {
+				EventQueue.invokeAndWait(this);
+			} catch (InvocationTargetException | InterruptedException e) {
+				logger.log(Level.SEVERE, "FeedbackPanel init failed", e);
+			}
+		} else {
+			run();
+		}
+	}
+
+	/**
+	 * Initialises the <code>FeedbackPanel</code>, run on the EDT.
+	 */
+	@Override
+	public void run() {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(
 				new Dimension(settings.getIwidth() + 2 * settings.getHgap(), settings.getFeedbackheight()));
 		panel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-		setLevel(Level.FINER);
+		setLevel(Level.FINE);
 
 		// log labels
 		for (int j = 0; j < m; j++) {

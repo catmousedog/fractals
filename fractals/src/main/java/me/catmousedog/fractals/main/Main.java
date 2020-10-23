@@ -12,7 +12,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -23,6 +22,7 @@ import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.FeedbackPanel;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.utils.FileFormatter;
 
 /**
  * the main class
@@ -41,7 +41,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		try {
 			FileHandler fileHandler = new FileHandler("logs/fractals.log");
 			fileHandler.setLevel(Level.ALL);
-			fileHandler.setFormatter(new SimpleFormatter());
+			fileHandler.setFormatter(new FileFormatter());
 			logger.addHandler(fileHandler);
 		} catch (SecurityException | IOException e) {
 			logger.log(Level.WARNING, "could not add FileHandler to Logger", e);
@@ -63,7 +63,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	 * This is also a {@link Handler} so any loggable messages will appear on this
 	 * panel.
 	 */
-	private final FeedbackPanel feedback = FeedbackPanel.init();
+	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
 
 	private JFrame frame;
 

@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -32,6 +34,8 @@ public class Canvas extends JPanel {
 	private final RenderWorker renderer = RenderWorker.getInstance();
 
 	private final Settings settings = Settings.getInstance();
+
+	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * the mouse listener
@@ -81,6 +85,8 @@ public class Canvas extends JPanel {
 	 * @param logger  the logger instance
 	 */
 	public Canvas(Fractal fractal) {
+		logger.log(Level.FINER, "Canvas init");
+		
 		this.fractal = fractal;
 		addMouseMotionListener(fractal.getMouse());
 		field = new Field(settings.getWidth(), settings.getHeight());
@@ -121,13 +127,14 @@ public class Canvas extends JPanel {
 	 * true before starting a new <code>Generator</code>.
 	 */
 	public void render() {
+		logger.log(Level.FINEST, "canvas.render");
+
 		renderer.newRender(field, fractal.clone(), () -> {
 			allowRender = true;
 			repaint();
 			if (!renderer.isGeneratorScheduled() && !renderer.isPainterScheduled())
 				jpi.postRender();
 		});
-
 	}
 
 	private boolean allowRender = false;
@@ -145,6 +152,8 @@ public class Canvas extends JPanel {
 	 * @return true if a new {@link Painter} was successfully executed.
 	 */
 	public void paint() {
+		logger.log(Level.FINEST, "canvas.paint");
+
 		renderer.newPainter(field, fractal.getFunction().getFilter().clone(), () -> {
 			allowPainter = true;
 			repaint();
@@ -159,7 +168,7 @@ public class Canvas extends JPanel {
 	 * <ul>
 	 * <li>{@link Canvas#field}
 	 * <li>The {@link LinearTransform} of the {@link Fractal}. (the origin)
-	 * <li>The {@link JPInterface} extended by the {@link Canvas}.
+	 * <li>The {@link JPanel} extended by the {@link Canvas}.
 	 * </ul>
 	 * <p>
 	 * If the <code>w</code> and <code>h</code> are the same as {@link Canvas#width}
@@ -169,6 +178,8 @@ public class Canvas extends JPanel {
 	 * @param h new height
 	 */
 	public void setPanelSize(int w, int h) {
+		logger.log(Level.FINEST, "canvas.setPanelSize");
+		
 		// do nothing if unchanged
 		if (width == w && height == h)
 			return;
@@ -193,6 +204,8 @@ public class Canvas extends JPanel {
 	 * {@link Fractal} which is kept as a reference.
 	 */
 	public void savePrevConfig() {
+		logger.log(Level.FINEST, "canvas.savePrevConfig");
+
 		prevConfig = new Configuration(fractal, zoomFactor);
 	}
 
@@ -202,6 +215,8 @@ public class Canvas extends JPanel {
 	 * time {@link Canvas#savePrevConfig()} was called.
 	 */
 	public void undo() {
+		logger.log(Level.FINEST, "canvas.undo");
+
 		Fractal fractal = prevConfig.fractal;
 		fractal.pickFunction(prevConfig.function.getClass());
 		fractal.getFunction().pickFilter(prevConfig.filter.getClass());
@@ -219,6 +234,8 @@ public class Canvas extends JPanel {
 	 * @param jpi the instance of {@link JPInterface}
 	 */
 	public void setJPI(@NotNull JPInterface jpi) {
+		logger.log(Level.FINER, "canvas.setJPI");
+
 		this.jpi = jpi;
 		mouse.setJPI(jpi);
 		GUI gui = jpi.getGUI();
@@ -249,6 +266,8 @@ public class Canvas extends JPanel {
 	 * @param fractal
 	 */
 	public void setFractal(@NotNull Fractal fractal) {
+		logger.log(Level.FINEST, "canvas.setFractal");
+
 		super.removeMouseMotionListener(this.fractal.getMouse());
 		super.addMouseMotionListener(fractal.getMouse());
 		this.fractal = fractal;
@@ -257,11 +276,15 @@ public class Canvas extends JPanel {
 	}
 
 	public void setFunction(@NotNull Function function) {
+		logger.log(Level.FINEST, "canvas.setFunction");
+
 		fractal.pickFunction(function.getClass());
 		jpi.updateFunction();
 	}
 
 	public void setFilter(@NotNull Filter filter) {
+		logger.log(Level.FINEST, "canvas.setFilter");
+
 		fractal.getFunction().pickFilter(filter.getClass());
 		jpi.updateFilter();
 	}
@@ -356,30 +379,5 @@ public class Canvas extends JPanel {
 			iterations = fractal.getIterations();
 			this.zoomFactor = zoomFactor;
 		}
-
-//		public Fractal getFractal() {
-//			return fractal;
-//		}
-//
-//		public Function getFunction() {
-//			return function;
-//		}
-//
-//		public Filter getFilter() {
-//			return filter;
-//		}
-//
-//		public LinearTransform getTransform() {
-//			return transform;
-//		}
-//
-//		public int getIterations() {
-//			return iterations;
-//		}
-//
-//		public double getZoomFactor() {
-//			return zoomFactor;
-//		}
 	}
-
 }

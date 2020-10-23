@@ -19,12 +19,12 @@
 - [x] ordered fractals (Fractal -> Function -> Filter)
 - [x] update resources to new hierarchy
 - [x] update Settings to new hierarchy
-- [ ] start logging
+- [ ] keylistener
 - [ ] tips
 - [ ] sort JPI savable methods to new GUI
+- [ ] replace Canvas.configuration with prevfields inside Canvas
 
 ## Other
-- [ ] keylistener
 - [ ] make logger messages fade
 - [ ] julia default fixed point settings
 - [ ] advanced setting -> overlay for overlaying mandelbrot over julia set

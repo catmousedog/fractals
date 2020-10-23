@@ -100,19 +100,24 @@ public class Settings {
 	private Settings() {
 
 		// create directories
-		File images = new File("./images");
-		if (!images.exists())
-			images.mkdir();
-		File logs = new File("./logs");
-		if (!logs.exists())
-			logs.mkdirs();
+		try {
+			File images = new File("./images");
+			if (!images.exists())
+				images.mkdir();
+			File logs = new File("./logs");
+			if (!logs.exists())
+				logs.mkdirs();
+			logger.log(Level.FINER, "created images & logs dir");
+		} catch (Exception e) {
+			logger.log(Level.CONFIG, "failed to create images | logs dir", e);
+		}
 
 		// pom.xml
 		Properties project = new Properties();
 		try {
 			project.load(getClass().getClassLoader().getResourceAsStream("project.properties"));
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "project.properties exception", e);
+			logger.log(Level.CONFIG, "project.properties IOException", e);
 		}
 		artifact_id = project.getProperty("artifactId");
 		version = project.getProperty("version");
@@ -120,13 +125,13 @@ public class Settings {
 		try {
 			initSettings();
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "iniSettings exception", e);
+			logger.log(Level.CONFIG, "iniSettings IOException", e);
 		}
 
 		try {
 			initFractals();
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "initFractals exception", e);
+			logger.log(Level.CONFIG, "initFractals IOException", e);
 		}
 
 	}
@@ -147,6 +152,7 @@ public class Settings {
 		InputStream settingsStream = getClass().getClassLoader().getResourceAsStream("default_settings.properties");
 		if (!f.exists()) {
 			Files.copy(settingsStream, Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
+			logger.log(Level.FINER, "copied settings");
 		}
 
 		// load settings from file
@@ -159,12 +165,10 @@ public class Settings {
 		render_on_changes = Boolean.parseBoolean(settings.getProperty("render_on_change"));
 		scheduled_workers = Boolean.parseBoolean(settings.getProperty("scheduled_workers"));
 		// intial size
-		try {
-			width = Integer.parseInt(settings.getProperty("width"));
-			height = Integer.parseInt(settings.getProperty("height"));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
+		width = Integer.parseInt(settings.getProperty("width"));
+		height = Integer.parseInt(settings.getProperty("height"));
+
+		logger.log(Level.FINER, "retrieved settings");
 	}
 
 	/**
@@ -175,7 +179,7 @@ public class Settings {
 	 * @throws IOException if a directory could not be copied or a
 	 *                     {@link Properties} could not be loaded.
 	 */
-	private void initFractals() throws IOException {
+	private void initFractals() {
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
 				new InverseMandelbrot() };
@@ -184,56 +188,47 @@ public class Settings {
 
 		for (Fractal fractal : allFractals) {
 			// filename
-			String filename = fractal.fileName();
-
-			// the path to the fractal folder in the resources
-			String resource = "fractals/" + filename;
-
-			// path to fractal resource
-			String settingsResourcePath = resource + "/settings.properties";
-
-			// path to location resource
-			String locationsResourcePath = resource + "/locations.properties";
-
-			// path to fractal file
-			String settingsFilePath = "./" + settingsResourcePath;
-
-			// path to location file
-			String locationsFilePath = "./" + locationsResourcePath;
+			String fileName = fractal.fileName();
 
 			// "true" if this fractal should be used
-			String enabled = settings.getProperty(filename);
+			String enabled = settings.getProperty(fileName);
 
 			if (enabled.equalsIgnoreCase("true")) {
+				// the path to the fractal folder in the resources
+				String resource = "fractals/" + fileName;
+
+				// path to fractal resource
+				String settingsResourcePath = resource + "/settings.properties";
+
+				// path to location resource
+				String locationsResourcePath = resource + "/locations.properties";
+
+				// path to fractal file
+				String settingsFilePath = "./" + settingsResourcePath;
+
+				// path to location file
+				String locationsFilePath = "./" + locationsResourcePath;
 
 				// make directory
 				File fractalDirectory = new File("./" + resource);
 				if (!fractalDirectory.exists())
 					fractalDirectory.mkdirs();
+				logger.log(Level.FINER, "created " + resource);
 
 				// settings.properties resource for this fractal
 				InputStream settingsStream = getClass().getClassLoader().getResourceAsStream(settingsResourcePath);
-
 				// settings.properties file for this fractal
 				File settingsFile = new File(settingsFilePath);
-
 				// if 'properties' resource exists and file doesn't copy over
-				if (settingsStream == null)
-					logger.log(Level.SEVERE, "missing settings resource for " + resource);
-				else if (!settingsFile.exists())
-					Files.copy(settingsStream, Paths.get(settingsFilePath), StandardCopyOption.REPLACE_EXISTING);
-
-				// locations.properties resource for this fractal
-				InputStream locationsStream = getClass().getClassLoader().getResourceAsStream(locationsResourcePath);
-
-				// locations.properties file for this fractal
-				File locationsFile = new File(locationsFilePath);
-
-				// if 'location' resource exists and file doesn't copy over
-				if (locationsStream == null)
-					logger.log(Level.SEVERE, "missing locations resource for " + resource);
-				else if (!locationsFile.exists())
-					Files.copy(locationsStream, Paths.get(locationsFilePath), StandardCopyOption.REPLACE_EXISTING);
+				if (settingsStream == null) {
+					logger.log(Level.SEVERE, "missing settings resource for " + fileName);
+				} else if (!settingsFile.exists()) {
+					try {
+						Files.copy(settingsStream, Paths.get(settingsFilePath), StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+						logger.log(Level.SEVERE, fileName + " settings could not be copied", e);
+					}
+				}
 
 				// create properties
 				Properties defaultP = new Properties();
@@ -244,6 +239,15 @@ public class Settings {
 					p.load(new FileInputStream(settingsFilePath));
 				}
 
+				// locations.properties resource for this fractal
+				InputStream locationsStream = getClass().getClassLoader().getResourceAsStream(locationsResourcePath);
+				// locations.properties file for this fractal
+				File locationsFile = new File(locationsFilePath);
+				// if 'location' resource exists and file doesn't copy over
+				if (locationsStream == null)
+					logger.log(Level.SEVERE, "missing locations resource for " + resource);
+				else if (!locationsFile.exists())
+					Files.copy(locationsStream, Paths.get(locationsFilePath), StandardCopyOption.REPLACE_EXISTING);
 				// create locations
 				OrderedProperties defaultL = new OrderedProperties();
 				if (locationsStream != null)
@@ -374,7 +378,7 @@ public class Settings {
 		try {
 			ImageIO.write(img, ext, imageFile);
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "failed to write image at " + imageFile.getPath(), e);
+			logger.log(Level.SEVERE, "failed to write image at " + imageFile.getPath(), e);
 		}
 	}
 
