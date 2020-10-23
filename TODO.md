@@ -21,6 +21,7 @@
 - [x] update Settings to new hierarchy
 - [ ] start logging
 - [ ] tips
+- [ ] sort JPI savable methods to new GUI
 
 ## Other
 - [ ] keylistener

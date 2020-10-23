@@ -82,7 +82,7 @@ public class GUI {
 		/**
 		 * Calculation
 		 */
-		Title calculations = new Title("Calculation");
+		Title canvasTitle = new Title("Canvas");
 
 		zoomjtf = new TextFieldDouble.Builder().setLabel("zoom factor").setDefault(-1).setMin(1)
 				.setTip("<html>The zoom factor to multiply with on click</html>").build();
@@ -194,7 +194,7 @@ public class GUI {
 		heightjtf = new TextFieldInteger.Builder().setLabel("height").setMin(100)
 				.setTip("<html>The height of the canvas</html>").build();
 
-		all = new Item[] { p20, calculations, p5, zoomjtf, p5, zoomjb, p5, renderjb, p5, canceljb, p20, fractal,
+		all = new Item[] { p20, canvasTitle, p5, zoomjtf, p5, zoomjb, p5, renderjb, p5, canceljb, p20, fractal,
 				p5, fractaljl, fractaljcb, p5, fractaljp, p5, functionjl, functionjcb, p5, functionjp, p5, filterjl,
 				filterjcb, p5, repaintjb, p5, filterjp, p20, location, p5, xjtf, p5, yjtf, p5, mjtf, p5, njtf, p5,
 				rjtf, p10, copypastejb, p5, locationjcb, p5, undojb, p20, picture, p5, picturesizejcb, p5, picturewjtf,
