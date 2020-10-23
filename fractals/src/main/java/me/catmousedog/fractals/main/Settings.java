@@ -40,6 +40,31 @@ public class Settings {
 		return SETTINGS;
 	}
 
+	/**
+	 * The interface width, this remains constant unless the frame is smaller than
+	 * this width.<br>
+	 * Note that this is not the width of the {@linkplain Main#jpi}, as this is
+	 * usually smaller.
+	 */
+	private final int iwidth = 200;
+
+	/**
+	 * height of the feedback box
+	 */
+	private final int feedbackheight = 150;
+
+	/**
+	 * vertical gap for the jpi border
+	 */
+	private final int vgap = 10;
+
+	/**
+	 * horizontal gap for the jpi border
+	 */
+	private final int hgap = 4;
+
+	/* Settings */
+
 	private String artifact_id;
 
 	private String version;
@@ -375,6 +400,38 @@ public class Settings {
 
 	public boolean isScheduled_workers() {
 		return scheduled_workers;
+	}
+
+	/**
+	 * @return the iwidth
+	 */
+	public int getIwidth() {
+		return iwidth;
+	}
+
+	/**
+	 * @return the feedbackheight
+	 */
+	public int getFeedbackheight() {
+		return feedbackheight;
+	}
+
+	/**
+	 * @return the vgap
+	 */
+	public int getVgap() {
+		return vgap;
+	}
+
+	/**
+	 * @return the hgap
+	 */
+	public int getHgap() {
+		return hgap;
+	}
+
+	public int getJPIWidth() {
+		return iwidth + 2 * hgap;
 	}
 
 	private List<Fractal> fractalList = new ArrayList<Fractal>();

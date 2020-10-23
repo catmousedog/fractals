@@ -18,11 +18,13 @@ import javax.swing.JProgressBar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.main.Main.InitialSize;
+import me.catmousedog.fractals.main.Settings;
 
 public class FeedbackPanel extends Handler {
 
 	private static FeedbackPanel FEEDBACK_PANEL;
+
+	private final Settings settings = Settings.getInstance();
 
 	/**
 	 * The <code>JPanel</code> in which all the feedback is displayed.
@@ -86,16 +88,17 @@ public class FeedbackPanel extends Handler {
 	 * 
 	 * @return the static <code>FEEDBACK_PANEM</code>.
 	 */
-	public static FeedbackPanel init(InitialSize size) {
+	public static FeedbackPanel init() {
 		if (FEEDBACK_PANEL == null)
-			FEEDBACK_PANEL = new FeedbackPanel(size);
+			FEEDBACK_PANEL = new FeedbackPanel();
 		return FEEDBACK_PANEL;
 	}
 
-	private FeedbackPanel(InitialSize size) {
+	private FeedbackPanel() {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.setPreferredSize(new Dimension(size.getIwidth() + 2 * size.getHgap(), size.getFeedbackheight()));
+		panel.setPreferredSize(
+				new Dimension(settings.getIwidth() + 2 * settings.getHgap(), settings.getFeedbackheight()));
 		panel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		setLevel(Level.FINER);
 
@@ -143,7 +146,8 @@ public class FeedbackPanel extends Handler {
 	}
 
 	/**
-	 * sets the progress message and the progress bar value for the <code>generator</code>.<br>
+	 * sets the progress message and the progress bar value for the
+	 * <code>generator</code>.<br>
 	 * Must be run on the EDT.
 	 * 
 	 * @param progressMessage the message above the progress bar without the
@@ -156,7 +160,8 @@ public class FeedbackPanel extends Handler {
 	}
 
 	/**
-	 * sets the progress message and the progress bar value for the <code>painter</code>.<br>
+	 * sets the progress message and the progress bar value for the
+	 * <code>painter</code>.<br>
 	 * Must be run on the EDT.
 	 * 
 	 * @param progressMessage the message above the progress bar without the

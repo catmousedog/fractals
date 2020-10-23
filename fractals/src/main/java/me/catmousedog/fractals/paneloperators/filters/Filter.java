@@ -62,6 +62,16 @@ public abstract class Filter extends PanelOperator {
 	 */
 	public abstract int apply(@NotNull Number v);
 
+	/**
+	 * Any implementation should save the {@link PanelOperator#items} if not null.
+	 */
+	public abstract void save();
+	
+	/**
+	 * Any implementation should update the {@link PanelOperator#items} if not null.
+	 */
+	public abstract void update();
+	
 	@Override
 	public abstract Filter clone();
 

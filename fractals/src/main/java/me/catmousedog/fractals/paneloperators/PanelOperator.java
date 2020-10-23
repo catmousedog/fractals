@@ -43,22 +43,12 @@ public abstract class PanelOperator implements SafeSavable {
 	protected PanelOperator() {
 	}
 
-	@Override
-	public void save() {
-		if (items != null) {
-			for (Item item : items)
-				item.save();
-		}
-	}
-
-	@Override
-	public void update() {
-		if (items != null) {
-			for (Item item : items)
-				item.update();
-		}
-	}
-
+	/**
+	 * Prerenders the
+	 * <ul>
+	 * <li>{@link PanelOperator#items}
+	 * </ul>
+	 */
 	@Override
 	public void preRender() {
 		if (items != null) {
@@ -66,7 +56,13 @@ public abstract class PanelOperator implements SafeSavable {
 				item.preRender();
 		}
 	}
-
+	
+	/**
+	 * Postrenders the
+	 * <ul>
+	 * <li>{@link PanelOperator#items}
+	 * </ul>
+	 */
 	@Override
 	public void postRender() {
 		if (items != null) {

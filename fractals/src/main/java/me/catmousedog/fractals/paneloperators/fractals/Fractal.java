@@ -15,7 +15,6 @@ import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.PanelOperator;
-import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.components.Data;
@@ -133,7 +132,7 @@ public abstract class Fractal extends PanelOperator {
 	 */
 	@NotNull
 	private final Item[] commonItems;
-	
+
 	private TextFieldInteger iterjtf;
 
 	/**
@@ -168,29 +167,42 @@ public abstract class Fractal extends PanelOperator {
 	public abstract FractalValue get(double cx, double cy);
 
 	/**
-	 * Calls {@link Filter#save()}.
+	 * Saves the
+	 * <ul>
+	 * <li>{@link Fractal#function}
+	 * <li>{@link Fractal#commonItems}
+	 * </ul>
+	 * Any implementation should save the {@link PanelOperator#items} if not null.
 	 */
 	@Override
 	public void save() {
-		super.save();
 		function.save();
-		
+
 		iterations = iterjtf.saveAndGet();
 	}
 
 	/**
-	 * Calls {@link Filter#update()}.
+	 * Updates the
+	 * <ul>
+	 * <li>{@link Fractal#function}
+	 * <li>{@link Fractal#commonItems}
+	 * </ul>
+	 * Any implementation should update the {@link PanelOperator#items} if not null.
 	 */
 	@Override
 	public void update() {
-		super.update();
 		function.update();
-		
+
 		iterjtf.setData(iterations);
 	}
 
 	/**
-	 * Calls {@link Filter#preRender()}.
+	 * Prerenders the
+	 * <ul>
+	 * <li>{@link PanelOperator#items}
+	 * <li>{@link Fractal#function}
+	 * <li>{@link Fractal#commonItems}
+	 * </ul>
 	 */
 	@Override
 	public void preRender() {
@@ -201,7 +213,12 @@ public abstract class Fractal extends PanelOperator {
 	}
 
 	/**
-	 * Calls {@link Filter#preRender()}.
+	 * Postrenders the
+	 * <ul>
+	 * <li>{@link PanelOperator#items}
+	 * <li>{@link Fractal#function}
+	 * <li>{@link Fractal#commonItems}
+	 * </ul>
 	 */
 	@Override
 	public void postRender() {
@@ -212,14 +229,27 @@ public abstract class Fractal extends PanelOperator {
 	}
 
 	/**
-	 * Saves all data through {@link Fractal#save()} and colours the image through
-	 * {@link Canvas#paint()} if {@link Settings#isRender_on_changes()}.
-	 * 
-	 * @return true if the canvas successfully called {@link Canvas#paint()}, false
-	 *         otherwise
+	 * Saves the <code>Fractal</code> and attempts to render it through
+	 * {@link Canvas#render()} if this is not being called by an updating listener
+	 * and the {@link Canvas#fractal} is the same instance as this
+	 * <code>Fractal</code>.
+	 */
+	public void saveAndRender() {
+		if (allowListeners && canvas.getFractal() == this) {
+			save();
+			if (render_on_changes)
+				canvas.render();
+		}
+	}
+
+	/**
+	 * Saves the <code>Fractal</code> and attempts to paint it through
+	 * {@link Canvas#paint()} if this is not being called by an updating listener
+	 * and the {@link Canvas#fractal} is the same instance as this
+	 * <code>Fractal</code>.
 	 */
 	public void saveAndColour() {
-		if (allowListeners) {
+		if (allowListeners && canvas.getFractal() == this) {
 			save();
 			if (render_on_changes)
 				canvas.paint();

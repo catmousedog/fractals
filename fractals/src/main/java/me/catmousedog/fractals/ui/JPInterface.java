@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.main.Main;
-import me.catmousedog.fractals.main.Main.InitialSize;
+import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
@@ -42,14 +42,17 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	private final GUI gui;
 
-	public JPInterface(InitialSize size, Main main, Canvas canvas) {
+	private final Settings settings = Settings.getInstance();
+
+	public JPInterface(Main main, Canvas canvas) {
 		this.main = main;
 		this.canvas = canvas;
 		gui = new GUI(canvas, this);
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setMaximumSize(new Dimension(size.getIwidth(), Integer.MAX_VALUE));
-		setBorder(BorderFactory.createEmptyBorder(size.getVgap(), size.getHgap(), size.getVgap(), size.getHgap()));
+		setMaximumSize(new Dimension(settings.getIwidth(), Integer.MAX_VALUE));
+		setBorder(BorderFactory.createEmptyBorder(settings.getVgap(), settings.getHgap(), settings.getVgap(),
+				settings.getHgap()));
 		updateFractal(); // add colour panel, etc.
 	}
 
@@ -196,7 +199,7 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getFractaljcb().postRender();
 		gui.getFunctionjcb().postRender();
 		gui.getFilterjcb().postRender();
-		
+
 		gui.getRepaintjb().postRender();
 		;
 		// specific
@@ -233,7 +236,6 @@ public class JPInterface extends JPanel implements Savable {
 		canvas.getFractal().getTransform().setRot(gui.getRjtf().saveAndGet());
 
 		/* Calculation */
-//		canvas.getFractal().setIterations(gui.getIterjtf().saveAndGet());
 		canvas.setZoomFactor(gui.getZoomjtf().saveAndGet());
 
 		/* Fractal */
@@ -262,7 +264,6 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getRjtf().setData(canvas.getFractal().getTransform().getrot());
 
 		/* Calculation */
-//		gui.getIterjtf().setData(canvas.getFractal().getIterations());
 		gui.getZoomjtf().setData(canvas.getZoomFactor());
 
 		/* Fractal */
@@ -272,8 +273,10 @@ public class JPInterface extends JPanel implements Savable {
 		canvas.getFractal().safeUpdate();
 
 		/* Picture */
-		gui.getPicturewjtf().update();
-		gui.getPicturehjtf().update();
+		// not needed as you cannot change this data without updating
+		// hence it will always be updated
+//		gui.getPicturewjtf().update();
+//		gui.getPicturehjtf().update();
 	}
 
 	/**

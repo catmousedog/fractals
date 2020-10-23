@@ -20,6 +20,7 @@
 - [x] update resources to new hierarchy
 - [x] update Settings to new hierarchy
 - [ ] start logging
+- [ ] tips
 
 ## Other
 - [ ] keylistener

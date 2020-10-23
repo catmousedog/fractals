@@ -74,24 +74,50 @@ public abstract class Function extends PanelOperator {
 	@NotNull
 	public abstract Number apply(FractalValue v);
 
+	/**
+	 * Saves the
+	 * <ul>
+	 * <li>{@link Function#filter}
+	 * </ul>
+	 * Any implementation should save the {@link PanelOperator#items} if not null.
+	 */
 	@Override
 	public void save() {
-		super.save();
 		filter.save();
 	}
 
+	/**
+	 * Updates the
+	 * <ul>
+	 * <li>{@link Function#filter}
+	 * </ul>
+	 * Any implementation should update the {@link PanelOperator#items} if not null.
+	 */
 	@Override
 	public void update() {
-		super.update();
 		filter.update();
 	}
 
+	/**
+	 * Prerenders the
+	 * <ul>
+	 * <li>{@link PanelOperator#items}
+	 * <li>{@link Function#filter}
+	 * </ul>
+	 */
 	@Override
 	public void preRender() {
 		super.preRender();
 		filter.preRender();
 	}
 
+	/**
+	 * Postrenders the
+	 * <ul>
+	 * <li>{@link PanelOperator#items}
+	 * <li>{@link Function#filter}
+	 * </ul>
+	 */
 	@Override
 	public void postRender() {
 		super.postRender();

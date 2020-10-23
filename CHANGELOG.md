@@ -273,6 +273,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - **MouseFractal** abstract fractal
 - added **UI** abstract class and made **Fractal**, **Function** and **Filter**
 - **Nameable** interface for common *String* methods
+- **NormalizedFunction** offset to *items*
 
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
@@ -280,6 +281,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - fixes to **UI** and renamed to **PanelConstruct**
 - the JPI update methods (Fractal, Function and Filter)
 - GUI layout
+- Merged **InitialSize** into **Settings**
 
 ### Removed
 - *Filter.setFilter(Filter)* as this is done is the cloning constructor.

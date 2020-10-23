@@ -3,6 +3,9 @@ package me.catmousedog.fractals.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.logging.FileHandler;
@@ -56,16 +59,11 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	private final Fractal[] fractals = settings.getFractals();
 
 	/**
-	 * Object for storing all the initial dimensions
-	 */
-	private final InitialSize size = new InitialSize();
-
-	/**
 	 * The panel containing all the feedback.<br>
 	 * This is also a {@link Handler} so any loggable messages will appear on this
 	 * panel.
 	 */
-	private final FeedbackPanel feedback = FeedbackPanel.init(size);
+	private final FeedbackPanel feedback = FeedbackPanel.init();
 
 	private JFrame frame;
 
@@ -109,24 +107,24 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 
 		// add feedback panel
 		logger.addHandler(feedback);
-		
+
 		// create JFrame
 		frame = new JFrame(settings.getArtifact_id() + "-" + settings.getVersion());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 
 		// create canvas
-		canvas = new Canvas(size, settings.getDefaultFractal());
+		canvas = new Canvas(settings.getDefaultFractal());
 
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 
 		// create right panel (containing logger and jpi)
 		rpanel = new JPanel();
-		rpanel.setPreferredSize(new Dimension(size.getJPIWidth(), size.getHeight()));
+		rpanel.setPreferredSize(new Dimension(settings.getJPIWidth(), settings.getHeight()));
 		rpanel.setLayout(new BorderLayout());
 
 		// create interface panel
-		jpi = new JPInterface(size, this, canvas);
+		jpi = new JPInterface(this, canvas);
 
 		for (Fractal f : fractals) {
 			f.setCanvas(canvas);
@@ -138,7 +136,8 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 
 		// create scroll panel
 		jsp = new JScrollPane(jpi, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jsp.setPreferredSize(new Dimension(size.getJPIWidth(), size.getHeight() - size.getFeedbackheight()));
+		jsp.setPreferredSize(
+				new Dimension(settings.getJPIWidth(), settings.getHeight() - settings.getFeedbackheight()));
 		jsp.getVerticalScrollBar().setUnitIncrement(16);
 		rpanel.add(jsp, BorderLayout.CENTER);
 
@@ -161,6 +160,14 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		// make sure all components are displayed
 		frame.validate();
 
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				System.out.println("test");
+				return false;
+			}
+		});
+
 		// initial render
 		if (settings.isRender_on_changes())
 			jpi.renderNow();
@@ -172,94 +179,11 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	}
 
 	public void setSize(int w, int h) {
-		rpanel.setPreferredSize(new Dimension(size.getJPIWidth(), h));
-		jsp.setPreferredSize(new Dimension(size.getJPIWidth(), h - size.getFeedbackheight()));
+		rpanel.setPreferredSize(new Dimension(settings.getJPIWidth(), h));
+		jsp.setPreferredSize(new Dimension(settings.getJPIWidth(), h - settings.getFeedbackheight()));
 		canvas.setPanelSize(w, h);
 		frame.pack();
 		frame.validate();
-	}
-
-	/**
-	 * Class for keeping the initial dimension constants.
-	 */
-	public class InitialSize {
-
-		/**
-		 * Width and height of the canvas.
-		 * <p>
-		 * The default size is set in the {@code settings.properties} file
-		 */
-		private final int width = settings.getWidth(), height = settings.getHeight();
-
-		/**
-		 * The interface width, this remains constant unless the frame is smaller than
-		 * this width.<br>
-		 * Note that this is not the width of the {@linkplain Main#jpi}, as this is
-		 * usually smaller.
-		 */
-		private final int iwidth = 200;
-
-		/**
-		 * height of the feedback box
-		 */
-		private final int feedbackheight = 150;
-
-		/**
-		 * vertical gap for the jpi border
-		 */
-		private final int vgap = 10;
-
-		/**
-		 * horizontal gap for the jpi border
-		 */
-		private final int hgap = 4;
-
-		/**
-		 * @return the width
-		 */
-		public int getWidth() {
-			return width;
-		}
-
-		/**
-		 * @return the height
-		 */
-		public int getHeight() {
-			return height;
-		}
-
-		/**
-		 * @return the iwidth
-		 */
-		public int getIwidth() {
-			return iwidth;
-		}
-
-		/**
-		 * @return the feedbackheight
-		 */
-		public int getFeedbackheight() {
-			return feedbackheight;
-		}
-
-		/**
-		 * @return the vgap
-		 */
-		public int getVgap() {
-			return vgap;
-		}
-
-		/**
-		 * @return the hgap
-		 */
-		public int getHgap() {
-			return hgap;
-		}
-
-		public int getJPIWidth() {
-			return iwidth + 2 * hgap;
-		}
-
 	}
 
 	/**

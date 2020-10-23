@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.Field;
 import me.catmousedog.fractals.data.LinearTransform;
-import me.catmousedog.fractals.main.Main.InitialSize;
+import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
@@ -30,6 +30,8 @@ import me.catmousedog.fractals.workers.RenderWorker;
 public class Canvas extends JPanel {
 
 	private final RenderWorker renderer = RenderWorker.getInstance();
+
+	private final Settings settings = Settings.getInstance();
 
 	/**
 	 * the mouse listener
@@ -78,17 +80,17 @@ public class Canvas extends JPanel {
 	 * @param jpi     the user interface, used for saving and updating
 	 * @param logger  the logger instance
 	 */
-	public Canvas(InitialSize size, Fractal fractal) {
+	public Canvas(Fractal fractal) {
 		this.fractal = fractal;
 		addMouseMotionListener(fractal.getMouse());
-		field = new Field(size.getWidth(), size.getHeight());
+		field = new Field(settings.getWidth(), settings.getHeight());
 
 		mouse = new Mouse(this);
 		addMouseListener(mouse);
 		addMouseMotionListener(mouse);
 		setBorder(BorderFactory.createLoweredBevelBorder());
 
-		setPanelSize(size.getWidth(), size.getHeight());
+		setPanelSize(settings.getWidth(), settings.getHeight());
 		savePrevConfig();
 	}
 
@@ -127,7 +129,7 @@ public class Canvas extends JPanel {
 		});
 
 	}
-	
+
 	private boolean allowRender = false;
 
 	private boolean allowPainter = false;
@@ -253,12 +255,12 @@ public class Canvas extends JPanel {
 		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
 		jpi.updateFractal();
 	}
-	
+
 	public void setFunction(@NotNull Function function) {
 		fractal.pickFunction(function.getClass());
 		jpi.updateFunction();
 	}
-	
+
 	public void setFilter(@NotNull Filter filter) {
 		fractal.getFunction().pickFilter(filter.getClass());
 		jpi.updateFilter();
