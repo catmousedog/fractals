@@ -172,17 +172,17 @@ public class Canvas extends JPanel {
 	 * </ul>
 	 * <p>
 	 * If the <code>w</code> and <code>h</code> are the same as {@link Canvas#width}
-	 * and {@link Canvas#height} this method will return.
+	 * and {@link Canvas#height} this method will not do anything.
 	 * 
 	 * @param w new width
 	 * @param h new height
 	 */
 	public void setPanelSize(int w, int h) {
-		logger.log(Level.FINEST, "canvas.setPanelSize");
-		
 		// do nothing if unchanged
 		if (width == w && height == h)
 			return;
+		
+		logger.log(Level.FINEST, "canvas.setPanelSize");
 
 		width = w;
 		height = h;

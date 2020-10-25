@@ -69,6 +69,8 @@ public class GUI {
 	private final RenderWorker RENDER = RenderWorker.getInstance();
 
 	public GUI(Canvas canvas, JPInterface jpi) {
+		logger.log(Level.FINER, "GUI init");
+
 		this.canvas = canvas;
 		this.jpi = jpi;
 		picture = new Picture(canvas, jpi, settings);
@@ -205,6 +207,8 @@ public class GUI {
 	 * copy button
 	 */
 	private void copy() {
+		logger.log(Level.FINEST, "GUI.copy");
+
 		// update?
 		String clip = canvas.getFractal().new Location().getID();
 
@@ -219,6 +223,8 @@ public class GUI {
 	 * paste button
 	 */
 	private void paste() {
+		logger.log(Level.FINEST, "GUI.paste");
+
 		try {
 			String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 
@@ -282,6 +288,8 @@ public class GUI {
 	 * cancel button
 	 */
 	private void cancel() {
+		logger.log(Level.FINEST, "GUI.cancel");
+
 		if (RENDER.cancel()) {
 			if (picture.isGenerating()) {
 				picture.setGenerating(false);
@@ -371,6 +379,8 @@ public class GUI {
 	 * picturejb
 	 */
 	private void picture() {
+		logger.log(Level.FINEST, "GUI.picture");
+
 		int w = picturewjtf.saveAndGet();
 		int h = picturehjtf.saveAndGet();
 		String ext = (String) picturejcb.saveAndGet();

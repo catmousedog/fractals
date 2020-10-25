@@ -1,6 +1,8 @@
 package me.catmousedog.fractals.ui;
 
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +34,10 @@ public class Picture {
 	 * The {@link Settings} instance.
 	 */
 	private final Settings settings;
-	
+
 	private final RenderWorker renderer = RenderWorker.getInstance();
+
+	private final Logger logger = Logger.getLogger("fractals");
 
 	private boolean generating = false;
 
@@ -41,6 +45,8 @@ public class Picture {
 		this.canvas = canvas;
 		this.jpi = jpi;
 		this.settings = settings;
+
+		logger.log(Level.FINER, "Picture init");
 	}
 
 	/**
@@ -51,8 +57,13 @@ public class Picture {
 	 * @param height The height of the image.
 	 * @param ext    The extension used for the image file, either 'png' or 'jpg'.
 	 */
-	public void newPicture(int width, int height, String ext) {
+	public synchronized void newPicture(int width, int height, String ext) {
+		if (generating)
+			return;
+		
 		generating = true;
+
+		logger.log(Level.FINEST, "Picture.newPicture");
 
 		jpi.preRender();
 
@@ -74,7 +85,7 @@ public class Picture {
 					renderer.runScheduledGenerator();
 					renderer.runScheduledPainter();
 				});
-				
+
 				renderer.newRender(field, fractal, () -> done.start());
 
 			}
@@ -88,7 +99,7 @@ public class Picture {
 	public boolean isGenerating() {
 		return generating;
 	}
-	
+
 	public void setGenerating(boolean generating) {
 		this.generating = generating;
 	}

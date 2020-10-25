@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.paneloperators.fractals.BurningShip;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal.Location;
 import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
 import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
-import me.catmousedog.fractals.paneloperators.fractals.Fractal.Location;
 import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**
@@ -179,7 +180,7 @@ public class Settings {
 	 * @throws IOException if a directory could not be copied or a
 	 *                     {@link Properties} could not be loaded.
 	 */
-	private void initFractals() {
+	private void initFractals() throws IOException {
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
 				new InverseMandelbrot() };
@@ -221,15 +222,11 @@ public class Settings {
 				File settingsFile = new File(settingsFilePath);
 				// if 'properties' resource exists and file doesn't copy over
 				if (settingsStream == null) {
-					logger.log(Level.SEVERE, "missing settings resource for " + fileName);
+					throw new MissingResourceException("missing settings resource for " + fileName,
+							"settings.properties", fileName);
 				} else if (!settingsFile.exists()) {
-					try {
-						Files.copy(settingsStream, Paths.get(settingsFilePath), StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException e) {
-						logger.log(Level.SEVERE, fileName + " settings could not be copied", e);
-					}
+					Files.copy(settingsStream, Paths.get(settingsFilePath), StandardCopyOption.REPLACE_EXISTING);
 				}
-
 				// create properties
 				Properties defaultP = new Properties();
 				if (settingsStream != null)
@@ -244,10 +241,12 @@ public class Settings {
 				// locations.properties file for this fractal
 				File locationsFile = new File(locationsFilePath);
 				// if 'location' resource exists and file doesn't copy over
-				if (locationsStream == null)
-					logger.log(Level.SEVERE, "missing locations resource for " + resource);
-				else if (!locationsFile.exists())
+				if (locationsStream == null) {
+					throw new MissingResourceException("missing settings resource for " + fileName,
+							"settings.properties", fileName);
+				} else if (!locationsFile.exists()) {
 					Files.copy(locationsStream, Paths.get(locationsFilePath), StandardCopyOption.REPLACE_EXISTING);
+				}
 				// create locations
 				OrderedProperties defaultL = new OrderedProperties();
 				if (locationsStream != null)

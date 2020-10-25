@@ -39,7 +39,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		logger.setLevel(Level.ALL);
 
 		try {
-			FileHandler fileHandler = new FileHandler("logs/fractals.log");
+			FileHandler fileHandler = new FileHandler("logs/fractals.log", 1024 * 1024, 2, false);
 			fileHandler.setLevel(Level.ALL);
 			fileHandler.setFormatter(new FileFormatter());
 			logger.addHandler(fileHandler);

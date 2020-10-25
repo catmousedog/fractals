@@ -1,6 +1,8 @@
 package me.catmousedog.fractals.ui;
 
 import java.awt.Dimension;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -44,7 +46,11 @@ public class JPInterface extends JPanel implements Savable {
 
 	private final Settings settings = Settings.getInstance();
 
+	private final Logger logger = Logger.getLogger("fractals");
+
 	public JPInterface(Main main, Canvas canvas) {
+		logger.log(Level.FINER, "JPInterface init");
+
 		this.main = main;
 		this.canvas = canvas;
 		gui = new GUI(canvas, this);
@@ -72,6 +78,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * Must be run on the EDT
 	 */
 	public void render() {
+		logger.log(Level.FINEST, "JPInterface.render");
+
 		preRender();
 
 		save();
@@ -87,6 +95,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * This method still calls the {@link JPInterface#postRender()} method.
 	 */
 	public void renderNow() {
+		logger.log(Level.FINEST, "JPInterface.renderNow");
+
 		preRender();
 		canvas.render();
 	}
@@ -108,6 +118,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * @param r      the runnable to change any data not entered by the user.
 	 */
 	public void renderWithout(boolean render, @NotNull Runnable r) {
+		logger.log(Level.FINEST, "JPInterface.renderWithout");
+
 		save();
 		r.run();
 		update();
@@ -286,6 +298,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * calls {@link JPInterface#updateFilter()}.
 	 */
 	public void updateFractal() {
+		logger.log(Level.FINEST, "JPInterface.updateFractal");
+
 		Fractal fractal = canvas.getFractal();
 
 		gui.getLocationjcb().setDataSafe(fractal.getLocations());
@@ -307,6 +321,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * This includes calling {@link JPInterface#updateFilter()}.
 	 */
 	public void updateFunction() {
+		logger.log(Level.FINEST, "JPInterface.updateFunction");
+		
 		// function
 		Function function = canvas.getFractal().getFunction();
 		gui.getFunctionjcb().getComponent().setToolTipText(function.getTip());
@@ -324,6 +340,8 @@ public class JPInterface extends JPanel implements Savable {
 	 * changes.
 	 */
 	public void updateFilter() {
+		logger.log(Level.FINEST, "JPInterface.updateFilter");
+		
 		// filter
 		Filter filter = canvas.getFractal().getFunction().getFilter();
 		gui.getFilterjcb().getComponent().setToolTipText(filter.getTip());
