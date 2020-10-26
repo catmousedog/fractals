@@ -27,6 +27,8 @@ public class FeedbackPanel extends Handler implements Runnable {
 
 	private final Settings settings = Settings.getInstance();
 
+	private final Logger logger = Logger.getLogger("fractals");
+
 	/**
 	 * The <code>JPanel</code> in which all the feedback is displayed.
 	 */
@@ -83,7 +85,8 @@ public class FeedbackPanel extends Handler implements Runnable {
 	}
 
 	private FeedbackPanel() {
-		Logger logger = Logger.getLogger("fractals");
+		logger.log(Level.FINER, "FeedbackPanel init");
+		
 		if (!EventQueue.isDispatchThread()) {
 			try {
 				EventQueue.invokeAndWait(this);

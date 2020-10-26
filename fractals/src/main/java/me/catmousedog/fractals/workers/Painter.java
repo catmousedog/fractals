@@ -3,6 +3,7 @@ package me.catmousedog.fractals.workers;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,8 @@ public class Painter extends GlobalWorker {
 	 */
 	@Override
 	protected Void doInBackground() {
+		logger.log(Level.FINEST, "Painter.doInBackground");
+		
 		// begin time
 		long b = System.nanoTime();
 

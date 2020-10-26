@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.paneloperators.filters;
 
+import java.util.logging.Level;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +34,7 @@ public abstract class Filter extends PanelOperator {
 	 */
 	protected Filter(@NotNull Fractal fractal) {
 		super();
+		logger.log(Level.FINER, "Filter " + className + " init");
 		this.fractal = fractal;
 	}
 
@@ -50,6 +53,7 @@ public abstract class Filter extends PanelOperator {
 	 */
 	protected Filter(@NotNull Filter filter) {
 		super();
+		logger.log(Level.FINEST, "Filter " + className + " clone");
 	}
 
 	/**
@@ -66,12 +70,12 @@ public abstract class Filter extends PanelOperator {
 	 * Any implementation should save the {@link PanelOperator#items} if not null.
 	 */
 	public abstract void save();
-	
+
 	/**
 	 * Any implementation should update the {@link PanelOperator#items} if not null.
 	 */
 	public abstract void update();
-	
+
 	@Override
 	public abstract Filter clone();
 

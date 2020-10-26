@@ -1,5 +1,8 @@
 package me.catmousedog.fractals.workers;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +40,8 @@ public class RenderWorker {
 	private RenderWorker() {
 		scheduled_workers = Settings.getInstance().isScheduled_workers();
 	}
+	
+	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * The boolean from {@link Settings#isScheduled_workers()}.
@@ -117,7 +122,8 @@ public class RenderWorker {
 	 *                 started.
 	 */
 	public synchronized void newRender(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
-
+		logger.log(Level.FINEST, "RenderWorker.newRender");
+		
 		rendering = true; // block new generators and painters
 
 		// This does not check if there are any painters active when starting the
@@ -149,6 +155,7 @@ public class RenderWorker {
 	 */
 
 	public synchronized void newGenerator(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
+		logger.log(Level.FINEST, "RenderWorker.newGenerator");
 		generator(field, fractal, fractal.getFunction(), runnable, false);
 	}
 
@@ -193,6 +200,7 @@ public class RenderWorker {
 	 *                 when a new <code>painter</code> can be started.
 	 */
 	public synchronized void newPainter(@NotNull Field field, @NotNull Filter filter, @NotNull Runnable runnable) {
+		logger.log(Level.FINEST, "RenderWorker.newPainter");
 		painter(field, filter, runnable, false);
 	}
 
@@ -229,6 +237,7 @@ public class RenderWorker {
 	 * This should only be run when the <code>currentGenerator</code> has finished.
 	 */
 	public synchronized void runScheduledGenerator() {
+		logger.log(Level.FINEST, "RenderWorker.runScheduledGenerator");
 		if (scheduled_workers && scheduledGenerator != null) {
 			generatorReady = false;
 			currentGenerator = scheduledGenerator;
@@ -249,6 +258,7 @@ public class RenderWorker {
 	 * This should only be run when the <code>currentPainter</code> has finished.
 	 */
 	public synchronized void runScheduledPainter() {
+		logger.log(Level.FINEST, "RenderWorker.runScheduledPainter");
 		if (scheduled_workers && scheduledPainter != null) {
 			painterReady = false; // should already be false
 			currentPainter = scheduledPainter; // recursively start another painter
@@ -267,6 +277,7 @@ public class RenderWorker {
 	 *         <code>currentGenerator</code>.
 	 */
 	public boolean cancel() {
+		logger.log(Level.FINEST, "RenderWorker.cancel");
 		boolean out = false;
 		if (currentGenerator.cancel(true)) {
 			generatorReady = true;

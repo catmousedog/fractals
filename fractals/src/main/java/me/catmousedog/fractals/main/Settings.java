@@ -99,6 +99,7 @@ public class Settings {
 	private Fractal defaultFractal;
 
 	private Settings() {
+		logger.log(Level.FINER, "Settings init");
 
 		// create directories
 		try {
@@ -108,9 +109,8 @@ public class Settings {
 			File logs = new File("./logs");
 			if (!logs.exists())
 				logs.mkdirs();
-			logger.log(Level.FINER, "created images & logs dir");
 		} catch (Exception e) {
-			logger.log(Level.CONFIG, "failed to create images | logs dir", e);
+			logger.log(Level.CONFIG, "Settings failed to create images or logs dir", e);
 		}
 
 		// pom.xml
@@ -118,7 +118,7 @@ public class Settings {
 		try {
 			project.load(getClass().getClassLoader().getResourceAsStream("project.properties"));
 		} catch (IOException e) {
-			logger.log(Level.CONFIG, "project.properties IOException", e);
+			logger.log(Level.CONFIG, "Settings project.properties IOException", e);
 		}
 		artifact_id = project.getProperty("artifactId");
 		version = project.getProperty("version");
@@ -126,15 +126,14 @@ public class Settings {
 		try {
 			initSettings();
 		} catch (IOException e) {
-			logger.log(Level.CONFIG, "iniSettings IOException", e);
+			logger.log(Level.CONFIG, "Settings.iniSettings IOException", e);
 		}
 
 		try {
 			initFractals();
 		} catch (IOException e) {
-			logger.log(Level.CONFIG, "initFractals IOException", e);
+			logger.log(Level.CONFIG, "Settings.initFractals IOException", e);
 		}
-
 	}
 
 	/**
@@ -148,12 +147,13 @@ public class Settings {
 	 * @throws IOException if files failed to copy or load
 	 */
 	private void initSettings() throws IOException {
+		logger.log(Level.FINER, "Settings.initSettings");
+
 		// create file and load defaults
 		File f = new File("./settings.properties");
 		InputStream settingsStream = getClass().getClassLoader().getResourceAsStream("default_settings.properties");
 		if (!f.exists()) {
 			Files.copy(settingsStream, Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
-			logger.log(Level.FINER, "copied settings");
 		}
 
 		// load settings from file
@@ -168,8 +168,6 @@ public class Settings {
 		// intial size
 		width = Integer.parseInt(settings.getProperty("width"));
 		height = Integer.parseInt(settings.getProperty("height"));
-
-		logger.log(Level.FINER, "retrieved settings");
 	}
 
 	/**
@@ -181,6 +179,7 @@ public class Settings {
 	 *                     {@link Properties} could not be loaded.
 	 */
 	private void initFractals() throws IOException {
+		logger.log(Level.FINER, "Settings.initFractals");
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
 				new InverseMandelbrot() };
@@ -212,9 +211,10 @@ public class Settings {
 
 				// make directory
 				File fractalDirectory = new File("./" + resource);
-				if (!fractalDirectory.exists())
+				if (!fractalDirectory.exists()) {
 					fractalDirectory.mkdirs();
-				logger.log(Level.FINER, "created " + resource);
+					logger.log(Level.FINER, "Settings.initFractals created dir " + resource);
+				}
 
 				// settings.properties resource for this fractal
 				InputStream settingsStream = getClass().getClassLoader().getResourceAsStream(settingsResourcePath);
@@ -264,7 +264,7 @@ public class Settings {
 		// defaultFractal
 		String d = settings.getProperty("defaultFractal");
 		if (fractalList.size() == 0) {
-			logger.log(Level.SEVERE, "fractalList.size() == 0, no active fractals!");
+			logger.log(Level.SEVERE, "Settings.initFractals fractalList.size() == 0, no active fractals!");
 		} else {
 			defaultFractal = fractalList.get(0);
 			for (Fractal f : fractalList) {
@@ -313,7 +313,7 @@ public class Settings {
 			// and 'getInstance' will return null.
 			fractal.setProperties(this, properties);
 		} catch (NumberFormatException e) {
-			logger.log(Level.CONFIG, fractal.fileName() + " default settings parsing exception", e);
+			logger.log(Level.CONFIG, "Settings " + fractal.fileName() + " default settings parsing exception", e);
 		}
 
 		// initialise locations
@@ -339,7 +339,7 @@ public class Settings {
 					// add new location
 					temp.add(fractal.new Location(key, dx, dy, m, n, rot, iter));
 				} catch (NumberFormatException e) {
-					logger.log(Level.CONFIG, fractal.fileName() + " location file exception", e);
+					logger.log(Level.CONFIG, "Settings " + fractal.fileName() + " location file exception", e);
 				}
 			}
 		}
@@ -360,6 +360,8 @@ public class Settings {
 	 * @param fractal The {@link Fractal} with which this image was created.
 	 */
 	public void addImage(@NotNull BufferedImage img, @NotNull String ext, @NotNull Fractal fractal) {
+		logger.log(Level.FINER, "Settings.addImage");
+
 		String dirPath = "./images/" + fractal.fileName();
 		File dir = new File(dirPath);
 		if (!dir.exists())
@@ -376,8 +378,9 @@ public class Settings {
 
 		try {
 			ImageIO.write(img, ext, imageFile);
+			logger.log(Level.FINER, "Settings created image at " + imageFile.getPath());
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "failed to write image at " + imageFile.getPath(), e);
+			logger.log(Level.SEVERE, "Settings failed to write image at " + imageFile.getPath(), e);
 		}
 	}
 

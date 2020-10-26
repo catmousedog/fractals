@@ -1,5 +1,7 @@
 package me.catmousedog.fractals.paneloperators.functions;
 
+import java.util.logging.Level;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +51,7 @@ public abstract class Function extends PanelOperator {
 	 */
 	protected Function(Fractal fractal) {
 		super();
+		logger.log(Level.FINER, "Function " + className + " init");
 		this.fractal = fractal;
 	}
 
@@ -67,6 +70,7 @@ public abstract class Function extends PanelOperator {
 	 */
 	protected Function(@NotNull Function function) {
 		super();
+		logger.log(Level.FINEST, "Function " + className + " clone");
 		filters = null;
 		filter = function.getFilter().clone();
 	}
@@ -150,6 +154,7 @@ public abstract class Function extends PanelOperator {
 	 * @param clazz the <code>Class</code> of the <code>Filter</code>.
 	 */
 	public void pickFilter(Class<? extends Filter> clazz) {
+		logger.log(Level.FINEST, "Function " + className + ".pickFilter");
 		for (Filter f : filters) {
 			if (f.getClass().equals(clazz)) {
 				this.filter = f;

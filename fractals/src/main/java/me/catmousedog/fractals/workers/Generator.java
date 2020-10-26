@@ -3,6 +3,7 @@ package me.catmousedog.fractals.workers;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -75,6 +76,8 @@ public class Generator extends GlobalWorker {
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
+		logger.log(Level.FINEST, "Generator.doInBackground");
+		
 		// begin time
 		long b = System.nanoTime();
 

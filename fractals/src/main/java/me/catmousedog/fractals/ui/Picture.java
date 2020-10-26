@@ -42,11 +42,11 @@ public class Picture {
 	private boolean generating = false;
 
 	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings) {
+		logger.log(Level.FINER, "Picture init");
+		
 		this.canvas = canvas;
 		this.jpi = jpi;
 		this.settings = settings;
-
-		logger.log(Level.FINER, "Picture init");
 	}
 
 	/**

@@ -3,6 +3,7 @@ package me.catmousedog.fractals.paneloperators.fractals;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.swing.JPanel;
 
@@ -112,6 +113,7 @@ public abstract class Fractal extends PanelOperator {
 	 */
 	protected Fractal() {
 		super();
+		logger.log(Level.FINER, "Fractal " + className + " init");
 		transform = new LinearTransform();
 
 		iterjtf = new TextFieldInteger.Builder().setLabel("iterations")
@@ -145,6 +147,7 @@ public abstract class Fractal extends PanelOperator {
 	 */
 	protected Fractal(@NotNull Fractal fractal) {
 		super();
+		logger.log(Level.FINEST, "Fractal " + className + " clone");
 		mouse = null;
 		commonItems = null;
 		locations = null;
@@ -276,6 +279,7 @@ public abstract class Fractal extends PanelOperator {
 	 * @param properties
 	 */
 	public void setProperties(@NotNull Settings settings, @NotNull Properties properties) {
+		logger.log(Level.FINER, "Fractal " + className + ".setProperties");
 		iterations = Integer.parseInt(properties.getProperty("default_iter"));
 		bailout = Double.parseDouble(properties.getProperty("bailout"));
 		render_on_changes = settings.isRender_on_changes();
@@ -288,6 +292,7 @@ public abstract class Fractal extends PanelOperator {
 	 * @param clazz the <code>Class</code> of the <code>Function</code>.
 	 */
 	public void pickFunction(Class<? extends Function> clazz) {
+		logger.log(Level.FINEST, "Fractal " + className + ".pickFunction");
 		for (Function f : functions) {
 			if (f.getClass().equals(clazz)) {
 				function = f;

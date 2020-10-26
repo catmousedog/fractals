@@ -54,14 +54,12 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 	private final Settings settings = Settings.getInstance();
 
 	/**
-	 * Array of all enabled fractals
-	 */
-	private final Fractal[] fractals = settings.getFractals();
-
-	/**
 	 * The panel containing all the feedback.<br>
 	 * This is also a {@link Handler} so any loggable messages will appear on this
 	 * panel.
+	 * <p>
+	 * The first instance of this must be created after the <code>Settings</code>
+	 * was created.
 	 */
 	private final FeedbackPanel feedback = FeedbackPanel.getInstance();
 
@@ -126,7 +124,7 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		// create interface panel
 		jpi = new JPInterface(this, canvas);
 
-		for (Fractal f : fractals) {
+		for (Fractal f : settings.getFractals()) {
 			f.setCanvas(canvas);
 			f.setJPI(jpi);
 		}
@@ -185,12 +183,4 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		frame.pack();
 		frame.validate();
 	}
-
-	/**
-	 * @return Get the array of the active {@link Fractal}s
-	 */
-	public Fractal[] getFractals() {
-		return fractals;
-	}
-
 }

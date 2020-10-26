@@ -249,6 +249,8 @@ public class GUI {
 	 * locationjcb
 	 */
 	private void location(ActionEvent a) {
+		logger.log(Level.FINEST, "GUI.location");
+
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			@SuppressWarnings("unchecked")
 			JComboBox<Object> jcb = (JComboBox<Object>) a.getSource();
@@ -260,6 +262,8 @@ public class GUI {
 	 * undo button
 	 */
 	private void undo() {
+		logger.log(Level.FINEST, "GUI.undo");
+
 		jpi.allowUndo(false);
 		canvas.undo();
 		jpi.update();
@@ -318,6 +322,8 @@ public class GUI {
 	 * fractaljcb
 	 */
 	private void fractal() {
+		logger.log(Level.FINEST, "GUI.fractal");
+
 		Fractal f = (Fractal) getFractaljcb().saveAndGet();
 		if (canvas.getFractal().equals(f))
 			return;
@@ -330,6 +336,8 @@ public class GUI {
 	 * functionjcb
 	 */
 	private void function() {
+		logger.log(Level.FINEST, "GUI.function");
+
 		Function f = (Function) getFunctionjcb().saveAndGet();
 		if (canvas.getFractal().getFunction().equals(f))
 			return;
@@ -343,6 +351,8 @@ public class GUI {
 	 * filterjcb
 	 */
 	private void filter() {
+		logger.log(Level.FINEST, "GUI.filter");
+
 		Filter f = (Filter) getFilterjcb().saveAndGet();
 		if (canvas.getFractal().getFunction().getFilter().equals(f))
 			return;

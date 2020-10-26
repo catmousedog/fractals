@@ -274,6 +274,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - added **UI** abstract class and made **Fractal**, **Function** and **Filter**
 - **Nameable** interface for common *String* methods
 - **NormalizedFunction** offset to *items*
+- logging
 
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter

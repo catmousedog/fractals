@@ -29,13 +29,16 @@ public abstract class PanelOperator implements SafeSavable {
 
 	@NotNull
 	protected final Logger logger = Logger.getLogger("fractals");
+	
+	@NotNull
+	protected final String className = getClass().getSimpleName();
 
 	/**
 	 * Used for disabling listeners in update calls. When a listener is fired it
 	 * should always check this first to make sure it is allowed to fire.
 	 */
 	protected boolean allowListeners = true;
-
+	
 	/**
 	 * Constructor used for both cloning and initialisation.<br>
 	 * The <code>items</code> array can only be null for clones.
