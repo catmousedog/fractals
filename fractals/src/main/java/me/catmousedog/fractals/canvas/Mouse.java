@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.Popup;
@@ -24,6 +26,8 @@ public class Mouse implements MouseListener, MouseMotionListener {
 	 * the instance of the canvas this MouseListener belongs to
 	 */
 	private final Canvas canvas;
+
+	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
 	 * the user interface, used to {@link JPInterface#render()} and retrieve user
@@ -51,6 +55,8 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 		// lmb (zoom in)
 		if (me.getButton() == MouseEvent.BUTTON1 && renderer.isGeneratorReady()) {
+			logger.log(Level.FINEST, "Mouse.mouseReleased lmb");
+			canvas.savePrevConfig();
 			jpi.save();
 			LinearTransform transform = canvas.getFractal().getTransform();
 			double[] t = transform.apply(me.getX(), me.getY());
@@ -63,6 +69,8 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 		// rmb (zoom out)
 		if (me.getButton() == MouseEvent.BUTTON3 && renderer.isGeneratorReady()) {
+			logger.log(Level.FINEST, "Mouse.mouseReleased rmb");
+			canvas.savePrevConfig();
 			jpi.save();
 			LinearTransform transform = canvas.getFractal().getTransform();
 			double[] t = transform.apply(me.getX(), me.getY());

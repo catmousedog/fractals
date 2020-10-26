@@ -154,7 +154,7 @@ public abstract class Function extends PanelOperator {
 	 * @param clazz the <code>Class</code> of the <code>Filter</code>.
 	 */
 	public void pickFilter(Class<? extends Filter> clazz) {
-		logger.log(Level.FINEST, "Function " + className + ".pickFilter");
+		logger.log(Level.FINEST, "Function " + className + ".pickFilter " + clazz.getSimpleName());
 		for (Filter f : filters) {
 			if (f.getClass().equals(clazz)) {
 				this.filter = f;

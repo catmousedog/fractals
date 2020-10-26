@@ -165,6 +165,8 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 				return false;
 			}
 		});
+		
+		logger.log(Level.FINER, "initial render\n");
 
 		// initial render
 		if (settings.isRender_on_changes())

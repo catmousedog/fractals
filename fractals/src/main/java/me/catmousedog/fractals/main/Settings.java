@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,13 +71,15 @@ public class Settings {
 
 	private String version;
 
-	private int width = 800;
+	private int width = 700;
 
-	private int height = 800;
+	private int height = 700;
 
 	private boolean render_on_changes = true;
 
 	private boolean scheduled_workers = true;
+
+	private boolean logger_enabled = true;
 
 	private final Logger logger = Logger.getLogger("fractals");
 
@@ -110,7 +113,7 @@ public class Settings {
 			if (!logs.exists())
 				logs.mkdirs();
 		} catch (Exception e) {
-			logger.log(Level.CONFIG, "Settings failed to create images or logs dir", e);
+			logger.log(Level.SEVERE, "Settings failed to create images or logs dir", e);
 		}
 
 		// pom.xml
@@ -118,7 +121,7 @@ public class Settings {
 		try {
 			project.load(getClass().getClassLoader().getResourceAsStream("project.properties"));
 		} catch (IOException e) {
-			logger.log(Level.CONFIG, "Settings project.properties IOException", e);
+			logger.log(Level.WARNING, "Settings project.properties IOException", e);
 		}
 		artifact_id = project.getProperty("artifactId");
 		version = project.getProperty("version");
@@ -126,13 +129,13 @@ public class Settings {
 		try {
 			initSettings();
 		} catch (IOException e) {
-			logger.log(Level.CONFIG, "Settings.iniSettings IOException", e);
+			logger.log(Level.SEVERE, "Settings.iniSettings IOException", e);
 		}
 
 		try {
 			initFractals();
 		} catch (IOException e) {
-			logger.log(Level.CONFIG, "Settings.initFractals IOException", e);
+			logger.log(Level.SEVERE, "Settings.initFractals IOException", e);
 		}
 	}
 
@@ -162,12 +165,26 @@ public class Settings {
 		settings = new Properties(defaultSettings);
 		settings.load(new FileInputStream(f));
 
-		// render_on_changes
+		// booleans
 		render_on_changes = Boolean.parseBoolean(settings.getProperty("render_on_change"));
 		scheduled_workers = Boolean.parseBoolean(settings.getProperty("scheduled_workers"));
+		logger_enabled = Boolean.parseBoolean(settings.getProperty("logger"));
 		// intial size
-		width = Integer.parseInt(settings.getProperty("width"));
-		height = Integer.parseInt(settings.getProperty("height"));
+		try {
+			width = Integer.parseInt(settings.getProperty("width"));
+			height = Integer.parseInt(settings.getProperty("height"));
+		} catch (NumberFormatException e) {
+			logger.log(Level.WARNING, "Settings settings.properties width or height parse exception", e);
+		}
+
+		// remove FileHandler
+		if (!logger_enabled) {
+			Handler[] handlers = logger.getHandlers();
+			if (handlers.length > 0) {
+				logger.log(Level.CONFIG, "disabled logger");
+				logger.removeHandler(handlers[0]);
+			}
+		}
 	}
 
 	/**
@@ -313,7 +330,7 @@ public class Settings {
 			// and 'getInstance' will return null.
 			fractal.setProperties(this, properties);
 		} catch (NumberFormatException e) {
-			logger.log(Level.CONFIG, "Settings " + fractal.fileName() + " default settings parsing exception", e);
+			logger.log(Level.WARNING, "Settings " + fractal.fileName() + " default settings parsing exception", e);
 		}
 
 		// initialise locations
@@ -339,7 +356,7 @@ public class Settings {
 					// add new location
 					temp.add(fractal.new Location(key, dx, dy, m, n, rot, iter));
 				} catch (NumberFormatException e) {
-					logger.log(Level.CONFIG, "Settings " + fractal.fileName() + " location file exception", e);
+					logger.log(Level.WARNING, "Settings " + fractal.fileName() + " location file exception", e);
 				}
 			}
 		}
@@ -406,6 +423,10 @@ public class Settings {
 
 	public boolean isScheduled_workers() {
 		return scheduled_workers;
+	}
+
+	public boolean isLogger_enabled() {
+		return logger_enabled;
 	}
 
 	/**

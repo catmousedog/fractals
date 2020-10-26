@@ -82,6 +82,7 @@ public class JPInterface extends JPanel implements Savable {
 
 		preRender();
 
+		canvas.savePrevConfig();
 		save();
 		update();
 
@@ -235,9 +236,11 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void save() {
+		logger.log(Level.FINEST, "JPInterface.save");
+
 		allowUndo = true;
 
-		canvas.savePrevConfig();
+//		canvas.savePrevConfig();
 
 		/* Window */
 		main.setSize(gui.getWidthjtf().saveAndGet(), gui.getHeightjtf().saveAndGet());
@@ -264,6 +267,8 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void update() {
+		logger.log(Level.FINEST, "JPInterface.update");
+
 		/* Window */
 		gui.getWidthjtf().setData(canvas.getWidth());
 		gui.getHeightjtf().setData(canvas.getHeight());
@@ -322,7 +327,7 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	public void updateFunction() {
 		logger.log(Level.FINEST, "JPInterface.updateFunction");
-		
+
 		// function
 		Function function = canvas.getFractal().getFunction();
 		gui.getFunctionjcb().getComponent().setToolTipText(function.getTip());
@@ -341,7 +346,7 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	public void updateFilter() {
 		logger.log(Level.FINEST, "JPInterface.updateFilter");
-		
+
 		// filter
 		Filter filter = canvas.getFractal().getFunction().getFilter();
 		gui.getFilterjcb().getComponent().setToolTipText(filter.getTip());

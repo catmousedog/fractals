@@ -86,7 +86,7 @@ public class Canvas extends JPanel {
 	 */
 	public Canvas(Fractal fractal) {
 		logger.log(Level.FINER, "Canvas init");
-		
+
 		this.fractal = fractal;
 		addMouseMotionListener(fractal.getMouse());
 		field = new Field(settings.getWidth(), settings.getHeight());
@@ -181,7 +181,7 @@ public class Canvas extends JPanel {
 		// do nothing if unchanged
 		if (width == w && height == h)
 			return;
-		
+
 		logger.log(Level.FINEST, "canvas.setPanelSize");
 
 		width = w;
@@ -200,13 +200,14 @@ public class Canvas extends JPanel {
 	 * Essentially the opposite of {@link Canvas#undo()}. This should be called
 	 * right before saving changes to the {@link Canvas}.
 	 * <p>
-	 * Creates a new {@link Configuration} by cloning everything except for the
-	 * {@link Fractal} which is kept as a reference.
+	 * Should only be called when the current <code>Fractal</code>,
+	 * <code>Function</code> or <code>Filter</code> changes or if the current
+	 * <code>Fractal</code> is altered such as its {@link LinearTransform}.
 	 */
 	public void savePrevConfig() {
 		logger.log(Level.FINEST, "canvas.savePrevConfig");
 
-		prevConfig = new Configuration(fractal, zoomFactor);
+		prevConfig = new Configuration();
 	}
 
 	/**
@@ -217,14 +218,68 @@ public class Canvas extends JPanel {
 	public void undo() {
 		logger.log(Level.FINEST, "canvas.undo");
 
-		Fractal fractal = prevConfig.fractal;
-		fractal.pickFunction(prevConfig.function.getClass());
-		fractal.getFunction().pickFilter(prevConfig.filter.getClass());
+		// set fractal
+		pickFractal(prevConfig.fractal.getClass());
+		fractal.getTransform().set(prevConfig.fractal.getTransform());
+		fractal.setIterations(prevConfig.fractal.getIterations());
+		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
+		// set function
+		fractal.pickFunction(prevConfig.fractal.getFunction().getClass());
+		// set filter
+		fractal.getFunction().pickFilter(prevConfig.fractal.getFunction().getFilter().getClass());
 
-		fractal.getTransform().set(prevConfig.transform);
-		fractal.setIterations(prevConfig.iterations);
 		zoomFactor = prevConfig.zoomFactor;
-		setFractal(fractal);
+
+		jpi.updateFractal();
+	}
+
+	/**
+	 * Sets the {@link Canvas#fractal} to the <code>Fractal</code> whose class
+	 * equals the given <code>clazz</code>.
+	 * <p>
+	 * This does not call the {@link Canvas#setFractal(Fractal)}.
+	 * 
+	 * @param clazz the <code>Class</code> of the <code>Fractal</code>.
+	 */
+	public void pickFractal(Class<? extends Fractal> clazz) {
+		logger.log(Level.FINEST, "Canvas.pickFractal " + clazz.getSimpleName());
+		for (Fractal f : settings.getFractals()) {
+			if (f.getClass().equals(clazz)) {
+				fractal = f;
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Sets the current {@link Canvas#fractal}.<br>
+	 * Keep in mind this method must take the actual original <code>Fractal</code>
+	 * as parameter, not a clone of it.
+	 * 
+	 * @param fractal the reference to the original <code>Fractal</code>.
+	 */
+	public void setFractal(@NotNull Fractal fractal) {
+		logger.log(Level.FINEST, "canvas.setFractal " + fractal.getName());
+
+		super.removeMouseMotionListener(this.fractal.getMouse());
+		super.addMouseMotionListener(fractal.getMouse());
+		this.fractal = fractal;
+		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
+		jpi.updateFractal();
+	}
+
+	public void setFunction(@NotNull Function function) {
+		logger.log(Level.FINEST, "canvas.setFunction " + function.getName());
+
+		fractal.pickFunction(function.getClass());
+		jpi.updateFunction();
+	}
+
+	public void setFilter(@NotNull Filter filter) {
+		logger.log(Level.FINEST, "canvas.setFilter " + filter.getName());
+
+		fractal.getFunction().pickFilter(filter.getClass());
+		jpi.updateFilter();
 	}
 
 	/**
@@ -258,35 +313,6 @@ public class Canvas extends JPanel {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
-	}
-
-	/**
-	 * Changes the current <code>Fractal</code>
-	 * 
-	 * @param fractal
-	 */
-	public void setFractal(@NotNull Fractal fractal) {
-		logger.log(Level.FINEST, "canvas.setFractal");
-
-		super.removeMouseMotionListener(this.fractal.getMouse());
-		super.addMouseMotionListener(fractal.getMouse());
-		this.fractal = fractal;
-		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
-		jpi.updateFractal();
-	}
-
-	public void setFunction(@NotNull Function function) {
-		logger.log(Level.FINEST, "canvas.setFunction");
-
-		fractal.pickFunction(function.getClass());
-		jpi.updateFunction();
-	}
-
-	public void setFilter(@NotNull Filter filter) {
-		logger.log(Level.FINEST, "canvas.setFilter");
-
-		fractal.getFunction().pickFilter(filter.getClass());
-		jpi.updateFilter();
 	}
 
 	/**
@@ -343,41 +369,21 @@ public class Canvas extends JPanel {
 	private class Configuration {
 
 		/**
-		 * A reference to the <code>Fractal</code> of this <code>Configuration</code>.
-		 * The fields inside this fractal don't matter for this class since the values
-		 * of those are stored in this class.
+		 * A clone of the saved <code>Fractal</code>, this includes a
+		 * <code>Function</code> and <code>Filter</code>.
 		 */
 		@NotNull
 		private final Fractal fractal;
 
-		/**
-		 * A clone of the current <code>Function</code>.
-		 */
-		@NotNull
-		private final Function function;
-
-		/**
-		 * A clone of the current <code>Filter</code>.
-		 */
-		@NotNull
-		private final Filter filter;
-
-		/**
-		 * A clone of the current {@link LinearTransform}.
-		 */
-		private final LinearTransform transform;
-
-		private final int iterations;
-
 		private final double zoomFactor;
 
-		public Configuration(Fractal fractal, double zoomFactor) {
-			this.fractal = fractal;
-			function = fractal.getFunction().clone();
-			filter = fractal.getFunction().getFilter().clone();
-			transform = fractal.getTransform().clone();
-			iterations = fractal.getIterations();
-			this.zoomFactor = zoomFactor;
+		/**
+		 * Creates a new <code>Configuration</code> from the current state of the
+		 * <code>Canvas</code>.
+		 */
+		public Configuration() {
+			this.fractal = Canvas.this.fractal.clone();
+			this.zoomFactor = Canvas.this.zoomFactor;
 		}
 	}
 }

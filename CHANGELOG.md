@@ -284,6 +284,8 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - GUI layout
 - Merged **InitialSize** into **Settings**
 - changed exceptions in **Settings**
+- renewed **Canvas.Configuration** to hold a single clone of the **Fractal**
+- Moved *Canvas.savePrevConfig* in JPI. Now has to be called manually to avoid Mouselisteners calling it
 
 ### Removed
 - *Filter.setFilter(Filter)* as this is done is the cloning constructor.

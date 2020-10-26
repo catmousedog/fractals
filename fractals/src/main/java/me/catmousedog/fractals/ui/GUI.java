@@ -251,6 +251,7 @@ public class GUI {
 	private void location(ActionEvent a) {
 		logger.log(Level.FINEST, "GUI.location");
 
+		canvas.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			@SuppressWarnings("unchecked")
 			JComboBox<Object> jcb = (JComboBox<Object>) a.getSource();
@@ -274,6 +275,7 @@ public class GUI {
 	 * zoom in button
 	 */
 	private void zoomIn() {
+		canvas.savePrevConfig();
 		jpi.renderWithout(true, () -> {
 			canvas.getFractal().getTransform().zoom(1 / canvas.getZoomFactor());
 		});
@@ -283,6 +285,7 @@ public class GUI {
 	 * zoom out button
 	 */
 	private void zoomOut() {
+		canvas.savePrevConfig();
 		jpi.renderWithout(true, () -> {
 			canvas.getFractal().getTransform().zoom(canvas.getZoomFactor());
 		});
@@ -327,6 +330,7 @@ public class GUI {
 		Fractal f = (Fractal) getFractaljcb().saveAndGet();
 		if (canvas.getFractal().equals(f))
 			return;
+		canvas.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFractal(f);
 		});
@@ -341,6 +345,7 @@ public class GUI {
 		Function f = (Function) getFunctionjcb().saveAndGet();
 		if (canvas.getFractal().getFunction().equals(f))
 			return;
+		canvas.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFunction(f);
 		});
@@ -356,6 +361,7 @@ public class GUI {
 		Filter f = (Filter) getFilterjcb().saveAndGet();
 		if (canvas.getFractal().getFunction().getFilter().equals(f))
 			return;
+		canvas.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFilter(f);
 		});

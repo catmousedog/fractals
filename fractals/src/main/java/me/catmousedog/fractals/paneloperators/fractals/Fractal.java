@@ -292,7 +292,7 @@ public abstract class Fractal extends PanelOperator {
 	 * @param clazz the <code>Class</code> of the <code>Function</code>.
 	 */
 	public void pickFunction(Class<? extends Function> clazz) {
-		logger.log(Level.FINEST, "Fractal " + className + ".pickFunction");
+		logger.log(Level.FINEST, "Fractal " + className + ".pickFunction " + clazz.getSimpleName());
 		for (Function f : functions) {
 			if (f.getClass().equals(clazz)) {
 				function = f;

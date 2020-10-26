@@ -29,7 +29,7 @@ public abstract class PanelOperator implements SafeSavable {
 
 	@NotNull
 	protected final Logger logger = Logger.getLogger("fractals");
-	
+
 	@NotNull
 	protected final String className = getClass().getSimpleName();
 
@@ -38,7 +38,7 @@ public abstract class PanelOperator implements SafeSavable {
 	 * should always check this first to make sure it is allowed to fire.
 	 */
 	protected boolean allowListeners = true;
-	
+
 	/**
 	 * Constructor used for both cloning and initialisation.<br>
 	 * The <code>items</code> array can only be null for clones.
@@ -59,7 +59,7 @@ public abstract class PanelOperator implements SafeSavable {
 				item.preRender();
 		}
 	}
-	
+
 	/**
 	 * Postrenders the
 	 * <ul>
@@ -137,6 +137,14 @@ public abstract class PanelOperator implements SafeSavable {
 		if (object == null)
 			return false;
 		return object.getClass().equals(getClass());
+	}
+
+	/**
+	 * @return the simple name of this <code>PanelOperator</code>.
+	 */
+	@NotNull
+	public String getName() {
+		return className;
 	}
 
 }
