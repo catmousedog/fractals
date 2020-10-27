@@ -22,7 +22,6 @@
 - [ ] keylistener
 - [ ] tips
 - [ ] sort JPI savable methods to new GUI
-- [ ] replace Canvas.configuration with prevfields inside Canvas
 - [ ] update settings for all fractals (eg. remove offset)
 
 ## Other

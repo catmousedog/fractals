@@ -161,11 +161,15 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
-				System.out.println("test");
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					if (e.getKeyCode() == KeyEvent.VK_5) {
+						
+					}
+				}
 				return false;
 			}
 		});
-		
+
 		logger.log(Level.FINER, "initial render\n");
 
 		// initial render
