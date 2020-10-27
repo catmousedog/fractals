@@ -3,9 +3,6 @@ package me.catmousedog.fractals.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.logging.FileHandler;
@@ -158,17 +155,12 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		// make sure all components are displayed
 		frame.validate();
 
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-			@Override
-			public boolean dispatchKeyEvent(KeyEvent e) {
-				if (e.getID() == KeyEvent.KEY_PRESSED) {
-					if (e.getKeyCode() == KeyEvent.VK_5) {
-						
-					}
-				}
-				return false;
-			}
-		});
+		// set keybinds
+		try {
+			settings.initKeybinds(jpi.getGUI());
+		} catch (IOException e) {
+			logger.log(Level.SEVERE, "Settings.initKeybinds IOException", e);
+		}
 
 		logger.log(Level.FINER, "initial render\n");
 

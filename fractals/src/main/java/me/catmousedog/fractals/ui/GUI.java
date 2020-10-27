@@ -92,7 +92,7 @@ public class GUI {
 		zoomjb = new Button2.Builder("Zoom In", "Zoom Out").setAction(a -> zoomIn(), a -> zoomOut())
 				.setTip("<html>Zoom in without moving</html>", "<html>Zoom out without moving</html>").build();
 
-		renderjb = new Button.Builder("Render").setAction(a -> jpi.render())
+		renderjb = new Button.Builder("Render").setAction(a -> render())
 				.setTip("<html>Render the image by generating it and painting it</html>").build();
 
 		canceljb = new Button.Builder("Cancel").setAction(a -> cancel()).setTip(
@@ -206,7 +206,7 @@ public class GUI {
 	/**
 	 * copy button
 	 */
-	private void copy() {
+	public void copy() {
 		logger.log(Level.FINEST, "GUI.copy");
 
 		// update?
@@ -222,7 +222,7 @@ public class GUI {
 	/**
 	 * paste button
 	 */
-	private void paste() {
+	public void paste() {
 		logger.log(Level.FINEST, "GUI.paste");
 
 		try {
@@ -248,7 +248,7 @@ public class GUI {
 	/**
 	 * locationjcb
 	 */
-	private void location(ActionEvent a) {
+	public void location(ActionEvent a) {
 		logger.log(Level.FINEST, "GUI.location");
 
 		canvas.savePrevConfig();
@@ -262,7 +262,7 @@ public class GUI {
 	/**
 	 * undo button
 	 */
-	private void undo() {
+	public void undo() {
 		logger.log(Level.FINEST, "GUI.undo");
 
 		jpi.allowUndo(false);
@@ -274,7 +274,7 @@ public class GUI {
 	/**
 	 * zoom in button
 	 */
-	private void zoomIn() {
+	public void zoomIn() {
 		canvas.savePrevConfig();
 		jpi.renderWithout(true, () -> {
 			canvas.getFractal().getTransform().zoom(1 / canvas.getZoomFactor());
@@ -284,17 +284,21 @@ public class GUI {
 	/**
 	 * zoom out button
 	 */
-	private void zoomOut() {
+	public void zoomOut() {
 		canvas.savePrevConfig();
 		jpi.renderWithout(true, () -> {
 			canvas.getFractal().getTransform().zoom(canvas.getZoomFactor());
 		});
 	}
 
+	public void render() {
+		jpi.render();
+	}
+	
 	/**
 	 * cancel button
 	 */
-	private void cancel() {
+	public void cancel() {
 		logger.log(Level.FINEST, "GUI.cancel");
 
 		if (RENDER.cancel()) {
@@ -316,7 +320,7 @@ public class GUI {
 	/**
 	 * repaintjb
 	 */
-	private void repaint() {
+	public void repaint() {
 		canvas.getFractal().saveAndColour();
 		jpi.update();
 	}
@@ -324,7 +328,7 @@ public class GUI {
 	/**
 	 * fractaljcb
 	 */
-	private void fractal() {
+	public void fractal() {
 		logger.log(Level.FINEST, "GUI.fractal");
 
 		Fractal f = (Fractal) getFractaljcb().saveAndGet();
@@ -339,7 +343,7 @@ public class GUI {
 	/**
 	 * functionjcb
 	 */
-	private void function() {
+	public void function() {
 		logger.log(Level.FINEST, "GUI.function");
 
 		Function f = (Function) getFunctionjcb().saveAndGet();
@@ -355,7 +359,7 @@ public class GUI {
 	/**
 	 * filterjcb
 	 */
-	private void filter() {
+	public void filter() {
 		logger.log(Level.FINEST, "GUI.filter");
 
 		Filter f = (Filter) getFilterjcb().saveAndGet();
@@ -370,7 +374,7 @@ public class GUI {
 	/**
 	 * picturesizejcb
 	 */
-	private void pictureSize() {
+	public void pictureSize() {
 		switch (getPicturesizejcb().getComponent().getSelectedIndex()) {
 		case 0:
 			picturewjtf.setData(1280);

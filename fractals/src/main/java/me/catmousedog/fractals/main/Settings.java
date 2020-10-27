@@ -1,5 +1,8 @@
 package me.catmousedog.fractals.main;
 
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +13,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.logging.Handler;
@@ -29,6 +34,7 @@ import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
 import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
+import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**
@@ -154,7 +160,7 @@ public class Settings {
 
 		// create file and load defaults
 		File f = new File("./settings.properties");
-		InputStream settingsStream = getClass().getClassLoader().getResourceAsStream("default_settings.properties");
+		InputStream settingsStream = getClass().getClassLoader().getResourceAsStream("settings.properties");
 		if (!f.exists()) {
 			Files.copy(settingsStream, Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -365,6 +371,94 @@ public class Settings {
 		temp.toArray(l);
 
 		fractal.setLocations(l);
+	}
+
+	public void initKeybinds(GUI gui) throws IOException {
+		logger.log(Level.FINER, "Settings.initKeybinds");
+
+		// create file and load defaults
+		File f = new File("./keybinds.properties");
+		InputStream keybindsStream = getClass().getClassLoader().getResourceAsStream("keybinds.properties");
+		if (!f.exists()) {
+			Files.copy(keybindsStream, Paths.get("./keybinds.properties"), StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		// load settings from file
+		Properties defaultKeybinds = new Properties();
+		defaultKeybinds.load(keybindsStream);
+		Properties keybinds = new Properties(defaultKeybinds);
+		keybinds.load(new FileInputStream(f));
+
+		Enumeration<Object> keys = keybinds.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+
+			key.replaceAll(" ", "");
+			// array of VK_KEYS
+			String[] splitKeys = key.split("\\+");
+
+			// array of keycodes
+			int[] codes = new int[splitKeys.length];
+
+			// get keycodes
+			for (int i = 0; i < codes.length; i++) {
+				String VK = splitKeys[i];
+
+				try {
+					codes[i] = KeyEvent.class.getField(VK).getInt(null);
+				} catch (NoSuchFieldException e) {
+					logger.log(Level.WARNING, "Settings.initKeybinds: " + VK + " is not a valid key", e);
+				} catch (IllegalAccessException | SecurityException | IllegalArgumentException e) {
+					logger.log(Level.SEVERE, "Settings.initKeybinds", e);
+				}
+			}
+
+			Runnable r;
+
+			String action = keybinds.getProperty(key);
+
+			switch (action) {
+			case "render":
+				r = () -> gui.render();
+				break;
+			case "repaint":
+				r = () -> gui.repaint();
+				break;
+			case "copy":
+				r = () -> gui.copy();
+				break;
+			case "paste":
+				r = () -> gui.paste();
+				break;
+			default:
+				logger.log(Level.WARNING, "Settings.initKeybinds: " + action + " is not a defined action");
+				r = null;
+			}
+
+			Map<int[], Runnable> map = new HashMap<int[], Runnable>();
+			if (r != null) //TODO if keycodes != 0
+				map.put(codes, r);
+
+		}
+
+		List<Integer> activeKeys = new ArrayList<Integer>();
+
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() == KeyEvent.KEY_PRESSED)
+					activeKeys.add(e.getKeyCode());
+				if (e.getID() == KeyEvent.KEY_RELEASED)
+					activeKeys.remove(e.getKeyCode());
+
+				keyChange();
+				return false;
+			}
+		});
+	}
+
+	private void keyChange() {
+
 	}
 
 	/**
