@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 
-import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
@@ -157,7 +156,7 @@ public class GUI {
 				.setAction(a -> location(a)).setTip("<html>A set of interesting locations</html>").build();
 
 		undojb = new Button.Builder("Undo").setAction(a -> undo()).setTip(
-				"<html>Go back to the previous location, fractal and filter<br>Does not revert any changes made to the fractal or filter.</html>")
+				"<html>Go back to the previous location, fractal and filter<br>Does not revert any specific changes made to the fractal, function or filter.</html>")
 				.setDefault(false).build();
 
 		/**
@@ -214,6 +213,7 @@ public class GUI {
 
 		try {
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
+			logger.log(Level.FINE, "successfully copied to clipboard");
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "unable to copy to clipboard", e);
 		}
@@ -228,10 +228,12 @@ public class GUI {
 		try {
 			String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 
-			canvas.savePrevConfig();
+			jpi.savePrevConfig();
 
 			Location l = canvas.getFractal().new Location(clip);
 			canvas.getFractal().setLocation(l);
+
+			logger.log(Level.FINE, "successfully pasted from clipboard");
 
 			if (settings.isRender_on_changes()) {
 				jpi.update();
@@ -251,7 +253,7 @@ public class GUI {
 	public void location(ActionEvent a) {
 		logger.log(Level.FINEST, "GUI.location");
 
-		canvas.savePrevConfig();
+		jpi.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			@SuppressWarnings("unchecked")
 			JComboBox<Object> jcb = (JComboBox<Object>) a.getSource();
@@ -265,8 +267,7 @@ public class GUI {
 	public void undo() {
 		logger.log(Level.FINEST, "GUI.undo");
 
-		jpi.allowUndo(false);
-		canvas.undo();
+		jpi.undo();
 		jpi.update();
 		jpi.renderNow();
 	}
@@ -275,7 +276,7 @@ public class GUI {
 	 * zoom in button
 	 */
 	public void zoomIn() {
-		canvas.savePrevConfig();
+		jpi.savePrevConfig();
 		jpi.renderWithout(true, () -> {
 			canvas.getFractal().getTransform().zoom(1 / canvas.getZoomFactor());
 		});
@@ -285,7 +286,7 @@ public class GUI {
 	 * zoom out button
 	 */
 	public void zoomOut() {
-		canvas.savePrevConfig();
+		jpi.savePrevConfig();
 		jpi.renderWithout(true, () -> {
 			canvas.getFractal().getTransform().zoom(canvas.getZoomFactor());
 		});
@@ -294,7 +295,7 @@ public class GUI {
 	public void render() {
 		jpi.render();
 	}
-	
+
 	/**
 	 * cancel button
 	 */
@@ -307,8 +308,7 @@ public class GUI {
 				feedback.setGeneratorProgress("cancelled generator", 0);
 				feedback.setPainterProgress("cancelled painter", 0);
 			} else {
-				jpi.allowUndo(false);
-				canvas.undo();
+				jpi.undo();
 				feedback.setGeneratorProgress("cancelled generator", 0);
 				feedback.setPainterProgress("cancelled painter", 0);
 			}
@@ -334,7 +334,7 @@ public class GUI {
 		Fractal f = (Fractal) getFractaljcb().saveAndGet();
 		if (canvas.getFractal().equals(f))
 			return;
-		canvas.savePrevConfig();
+		jpi.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFractal(f);
 		});
@@ -349,7 +349,7 @@ public class GUI {
 		Function f = (Function) getFunctionjcb().saveAndGet();
 		if (canvas.getFractal().getFunction().equals(f))
 			return;
-		canvas.savePrevConfig();
+		jpi.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFunction(f);
 		});
@@ -365,7 +365,7 @@ public class GUI {
 		Filter f = (Filter) getFilterjcb().saveAndGet();
 		if (canvas.getFractal().getFunction().getFilter().equals(f))
 			return;
-		canvas.savePrevConfig();
+		jpi.savePrevConfig();
 		jpi.renderWithout(settings.isRender_on_changes(), () -> {
 			canvas.setFilter(f);
 		});

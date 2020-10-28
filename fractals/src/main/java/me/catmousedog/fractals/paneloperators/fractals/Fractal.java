@@ -10,14 +10,14 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.catmousedog.fractals.canvas.Canvas;
-import me.catmousedog.fractals.canvas.Mouse;
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.PanelOperator;
 import me.catmousedog.fractals.paneloperators.functions.Function;
+import me.catmousedog.fractals.ui.Canvas;
 import me.catmousedog.fractals.ui.JPInterface;
+import me.catmousedog.fractals.ui.Mouse;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;

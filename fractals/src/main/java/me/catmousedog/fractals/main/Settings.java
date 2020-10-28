@@ -14,10 +14,12 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,11 +32,11 @@ import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.paneloperators.fractals.BurningShip;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal.Location;
+import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
 import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
-import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**
@@ -373,6 +375,22 @@ public class Settings {
 		fractal.setLocations(l);
 	}
 
+	/**
+	 * <code>Map</code> of key combination to an action.
+	 */
+	private final Map<Set<Integer>, Runnable> keyMap = new HashMap<Set<Integer>, Runnable>();
+
+	/**
+	 * Dynamic <code>Set</code> of pressed keys.
+	 */
+	private final Set<Integer> activeKeys = new HashSet<Integer>();
+
+	/**
+	 * Initialises the keybinds from the <code>keybinds.properties</code> file.
+	 * 
+	 * @param gui the <code>GUI</code> instance used for the defined actions.
+	 * @throws IOException if the file failed to be copied or loaded.
+	 */
 	public void initKeybinds(GUI gui) throws IOException {
 		logger.log(Level.FINER, "Settings.initKeybinds");
 
@@ -389,76 +407,120 @@ public class Settings {
 		Properties keybinds = new Properties(defaultKeybinds);
 		keybinds.load(new FileInputStream(f));
 
+		// set the keyMap
 		Enumeration<Object> keys = keybinds.keys();
+
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-
 			key.replaceAll(" ", "");
+
 			// array of VK_KEYS
 			String[] splitKeys = key.split("\\+");
 
-			// array of keycodes
-			int[] codes = new int[splitKeys.length];
+			// key combination
+			Set<Integer> codes = new HashSet<Integer>(splitKeys.length);
 
-			// get keycodes
-			for (int i = 0; i < codes.length; i++) {
-				String VK = splitKeys[i];
+			// true if the key combination is valid
+			boolean keyValid = true;
 
+			// set key combination
+			for (String VK : splitKeys) {
+				VK = "VK_" + VK.toUpperCase();
 				try {
-					codes[i] = KeyEvent.class.getField(VK).getInt(null);
+					int i = KeyEvent.class.getField(VK).getInt(null);
+					if (!codes.add(i) || i == 0) {
+						keyValid = false;
+						logger.log(Level.WARNING, "Settings.initKeybinds " + VK + " is not a valid key");
+					}
 				} catch (NoSuchFieldException e) {
+					keyValid = false;
 					logger.log(Level.WARNING, "Settings.initKeybinds: " + VK + " is not a valid key", e);
 				} catch (IllegalAccessException | SecurityException | IllegalArgumentException e) {
+					keyValid = false;
 					logger.log(Level.SEVERE, "Settings.initKeybinds", e);
 				}
 			}
 
-			Runnable r;
+			// if valid continue
+			if (keyValid) {
+				// action runnable
+				Runnable r;
 
-			String action = keybinds.getProperty(key);
+				// action string
+				String action = keybinds.getProperty(key);
 
-			switch (action) {
-			case "render":
-				r = () -> gui.render();
-				break;
-			case "repaint":
-				r = () -> gui.repaint();
-				break;
-			case "copy":
-				r = () -> gui.copy();
-				break;
-			case "paste":
-				r = () -> gui.paste();
-				break;
-			default:
-				logger.log(Level.WARNING, "Settings.initKeybinds: " + action + " is not a defined action");
-				r = null;
+				switch (action) {
+				case "render":
+					r = () -> gui.render();
+					break;
+				case "repaint":
+					r = () -> gui.repaint();
+					break;
+				case "copy":
+					r = () -> gui.copy();
+					break;
+				case "paste":
+					r = () -> gui.paste();
+					break;
+				case "undo":
+					r = () -> gui.undo();
+					break;
+				case "terminate":
+					r = () -> System.exit(0);
+					break;
+				default:
+					logger.log(Level.WARNING, "Settings.initKeybinds: " + action + " is not a defined action");
+					r = null;
+				}
+
+				// if valid continue
+				if (r != null)
+					keyMap.put(codes, r);
 			}
-
-			Map<int[], Runnable> map = new HashMap<int[], Runnable>();
-			if (r != null) //TODO if keycodes != 0
-				map.put(codes, r);
 
 		}
 
-		List<Integer> activeKeys = new ArrayList<Integer>();
-
+		// add keylistener
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 			@Override
-			public boolean dispatchKeyEvent(KeyEvent e) {
-				if (e.getID() == KeyEvent.KEY_PRESSED)
-					activeKeys.add(e.getKeyCode());
-				if (e.getID() == KeyEvent.KEY_RELEASED)
-					activeKeys.remove(e.getKeyCode());
+			public synchronized boolean dispatchKeyEvent(KeyEvent e) {
+				// to avoid holding down the key
+				if (e.getID() == KeyEvent.KEY_TYPED)
+					return false;
 
-				keyChange();
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					// if key was already pressed return
+					// to avoid holding down the key after letting go
+					if (!activeKeys.add(e.getKeyCode()))
+						return false;
+				}
+
+				// to avoid letting go of a key and this triggering an event
+				// a key combination should be intended by the user
+				if (e.getID() == KeyEvent.KEY_RELEASED) {
+					activeKeys.remove((Integer) e.getKeyCode());
+					return false;
+				}
+
+				runAction();
+
 				return false;
 			}
 		});
 	}
 
-	private void keyChange() {
-
+	/**
+	 * Runs the <code>Runnable</code> from the <code>keyMap</code>'s key combination
+	 * that matches the <code>activeKeys</code>.
+	 */
+	private void runAction() {
+		for (Set<Integer> key : keyMap.keySet()) {
+			if (key.equals(activeKeys)) {
+				logger.log(Level.FINEST, "Settings.runAction");
+				keyMap.get(key).run();
+				return;
+			}
+		}
 	}
 
 	/**

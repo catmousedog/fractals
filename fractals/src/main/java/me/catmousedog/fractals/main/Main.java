@@ -15,8 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ToolTipManager;
 
-import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.ui.Canvas;
 import me.catmousedog.fractals.ui.FeedbackPanel;
 import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.utils.FileFormatter;

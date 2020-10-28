@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.main.Main;
 import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
@@ -82,7 +81,7 @@ public class JPInterface extends JPanel implements Savable {
 
 		preRender();
 
-		canvas.savePrevConfig();
+		savePrevConfig();
 		save();
 		update();
 
@@ -199,7 +198,6 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getLocationjcb().postRender();
 		if (allowUndo) {
 			gui.getUndojb().setData(true);
-			allowUndo = false;
 		}
 
 		/* Calculation */
@@ -238,10 +236,6 @@ public class JPInterface extends JPanel implements Savable {
 	public void save() {
 		logger.log(Level.FINEST, "JPInterface.save");
 
-		allowUndo = true;
-
-//		canvas.savePrevConfig();
-
 		/* Window */
 		main.setSize(gui.getWidthjtf().saveAndGet(), gui.getHeightjtf().saveAndGet());
 
@@ -256,8 +250,6 @@ public class JPInterface extends JPanel implements Savable {
 		/* Fractal */
 		// specific
 		canvas.getFractal().save();
-
-		/* Picture */
 	}
 
 	/**
@@ -288,12 +280,6 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getFilterjcb().setDataSafe(canvas.getFractal().getFunction().getFilter());
 		// specific
 		canvas.getFractal().safeUpdate();
-
-		/* Picture */
-		// not needed as you cannot change this data without updating
-		// hence it will always be updated
-//		gui.getPicturewjtf().update();
-//		gui.getPicturehjtf().update();
 	}
 
 	/**
@@ -355,12 +341,22 @@ public class JPInterface extends JPanel implements Savable {
 	}
 
 	/**
-	 * Sets the {@link JPInterface#allowUndo}
-	 * 
-	 * @param allowUndo
+	 * Calls {@link Canvas#savePrevConfig()} and sets the
+	 * {@link JPInterface#allowUndo} to true.
 	 */
-	public void allowUndo(boolean allowUndo) {
-		this.allowUndo = allowUndo;
+	public void savePrevConfig() {
+		allowUndo = true;
+		canvas.savePrevConfig();
+	}
+
+	/**
+	 * Calls {@link Canvas#undo()} and sets the {@link JPInterface#allowUndo} to
+	 * false.
+	 */
+	public void undo() {
+		allowUndo = false;
+		gui.getUndojb().setData(false);
+		canvas.undo();
 	}
 
 	/**

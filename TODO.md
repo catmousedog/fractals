@@ -19,9 +19,10 @@
 - [x] ordered fractals (Fractal -> Function -> Filter)
 - [x] update resources to new hierarchy
 - [x] update Settings to new hierarchy
-- [ ] keylistener
-- [ ] tips
+- [x] keylistener
+- [x] fix undo button and action
 - [ ] sort JPI savable methods to new GUI
+- [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
 
 ## Other

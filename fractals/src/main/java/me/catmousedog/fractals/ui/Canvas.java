@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.canvas;
+package me.catmousedog.fractals.ui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -18,8 +18,6 @@ import me.catmousedog.fractals.main.Settings;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
-import me.catmousedog.fractals.ui.GUI;
-import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.workers.Generator;
 import me.catmousedog.fractals.workers.Painter;
 import me.catmousedog.fractals.workers.RenderWorker;
@@ -200,11 +198,12 @@ public class Canvas extends JPanel {
 	 * Essentially the opposite of {@link Canvas#undo()}. This should be called
 	 * right before saving changes to the {@link Canvas}.
 	 * <p>
-	 * Should only be called when the current <code>Fractal</code>,
-	 * <code>Function</code> or <code>Filter</code> changes or if the current
-	 * <code>Fractal</code> is altered such as its {@link LinearTransform}.
+	 * Should only be called through {@link JPInterface#savePrevConfig()} when the
+	 * current <code>Fractal</code>, <code>Function</code> or <code>Filter</code>
+	 * changes or if the current <code>Fractal</code> is altered such as its
+	 * {@link LinearTransform}.
 	 */
-	public void savePrevConfig() {
+	void savePrevConfig() {
 		logger.log(Level.FINEST, "canvas.savePrevConfig");
 
 		prevConfig = new Configuration();

@@ -8,10 +8,10 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.data.Field;
 import me.catmousedog.fractals.data.Pixel;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.ui.Canvas;
 import me.catmousedog.fractals.ui.FeedbackPanel;
 import me.catmousedog.fractals.ui.JPInterface;
 

@@ -1,4 +1,4 @@
-package me.catmousedog.fractals.canvas;
+package me.catmousedog.fractals.ui;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -14,7 +14,6 @@ import javax.swing.SwingUtilities;
 
 import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.data.Pixel;
-import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.workers.RenderWorker;
 
 /**
@@ -56,7 +55,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		// lmb (zoom in)
 		if (me.getButton() == MouseEvent.BUTTON1 && renderer.isGeneratorReady()) {
 			logger.log(Level.FINEST, "Mouse.mouseReleased lmb");
-			canvas.savePrevConfig();
+			jpi.savePrevConfig();
 			jpi.save();
 			LinearTransform transform = canvas.getFractal().getTransform();
 			double[] t = transform.apply(me.getX(), me.getY());
@@ -70,7 +69,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		// rmb (zoom out)
 		if (me.getButton() == MouseEvent.BUTTON3 && renderer.isGeneratorReady()) {
 			logger.log(Level.FINEST, "Mouse.mouseReleased rmb");
-			canvas.savePrevConfig();
+			jpi.savePrevConfig();
 			jpi.save();
 			LinearTransform transform = canvas.getFractal().getTransform();
 			double[] t = transform.apply(me.getX(), me.getY());

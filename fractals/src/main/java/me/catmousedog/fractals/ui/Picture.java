@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
-import me.catmousedog.fractals.canvas.Canvas;
 import me.catmousedog.fractals.data.Field;
 import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.main.Settings;

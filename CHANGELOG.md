@@ -275,6 +275,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - **Nameable** interface for common *String* methods
 - **NormalizedFunction** offset to *items*
 - logging
+- keylistener, keybinds.properties and **Settings** keybinds functionality 
 
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
@@ -285,7 +286,8 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - Merged **InitialSize** into **Settings**
 - changed exceptions in **Settings**
 - renewed **Canvas.Configuration** to hold a single clone of the **Fractal**
-- Moved *Canvas.savePrevConfig* in JPI. Now has to be called manually to avoid Mouselisteners calling it
+- Moved *Canvas.savePrevConfig* to *JPI.savePrevConfig* and updated *JPI.allowUndo*
+- packaging (moved canvas to ui)
 
 ### Removed
 - *Filter.setFilter(Filter)* as this is done is the cloning constructor.
