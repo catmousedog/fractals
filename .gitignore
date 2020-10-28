@@ -1,5 +1,6 @@
 # project settings
 fractals/settings.properties
+fractals/keybinds.properties
 
 # project files
 fractals/logs
