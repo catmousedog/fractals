@@ -3,6 +3,8 @@ package me.catmousedog.fractals.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import java.util.logging.Handler;
@@ -16,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.Timer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -86,7 +89,7 @@ public class FeedbackPanel extends Handler implements Runnable {
 
 	private FeedbackPanel() {
 		logger.log(Level.FINER, "FeedbackPanel init");
-		
+
 		if (!EventQueue.isDispatchThread()) {
 			try {
 				EventQueue.invokeAndWait(this);
@@ -248,5 +251,63 @@ public class FeedbackPanel extends Handler implements Runnable {
 	@NotNull
 	public JPanel getPanel() {
 		return panel;
+	}
+
+	private class LogMessage extends JLabel {
+
+		private float alpha;
+
+		private final Timer timer = new Timer(50, null);
+
+		private LogMessage(String text) {
+			timer.setRepeats(true);
+			timer.addActionListener(new ActionListener() {
+
+				private int b = 100;
+				private int i = b;
+				private int f = 20;
+
+				@Override
+				public void actionPerformed(ActionEvent a) {
+					i--;
+
+					if (i < f) {
+						setAlpha(i / (float) f);
+					}
+
+					if (i < 0) {
+						setText(null);
+						setToolTipText(null);
+						timer.stop();
+					}
+
+				}
+			});
+			schedule(text);
+		}
+
+		/**
+		 * Schedules a new {@link Timer}. <br>
+		 * must be run on the EDT
+		 * 
+		 * @param text
+		 */
+		private void schedule(String text) {
+			timer.stop();
+			setText(text);
+			setToolTipText(text);
+			timer.start();
+		}
+
+		private void setAlpha(float value) {
+//			if (alpha != value) {
+//				float old = alpha;
+//				alpha = value;
+//				firePropertyChange("alpha", old, alpha);
+//				repaint();
+//			}
+			if (0 <= alpha && alpha <= 1)
+				setForeground(new Color(255, 255, 255, alpha * 255));
+		}
 	}
 }

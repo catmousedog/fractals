@@ -449,9 +449,12 @@ public class Settings {
 				// action string
 				String action = keybinds.getProperty(key);
 
-				switch (action) {
+				switch (action.toLowerCase()) {
 				case "render":
 					r = () -> gui.render();
+					break;
+				case "cancel":
+					r = () -> gui.cancel();
 					break;
 				case "repaint":
 					r = () -> gui.repaint();
@@ -464,6 +467,12 @@ public class Settings {
 					break;
 				case "undo":
 					r = () -> gui.undo();
+					break;
+				case "zoomin":
+					r = () -> gui.zoomIn();
+					break;
+				case "zoomout":
+					r = () -> gui.zoomOut();
 					break;
 				case "terminate":
 					r = () -> System.exit(0);

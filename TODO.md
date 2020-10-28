@@ -24,9 +24,9 @@
 - [ ] sort JPI savable methods to new GUI
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
+- [ ] make logger messages fade
 
 ## Other
-- [ ] make logger messages fade
 - [ ] julia default fixed point settings
 - [ ] advanced setting -> overlay for overlaying mandelbrot over julia set
 - [ ] checkbox advanced settings (intertior algorithm, etc.)

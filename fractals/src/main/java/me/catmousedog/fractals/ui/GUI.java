@@ -195,9 +195,9 @@ public class GUI {
 		heightjtf = new TextFieldInteger.Builder().setLabel("height").setMin(100)
 				.setTip("<html>The height of the canvas</html>").build();
 
-		all = new Item[] { canvasTitle, p5, zoomjtf, p5, zoomjb, p5, renderjb, p5, canceljb, p20, fractal, p5,
-				fractaljl, fractaljcb, p5, fractaljp, p5, functionjl, functionjcb, p5, functionjp, p5, filterjl,
-				filterjcb, p5, repaintjb, p5, filterjp, p20, location, p5, xjtf, p5, yjtf, p5, mjtf, p5, njtf, p5, rjtf,
+		all = new Item[] { fractal, p5, fractaljl, fractaljcb, p5, fractaljp, p5, functionjl, functionjcb, p5,
+				functionjp, p5, filterjl, filterjcb, p5, repaintjb, p5, filterjp, p20, canvasTitle, p5, zoomjtf, p5,
+				zoomjb, p5, renderjb, p5, canceljb, p20, location, p5, xjtf, p5, yjtf, p5, mjtf, p5, njtf, p5, rjtf,
 				p10, copypastejb, p5, locationjcb, p5, undojb, p20, picture, p5, picturesizejcb, p5, picturewjtf, p5,
 				picturehjtf, p5, picturejb, p5, picturejcb, p20, window, p5, widthjtf, p5, heightjtf };
 	}
@@ -267,9 +267,10 @@ public class GUI {
 	public void undo() {
 		logger.log(Level.FINEST, "GUI.undo");
 
-		jpi.undo();
-		jpi.update();
-		jpi.renderNow();
+		if (jpi.undo()) {
+			jpi.update();
+			jpi.renderNow();
+		}
 	}
 
 	/**
@@ -305,13 +306,11 @@ public class GUI {
 		if (RENDER.cancel()) {
 			if (picture.isGenerating()) {
 				picture.setGenerating(false);
-				feedback.setGeneratorProgress("cancelled generator", 0);
-				feedback.setPainterProgress("cancelled painter", 0);
-			} else {
-				jpi.undo();
-				feedback.setGeneratorProgress("cancelled generator", 0);
-				feedback.setPainterProgress("cancelled painter", 0);
+			} else if (!jpi.undo()) {
+				logger.log(Level.WARNING, "GUI.cancel: JPI.undo was unsuccessful");
 			}
+			feedback.setGeneratorProgress("cancelled generator", 0);
+			feedback.setPainterProgress("cancelled painter", 0);
 		}
 		jpi.update();
 		jpi.postRender();

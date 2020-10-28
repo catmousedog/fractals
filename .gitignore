@@ -9,6 +9,8 @@ fractals/locations
 
 # Compiled class file
 *.class
+
+# target file
 fractals/target/
 
 # images

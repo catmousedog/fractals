@@ -40,7 +40,7 @@ public class RenderWorker {
 	private RenderWorker() {
 		scheduled_workers = Settings.getInstance().isScheduled_workers();
 	}
-	
+
 	private final Logger logger = Logger.getLogger("fractals");
 
 	/**
@@ -123,7 +123,7 @@ public class RenderWorker {
 	 */
 	public synchronized void newRender(@NotNull Field field, @NotNull Fractal fractal, @NotNull Runnable runnable) {
 		logger.log(Level.FINEST, "RenderWorker.newRender");
-		
+
 		rendering = true; // block new generators and painters
 
 		// This does not check if there are any painters active when starting the
@@ -280,12 +280,14 @@ public class RenderWorker {
 		logger.log(Level.FINEST, "RenderWorker.cancel");
 		boolean out = false;
 		if (currentGenerator.cancel(true)) {
+			scheduledGenerator = null;
 			generatorReady = true;
 			out = true;
 		}
-		if (currentPainter.cancel(true))
+		if (currentPainter.cancel(true)) {
+			scheduledPainter = null;
 			painterReady = true;
-
+		}
 		return out;
 	}
 

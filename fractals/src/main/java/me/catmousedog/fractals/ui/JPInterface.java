@@ -352,11 +352,18 @@ public class JPInterface extends JPanel implements Savable {
 	/**
 	 * Calls {@link Canvas#undo()} and sets the {@link JPInterface#allowUndo} to
 	 * false.
+	 * 
+	 * @return false if the undo could not be done if {@link JPInterface#allowUndo}
+	 *         was already false.
 	 */
-	public void undo() {
+	public boolean undo() {
+		if (!allowUndo)
+			return false;
+
 		allowUndo = false;
 		gui.getUndojb().setData(false);
 		canvas.undo();
+		return true;
 	}
 
 	/**
