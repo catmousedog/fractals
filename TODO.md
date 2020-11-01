@@ -24,7 +24,7 @@
 - [ ] sort JPI savable methods to new GUI
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
-- [ ] make logger messages fade
+- [x] make logger messages fade
 
 ## Other
 - [ ] julia default fixed point settings

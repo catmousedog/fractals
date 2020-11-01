@@ -3,6 +3,7 @@ package me.catmousedog.fractals.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
@@ -62,22 +63,6 @@ public class FeedbackPanel extends Handler implements Runnable {
 	private JProgressBar jpbPainter;
 
 	/**
-	 * Maximum amount of logged messages displayed.
-	 */
-	private int m = 3;
-
-	/**
-	 * The array of JLabels representing the logged messages.
-	 */
-	private JLabel[] logs = new JLabel[m];
-
-	/**
-	 * <code>Vector</code> of <code>Strings</code> representing the first to last
-	 * logged messages.
-	 */
-	private Vector<String> logMessages = new Vector<String>();
-
-	/**
 	 * @return the instance of the <code>FeedbackPanel</code>.<
 	 */
 	@NotNull
@@ -114,9 +99,8 @@ public class FeedbackPanel extends Handler implements Runnable {
 		setLevel(Level.FINE);
 
 		// log labels
-		for (int j = 0; j < m; j++) {
-			logs[j] = new JLabel();
-			logs[j].setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		for (int j = 0; j < maxLogs; j++) {
+			logs[j] = new LogMessage();
 			panel.add(logs[j]);
 		}
 
@@ -212,21 +196,25 @@ public class FeedbackPanel extends Handler implements Runnable {
 		if (!isLoggable(record))
 			return;
 
-		logMessage(record.getMessage());
+		EventQueue.invokeLater(() -> logMessage(record.getMessage()));
 	}
 
 	private void logMessage(@NotNull String message) {
 		logMessages.add(message);
 
-		if (logMessages.size() > m)
+		if (logMessages.size() > maxLogs) {
 			logMessages.remove(0);
+		}
 
-		EventQueue.invokeLater(() -> {
-			for (int j = 0; j < logMessages.size(); j++) {
-				logs[m - j - 1].setText(logMessages.get(j));
-				logs[m - j - 1].setToolTipText(logMessages.get(j));
+		// move logs down one
+		for (int j = maxLogs - 1; j > 0; j--) {
+			if (logs[j - 1].timer.isRunning()) {
+				logs[j].set(logs[j - 1]);
 			}
-		});
+		}
+
+		// insert top log
+		logs[0].start(logMessages.get(logMessages.size() - 1));
 	}
 
 	/**
@@ -253,61 +241,89 @@ public class FeedbackPanel extends Handler implements Runnable {
 		return panel;
 	}
 
-	private class LogMessage extends JLabel {
+	/**
+	 * Maximum amount of logged messages displayed.
+	 */
+	private int maxLogs = 3;
 
-		private float alpha;
+	private final LogMessage[] logs = new LogMessage[maxLogs];
+
+	private final Vector<String> logMessages = new Vector<String>();
+
+	@SuppressWarnings("serial")
+	private class LogMessage extends JLabel implements ActionListener {
 
 		private final Timer timer = new Timer(50, null);
 
-		private LogMessage(String text) {
+		private float alpha;
+
+		private int b, i, f;
+
+		private LogMessage() {
+			setAlignmentX(JLabel.CENTER_ALIGNMENT);
+			setFont(new Font(null, Font.PLAIN, 11));
 			timer.setRepeats(true);
-			timer.addActionListener(new ActionListener() {
-
-				private int b = 100;
-				private int i = b;
-				private int f = 20;
-
-				@Override
-				public void actionPerformed(ActionEvent a) {
-					i--;
-
-					if (i < f) {
-						setAlpha(i / (float) f);
-					}
-
-					if (i < 0) {
-						setText(null);
-						setToolTipText(null);
-						timer.stop();
-					}
-
-				}
-			});
-			schedule(text);
+			timer.addActionListener(this);
 		}
 
-		/**
-		 * Schedules a new {@link Timer}. <br>
-		 * must be run on the EDT
-		 * 
-		 * @param text
-		 */
-		private void schedule(String text) {
-			timer.stop();
+		private void start(String text) {
+			b = 100;
+			f = 20;
+			i = b;
 			setText(text);
-			setToolTipText(text);
+			setAlpha(0.99f);
 			timer.start();
 		}
 
-		private void setAlpha(float value) {
-//			if (alpha != value) {
-//				float old = alpha;
-//				alpha = value;
-//				firePropertyChange("alpha", old, alpha);
-//				repaint();
-//			}
+		private void stop() {
+			logMessages.remove(getText());
+			setText(null);
+			setAlpha(0f);
+			timer.stop();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent a) {
+			i--;
+
+			if (i < f) {
+				setAlpha(i / (float) f);
+			}
+
+			if (i < 0) {
+				stop();
+			}
+		}
+
+		/**
+		 * Change this <code>LogMessage</code> to correspond to the given. Used for
+		 * moving <code>LogMessages</code> down.
+		 * <p>
+		 * Can only be used for active <code>LogMessages</code>.
+		 * 
+		 * @param logMessage
+		 */
+		private void set(LogMessage logMessage) {
+			if (logMessage.timer.isRunning()) {
+				b = logMessage.b;
+				i = logMessage.i;
+				f = logMessage.f;
+				setText(logMessage.getText());
+				setAlpha(logMessage.alpha);
+				timer.start();
+			}
+		}
+
+		private void setAlpha(float alpha) {
+			this.alpha = alpha;
 			if (0 <= alpha && alpha <= 1)
-				setForeground(new Color(255, 255, 255, alpha * 255));
+				setForeground(new Color(0f, 0f, 0f, alpha));
+		}
+
+		@Override
+		public void setText(String text) {
+			super.setText(text);
+			setToolTipText(text);
 		}
 	}
 }

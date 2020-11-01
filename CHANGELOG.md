@@ -276,6 +276,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - **NormalizedFunction** offset to *items*
 - logging
 - keylistener, keybinds.properties and **Settings** keybinds functionality 
+- fading logger messages
 
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
