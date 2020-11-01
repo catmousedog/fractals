@@ -3,6 +3,7 @@ package me.catmousedog.fractals.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
@@ -36,8 +37,6 @@ public class FeedbackPanel extends Handler implements Runnable {
 	 * The <code>JPanel</code> in which all the feedback is displayed.
 	 */
 	private JPanel panel;
-
-	private JPanel logPanel;
 
 	/**
 	 * <code>JLabel</code> displaying the last generating time.
@@ -100,12 +99,10 @@ public class FeedbackPanel extends Handler implements Runnable {
 		setLevel(Level.FINE);
 
 		// log labels
-		logPanel = new JPanel();
-		logPanel.setLayout(new BoxLayout(logPanel, BoxLayout.Y_AXIS));
-		logPanel.setMaximumSize(new Dimension(settings.getIwidth() + 2 * settings.getHgap(), 10));
-		logPanel.setBackground(Color.LIGHT_GRAY);
-		logPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-		panel.add(logPanel);
+		for (int j = 0; j < maxLogs; j++) {
+			logs[j] = new LogMessage();
+			panel.add(logs[j]);
+		}
 
 		panel.add(Box.createVerticalGlue());
 
@@ -203,26 +200,21 @@ public class FeedbackPanel extends Handler implements Runnable {
 	}
 
 	private void logMessage(@NotNull String message) {
+		logMessages.add(message);
 
-		if (logs.size() >= maxLogs) {
-
+		if (logMessages.size() > maxLogs) {
+			logMessages.remove(0);
 		}
-		new LogMessage(message);
 
-//		logMessages.add(message);
-//
-//		// if more messages than JLabels
-//		if (logMessages.size() > maxLogs) {
-//			logs[maxLogs].stop();
-//		} else {
-//			int i = logMessages.size() - 1;
-//			logs[i].schedule(logMessages.get(i));
-//		}
+		// move logs down one
+		for (int j = maxLogs - 1; j > 0; j--) {
+			if (logs[j - 1].timer.isRunning()) {
+				logs[j].set(logs[j - 1]);
+			}
+		}
 
-//		for (int j = 0; j < logMessages.size(); j++) {
-//			logs[maxLogs - j - 1].setText(logMessages.get(j));
-//			logs[maxLogs - j - 1].setToolTipText(logMessages.get(j));
-//		}
+		// insert top log
+		logs[0].start(logMessages.get(logMessages.size() - 1));
 	}
 
 	/**
@@ -230,8 +222,7 @@ public class FeedbackPanel extends Handler implements Runnable {
 	 */
 	@Override
 	public void flush() {
-		for (LogMessage log : logs)
-			log.stop();
+		logMessages.clear();
 	}
 
 	/**
@@ -253,65 +244,86 @@ public class FeedbackPanel extends Handler implements Runnable {
 	/**
 	 * Maximum amount of logged messages displayed.
 	 */
-	private final int maxLogs = 3;
+	private int maxLogs = 3;
 
-	private final Vector<LogMessage> logs = new Vector<LogMessage>(maxLogs);
+	private final LogMessage[] logs = new LogMessage[maxLogs];
+
+	private final Vector<String> logMessages = new Vector<String>();
 
 	@SuppressWarnings("serial")
 	private class LogMessage extends JLabel implements ActionListener {
 
-		private final Timer timer = new Timer(50, null);
+		private final Timer timer = new Timer(150, null);
 
-		private int b;
-		private int i;
-		private int f;
+		private float alpha;
 
-		private LogMessage(String text) {
+		private int b, i, f;
+
+		private LogMessage() {
+			setAlignmentX(JLabel.CENTER_ALIGNMENT);
+			setFont(new Font(null, Font.PLAIN, 11));
 			timer.setRepeats(true);
 			timer.addActionListener(this);
-			start(text);
 		}
 
 		private void start(String text) {
-			System.out.println("start");
 			b = 100;
 			f = 20;
 			i = b;
-			logs.add(this);
-			logPanel.add(this);
-			setAlpha(1f);
 			setText(text);
-			setToolTipText(text);
-			setAlignmentX(JLabel.CENTER_ALIGNMENT);
+			setAlpha(0.99f);
 			timer.start();
 		}
 
 		private void stop() {
-			System.out.println("stop");
+			logMessages.remove(getText());
 			setText(null);
-			setToolTipText(null);
+			setAlpha(0f);
 			timer.stop();
-			logs.remove(this);
-			logPanel.remove(this);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent a) {
 			i--;
 
-			if (i < 0) {
-				stop();
-			}
-
 			if (i < f) {
 				setAlpha(i / (float) f);
 			}
 
+			if (i < 0) {
+				stop();
+			}
 		}
 
-		private void setAlpha(float value) {
-			if (0 <= value && value <= 1)
-				setForeground(new Color(0, 0, 0, (int) (value * 255)));
+		/**
+		 * Change this <code>LogMessage</code> to correspond to the given. Used for
+		 * moving <code>LogMessages</code> down.
+		 * <p>
+		 * Can only be used for active <code>LogMessages</code>.
+		 * 
+		 * @param logMessage
+		 */
+		private void set(LogMessage logMessage) {
+			if (logMessage.timer.isRunning()) {
+				b = logMessage.b;
+				i = logMessage.i;
+				f = logMessage.f;
+				setText(logMessage.getText());
+				setAlpha(logMessage.alpha);
+				timer.start();
+			}
+		}
+
+		private void setAlpha(float alpha) {
+			this.alpha = alpha;
+			if (0 <= alpha && alpha <= 1)
+				setForeground(new Color(0f, 0f, 0f, alpha));
+		}
+
+		@Override
+		public void setText(String text) {
+			super.setText(text);
+			setToolTipText(text);
 		}
 	}
 }

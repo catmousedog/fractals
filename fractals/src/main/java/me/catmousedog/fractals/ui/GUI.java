@@ -304,6 +304,7 @@ public class GUI {
 		logger.log(Level.FINEST, "GUI.cancel");
 
 		if (RENDER.cancel()) {
+			logger.log(Level.FINE, "Cancelled render");
 			if (picture.isGenerating()) {
 				picture.setGenerating(false);
 			} else if (!jpi.undo()) {

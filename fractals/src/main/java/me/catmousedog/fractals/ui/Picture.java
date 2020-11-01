@@ -42,7 +42,7 @@ public class Picture {
 
 	public Picture(@NotNull Canvas canvas, @NotNull JPInterface jpi, @NotNull Settings settings) {
 		logger.log(Level.FINER, "Picture init");
-		
+
 		this.canvas = canvas;
 		this.jpi = jpi;
 		this.settings = settings;
@@ -59,10 +59,12 @@ public class Picture {
 	public synchronized void newPicture(int width, int height, String ext) {
 		if (generating)
 			return;
-		
+
 		generating = true;
 
 		logger.log(Level.FINEST, "Picture.newPicture");
+
+		logger.log(Level.FINE, "creating new picture");
 
 		jpi.preRender();
 

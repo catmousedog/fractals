@@ -32,11 +32,12 @@ import me.catmousedog.fractals.data.LinearTransform;
 import me.catmousedog.fractals.paneloperators.fractals.BurningShip;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal.Location;
-import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
 import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
+import me.catmousedog.fractals.paneloperators.fractals.TestFractal;
+import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.utils.OrderedProperties;
 
 /**
@@ -207,7 +208,7 @@ public class Settings {
 		logger.log(Level.FINER, "Settings.initFractals");
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
-				new InverseMandelbrot() };
+				new InverseMandelbrot(), new TestFractal() };
 
 		// scan and copy resources inside 'conrete_fractals' resource
 
@@ -231,7 +232,7 @@ public class Settings {
 				// path to fractal file
 				String settingsFilePath = "./" + settingsResourcePath;
 
-				// path to location file
+				// path to locatin file
 				String locationsFilePath = "./" + locationsResourcePath;
 
 				// make directory
@@ -561,6 +562,7 @@ public class Settings {
 		try {
 			ImageIO.write(img, ext, imageFile);
 			logger.log(Level.FINER, "Settings created image at " + imageFile.getPath());
+			logger.log(Level.FINE, "picture created in '" + fractal.fileName() + "'");
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "Settings failed to write image at " + imageFile.getPath(), e);
 		}
