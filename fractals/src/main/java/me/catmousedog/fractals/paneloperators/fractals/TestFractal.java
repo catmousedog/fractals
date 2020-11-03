@@ -12,6 +12,7 @@ public class TestFractal extends MouseFractal {
 
 	public TestFractal() {
 		super();
+
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this) };
 		function = functions[0];
@@ -24,11 +25,11 @@ public class TestFractal extends MouseFractal {
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
-		double tx;
 		double t1, t2;
 
+		double C, ln, theta, t;
+
 		for (int i = 0; i < iterations; i++) {
-			tx = x;
 
 			t1 = x * x;
 			t2 = y * y;
@@ -36,11 +37,28 @@ public class TestFractal extends MouseFractal {
 			if (t1 + t2 > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			x = t1 - t2 + x * jx;
-			y = 2 * tx * y + y * jy;
+			ln = Math.log(t1 + t2) / 2;
+
+			theta = angle(x, y);
+
+			C = Math.exp(jx * ln - theta * jy);
+
+			t = jy * ln + theta * jx;
+
+			x = C * Math.cos(t) + cx;
+			y = C * Math.sin(t) + cy;
 
 		}
 		return new FractalValue(0, 0, iterations, iterations);
+	}
+
+	private double angle(double x, double y) {
+		double t = Math.atan(y / x);
+		if (x < 0)
+			return t + Math.PI;
+		else if (y < 0)
+			return t + 2 * Math.PI;
+		return t;
 	}
 
 	@Override
@@ -62,5 +80,4 @@ public class TestFractal extends MouseFractal {
 	public @NotNull Fractal clone() {
 		return new TestFractal(this);
 	}
-
 }

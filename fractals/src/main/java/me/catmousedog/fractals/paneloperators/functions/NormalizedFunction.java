@@ -41,7 +41,7 @@ public class NormalizedFunction extends Function {
 	public void update() {
 		super.update();
 		offsetjtf.setData(offset);
-		offsetjs.setData(offset);
+		offsetjs.setDataSafe(offset);
 	}
 
 	private NormalizedFunction(Function function, double offset) {

@@ -45,7 +45,7 @@ public class TextFieldDouble extends Data<Double> {
 		 * Sets the minimum of the {@link JTextField}, any value entered below this will
 		 * not register. The default is -infinity.
 		 */
-		public Builder setMin(int m) {
+		public Builder setMin(double m) {
 			this.m = m;
 			return this;
 		}
@@ -54,7 +54,7 @@ public class TextFieldDouble extends Data<Double> {
 		 * Sets the maximum of the {@link JTextField}, any value entered above this will
 		 * not register. The default is +infinity.
 		 */
-		public Builder setMax(int M) {
+		public Builder setMax(double M) {
 			this.M = M;
 			return this;
 		}
