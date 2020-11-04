@@ -13,7 +13,8 @@ public class Mandelbrot extends Fractal {
 	public Mandelbrot() {
 		super();
 		items = null;
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
+				new PotentialFunction(this) };
 		function = functions[0];
 		mouse = null;
 	}

@@ -3,6 +3,7 @@ package me.catmousedog.fractals.paneloperators.fractals;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
@@ -14,7 +15,7 @@ public class TestFractal extends MouseFractal {
 		super();
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this) };
+				new PotentialFunction(this), new EscapeAngleFunction(this) };
 		function = functions[0];
 	}
 
@@ -25,19 +26,18 @@ public class TestFractal extends MouseFractal {
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
-		double t1, t2;
+		double s;
 
 		double C, ln, theta, t;
 
 		for (int i = 0; i < iterations; i++) {
 
-			t1 = x * x;
-			t2 = y * y;
+			s = x * x + y * y;
 
-			if (t1 + t2 > bailout)
+			if (s > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			ln = Math.log(t1 + t2) / 2;
+			ln = Math.log(s) / 2;
 
 			theta = angle(x, y);
 
@@ -49,7 +49,7 @@ public class TestFractal extends MouseFractal {
 			y = C * Math.sin(t) + cy;
 
 		}
-		return new FractalValue(0, 0, iterations, iterations);
+		return new FractalValue(x, y, iterations, iterations);
 	}
 
 	private double angle(double x, double y) {
