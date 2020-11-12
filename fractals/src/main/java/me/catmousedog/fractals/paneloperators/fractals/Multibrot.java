@@ -8,29 +8,50 @@ import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
+import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
+import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
-public class TestFractal extends MouseFractal {
+public class Multibrot extends Fractal {
 
-	public TestFractal() {
+	private TextFieldDouble ajtf;
+
+	private SliderDouble ajs;
+
+	private double a;
+
+	private void changeA() {
+		if (render_on_changes)
+			jpi.render();
+	}
+
+	public Multibrot() {
 		super();
+
+		String tipA = "TODO";
+
+		ajtf = new TextFieldDouble.Builder().setLabel("exponent").setDefault(2).setTip(tipA).build();
+
+		ajs = new SliderDouble.Builder().setMin(-5).setMax(5).setChange(c -> changeA()).setTip(tipA).build();
+
+		items = new Item[] { ajtf, ajs };
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this) };
 		function = functions[0];
 	}
 
-	private TestFractal(MouseFractal fractal) {
+	private Multibrot(Fractal fractal, double a) {
 		super(fractal);
+		this.a = a;
 	}
 
-	private double ax = 2, ay = 0;
-	
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
 		double s;
 
-		double C, ln, theta, t;
+		double C, theta, t;
 
 		for (int i = 0; i < iterations; i++) {
 
@@ -39,28 +60,39 @@ public class TestFractal extends MouseFractal {
 			if (s > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			ln = Math.log(s) / 2;
-
 			theta = Math.atan2(y, x);
 
-			C = Math.exp(ax * ln - theta * ay);
+			C = Math.pow(s, a / 2);
 
-			t = ay * ln + theta * ax;
+			t = a * theta;
 
-			x = C * Math.cos(t) + jx;
-			y = C * Math.sin(t) + jy;
+			x = C * Math.cos(t) + cx;
+			y = C * Math.sin(t) + cy;
 		}
 		return new FractalValue(x, y, iterations, iterations);
 	}
 
 	@Override
+	public void save() {
+		a = ajtf.saveAndGet();
+		super.save();
+	}
+
+	@Override
+	public void update() {
+		ajtf.setData(a);
+		ajs.setDataSafe(a);
+		super.update();
+	}
+
+	@Override
 	public @NotNull String informalName() {
-		return "Test Fractal";
+		return "Multibrot";
 	}
 
 	@Override
 	public @NotNull String fileName() {
-		return "TestFractal";
+		return informalName();
 	}
 
 	@Override
@@ -70,6 +102,6 @@ public class TestFractal extends MouseFractal {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new TestFractal(this);
+		return new Multibrot(this, a);
 	}
 }

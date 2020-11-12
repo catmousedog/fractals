@@ -268,15 +268,14 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ## [0.3] - Fractal Function Filter (fractal_functions)
 
 ### Added
-- **Function** class
-- added the concrete fractals
 - **MouseFractal** abstract fractal
 - added **UI** abstract class and made **Fractal**, **Function** and **Filter**
 - **Nameable** interface for common *String* methods
 - **NormalizedFunction** offset to *items*
 - logging
 - keylistener, keybinds.properties and **Settings** keybinds functionality
-- fading logger 
+- fading logger
+- **Multibrot** fractal, **EscapeAngle** function
 
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter

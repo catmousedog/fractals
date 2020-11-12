@@ -36,6 +36,7 @@ import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
 import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
 import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
+import me.catmousedog.fractals.paneloperators.fractals.Multibrot;
 import me.catmousedog.fractals.paneloperators.fractals.TestFractal;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.utils.OrderedProperties;
@@ -128,7 +129,7 @@ public class Settings {
 		// pom.xml
 		Properties project = new Properties();
 		try {
-			project.load(getClass().getClassLoader().getResourceAsStream("project.properties"));
+			project.load(Settings.class.getResourceAsStream("/project.properties"));
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Settings project.properties IOException", e);
 		}
@@ -163,7 +164,7 @@ public class Settings {
 
 		// create file and load defaults
 		File f = new File("./settings.properties");
-		InputStream settingsStream = getClass().getClassLoader().getResourceAsStream("settings.properties");
+		InputStream settingsStream = Settings.class.getResourceAsStream("/settings.properties");
 		if (!f.exists()) {
 			Files.copy(settingsStream, Paths.get("./settings.properties"), StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -208,7 +209,7 @@ public class Settings {
 		logger.log(Level.FINER, "Settings.initFractals");
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
-				new InverseMandelbrot(), new TestFractal() };
+				new InverseMandelbrot(), new Multibrot(), new TestFractal() };
 
 		// scan and copy resources inside 'conrete_fractals' resource
 
@@ -221,7 +222,7 @@ public class Settings {
 
 			if (enabled.equalsIgnoreCase("true")) {
 				// the path to the fractal folder in the resources
-				String resource = "fractals/" + fileName;
+				String resource = "/fractals/" + fileName;
 
 				// path to fractal resource
 				String settingsResourcePath = resource + "/settings.properties";
@@ -230,26 +231,26 @@ public class Settings {
 				String locationsResourcePath = resource + "/locations.properties";
 
 				// path to fractal file
-				String settingsFilePath = "./" + settingsResourcePath;
+				String settingsFilePath = "." + settingsResourcePath;
 
 				// path to locatin file
-				String locationsFilePath = "./" + locationsResourcePath;
+				String locationsFilePath = "." + locationsResourcePath;
 
 				// make directory
-				File fractalDirectory = new File("./" + resource);
+				File fractalDirectory = new File("." + resource);
 				if (!fractalDirectory.exists()) {
 					fractalDirectory.mkdirs();
 					logger.log(Level.FINER, "Settings.initFractals created dir " + resource);
 				}
 
 				// settings.properties resource for this fractal
-				InputStream settingsStream = getClass().getClassLoader().getResourceAsStream(settingsResourcePath);
+				InputStream settingsStream = Settings.class.getResourceAsStream(settingsResourcePath);
 				// settings.properties file for this fractal
 				File settingsFile = new File(settingsFilePath);
 				// if 'properties' resource exists and file doesn't copy over
 				if (settingsStream == null) {
-					throw new MissingResourceException("missing settings resource for " + fileName,
-							"settings.properties", fileName);
+					throw new MissingResourceException("missing settings resource for " + settingsResourcePath,
+							"settings.properties", settingsResourcePath);
 				} else if (!settingsFile.exists()) {
 					Files.copy(settingsStream, Paths.get(settingsFilePath), StandardCopyOption.REPLACE_EXISTING);
 				}
@@ -263,7 +264,7 @@ public class Settings {
 				}
 
 				// locations.properties resource for this fractal
-				InputStream locationsStream = getClass().getClassLoader().getResourceAsStream(locationsResourcePath);
+				InputStream locationsStream = Settings.class.getResourceAsStream(locationsResourcePath);
 				// locations.properties file for this fractal
 				File locationsFile = new File(locationsFilePath);
 				// if 'location' resource exists and file doesn't copy over
@@ -397,7 +398,7 @@ public class Settings {
 
 		// create file and load defaults
 		File f = new File("./keybinds.properties");
-		InputStream keybindsStream = getClass().getClassLoader().getResourceAsStream("keybinds.properties");
+		InputStream keybindsStream = Settings.class.getResourceAsStream("/keybinds.properties");
 		if (!f.exists()) {
 			Files.copy(keybindsStream, Paths.get("./keybinds.properties"), StandardCopyOption.REPLACE_EXISTING);
 		}
