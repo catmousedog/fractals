@@ -20,6 +20,7 @@ import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Mouse;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 
 public abstract class Fractal extends PanelOperator {
@@ -121,7 +122,9 @@ public abstract class Fractal extends PanelOperator {
 						+ "<br>Usually a higher iteration count means better quality but longer generating time.</html>")
 				.setMin(0).build();
 
-		commonItems = new Item[] { iterjtf };
+		bailoutjtf = new TextFieldDouble.Builder().setLabel("bailout").setTip("TODO").setMin(0).build();
+
+		commonItems = new Item[] { iterjtf, bailoutjtf };
 	}
 
 	/**
@@ -136,6 +139,8 @@ public abstract class Fractal extends PanelOperator {
 	private final Item[] commonItems;
 
 	private TextFieldInteger iterjtf;
+
+	private TextFieldDouble bailoutjtf;
 
 	/**
 	 * Constructor used to create a clone.<br>
@@ -182,6 +187,7 @@ public abstract class Fractal extends PanelOperator {
 		function.save();
 
 		iterations = iterjtf.saveAndGet();
+		bailout = bailoutjtf.saveAndGet();
 	}
 
 	/**
@@ -197,6 +203,7 @@ public abstract class Fractal extends PanelOperator {
 		function.update();
 
 		iterjtf.setData(iterations);
+		bailoutjtf.setData(bailout);
 	}
 
 	/**

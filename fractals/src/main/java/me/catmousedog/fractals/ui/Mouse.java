@@ -44,6 +44,13 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseReleased(MouseEvent me) {
+
+		// mmb (info)
+		if (SwingUtilities.isMiddleMouseButton(me)) {
+			middleMouse = false;
+			tip.hide();
+		}
+
 		if (canvas.getFractal().isMouseEnabled() && !isStationary)
 			return;
 
@@ -53,7 +60,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		// MouseEvent here which isn't effectively final
 
 		// lmb (zoom in)
-		if (me.getButton() == MouseEvent.BUTTON1 && renderer.isGeneratorReady()) {
+		if (SwingUtilities.isLeftMouseButton(me) && renderer.isGeneratorReady()) {
 			logger.log(Level.FINEST, "Mouse.mouseReleased lmb");
 			jpi.savePrevConfig();
 			jpi.save();
@@ -67,7 +74,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		}
 
 		// rmb (zoom out)
-		if (me.getButton() == MouseEvent.BUTTON3 && renderer.isGeneratorReady()) {
+		if (SwingUtilities.isRightMouseButton(me) && renderer.isGeneratorReady()) {
 			logger.log(Level.FINEST, "Mouse.mouseReleased rmb");
 			jpi.savePrevConfig();
 			jpi.save();
@@ -79,13 +86,6 @@ public class Mouse implements MouseListener, MouseMotionListener {
 			jpi.update();
 			jpi.renderNow();
 		}
-
-		// mmb (info)
-		if (me.getButton() == MouseEvent.BUTTON2) {
-			middleMouse = false;
-			tip.hide();
-		}
-
 	}
 
 	@Override
@@ -107,7 +107,6 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 		if (middleMouse) {
 			me = SwingUtilities.convertMouseEvent(me.getComponent(), me, canvas);
-
 			displayTip(me.getX(), me.getY());
 		}
 	}

@@ -11,6 +11,9 @@ import me.catmousedog.fractals.paneloperators.PanelOperator;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
+/**
+ * An operator applied after the {@link Fractal#get(double, double)}.
+ */
 public abstract class Function extends PanelOperator {
 
 	/**

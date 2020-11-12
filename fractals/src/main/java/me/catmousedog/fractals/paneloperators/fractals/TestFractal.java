@@ -24,7 +24,7 @@ public class TestFractal extends MouseFractal {
 	}
 
 	private double ax = 2, ay = 0;
-	
+
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
@@ -50,7 +50,7 @@ public class TestFractal extends MouseFractal {
 			x = C * Math.cos(t) + jx;
 			y = C * Math.sin(t) + jy;
 		}
-		return new FractalValue(x, y, iterations, iterations);
+		return new FractalValue(0, 0, iterations, iterations);
 	}
 
 	@Override

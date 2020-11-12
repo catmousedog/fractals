@@ -21,8 +21,8 @@ public class Multibrot extends Fractal {
 	private double a;
 
 	private void changeA() {
-		if (render_on_changes)
-			jpi.render();
+		ajtf.setData(ajs.saveAndGet());
+		saveAndRender();
 	}
 
 	public Multibrot() {
@@ -30,7 +30,7 @@ public class Multibrot extends Fractal {
 
 		String tipA = "TODO";
 
-		ajtf = new TextFieldDouble.Builder().setLabel("exponent").setDefault(2).setTip(tipA).build();
+		ajtf = new TextFieldDouble.Builder().setLabel("exponent").setTip(tipA).build();
 
 		ajs = new SliderDouble.Builder().setMin(-5).setMax(5).setChange(c -> changeA()).setTip(tipA).build();
 
@@ -39,6 +39,8 @@ public class Multibrot extends Fractal {
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this) };
 		function = functions[0];
+
+		a = 2;
 	}
 
 	private Multibrot(Fractal fractal, double a) {
@@ -51,7 +53,7 @@ public class Multibrot extends Fractal {
 		double x = cx, y = cy;
 		double s;
 
-		double C, theta, t;
+		double C, t;
 
 		for (int i = 0; i < iterations; i++) {
 
@@ -60,16 +62,14 @@ public class Multibrot extends Fractal {
 			if (s > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			theta = Math.atan2(y, x);
+			t = a * Math.atan2(y, x);
 
 			C = Math.pow(s, a / 2);
-
-			t = a * theta;
 
 			x = C * Math.cos(t) + cx;
 			y = C * Math.sin(t) + cy;
 		}
-		return new FractalValue(x, y, iterations, iterations);
+		return new FractalValue(0, 0, iterations, iterations);
 	}
 
 	@Override

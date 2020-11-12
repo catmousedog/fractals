@@ -20,6 +20,8 @@ public class PotentialFunction extends Function {
 
 	@Override
 	public Double apply(FractalValue v) {
+		if (v.x == 0 && v.y == 0)
+			return 0d;
 		return Math.log(v.x * v.x + v.y * v.y) / Math.pow(2, v.i);
 	}
 

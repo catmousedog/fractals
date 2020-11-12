@@ -21,7 +21,7 @@
 - [x] update Settings to new hierarchy
 - [x] keylistener
 - [x] fix undo button and action
-- [ ] fix getResourceAsStream
+- [x] fix getResourceAsStream
 - [ ] add bailout
 - [ ] sort JPI savable methods to new GUI
 - [ ] tips

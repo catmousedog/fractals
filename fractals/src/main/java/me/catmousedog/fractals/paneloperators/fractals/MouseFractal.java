@@ -3,6 +3,8 @@ package me.catmousedog.fractals.paneloperators.fractals;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.SwingUtilities;
+
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.CheckBox;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
@@ -34,13 +36,13 @@ public abstract class MouseFractal extends Fractal {
 
 		mouse = new MouseMotionListener() {
 			@Override
-			public void mouseMoved(MouseEvent e) {
+			public void mouseMoved(MouseEvent me) {
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				if (mousejcx.saveAndGet()) {
-					double[] t = transform.apply(e.getX(), e.getY());
+			public void mouseDragged(MouseEvent me) {
+				if (SwingUtilities.isLeftMouseButton(me) && mousejcx.saveAndGet()) {
+					double[] t = transform.apply(me.getX(), me.getY());
 					jpi.renderWithout(render_on_changes, () -> {
 						jx = t[0];
 						jy = t[1];
