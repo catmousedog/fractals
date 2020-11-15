@@ -217,43 +217,49 @@ public class Canvas extends JPanel {
 	public void undo() {
 		logger.log(Level.FINEST, "canvas.undo");
 
-		// set fractal
-		pickFractal(prevConfig.fractal.getClass());
-		fractal.getTransform().set(prevConfig.fractal.getTransform());
-		fractal.setIterations(prevConfig.fractal.getIterations());
-		fractal.getTransform().setOrigin(getWidth() / 2, getHeight() / 2);
-		// set function
-		fractal.pickFunction(prevConfig.fractal.getFunction().getClass());
-		// set filter
-		fractal.getFunction().pickFilter(prevConfig.fractal.getFunction().getFilter().getClass());
+		// get original reference
+		Fractal f = pickFractal(prevConfig.fractal.getClass());
+		if (f != null) {
+			f.getTransform().set(prevConfig.fractal.getTransform());
+			f.setIterations(prevConfig.fractal.getIterations());
+			// set function
+			f.pickFunction(prevConfig.fractal.getFunction().getClass());
+			// set filter
+			f.getFunction().pickFilter(prevConfig.fractal.getFunction().getFilter().getClass());
 
-		zoomFactor = prevConfig.zoomFactor;
+			zoomFactor = prevConfig.zoomFactor;
 
-		jpi.updateFractal();
+			setFractal(f);
+		} else {
+			logger.log(Level.WARNING, "canvas.undo no original fractal found of " + prevConfig.fractal.fileName());
+		}
 	}
 
 	/**
-	 * Sets the {@link Canvas#fractal} to the <code>Fractal</code> whose class
+	 * Returns the {@link Canvas#fractal} to the <code>Fractal</code> whose class
 	 * equals the given <code>clazz</code>.
 	 * <p>
 	 * This does not call the {@link Canvas#setFractal(Fractal)}.
 	 * 
 	 * @param clazz the <code>Class</code> of the <code>Fractal</code>.
+	 * 
+	 * @return the original reference to the fractal with the same class as
+	 *         <code>clazz</code>. <br>
+	 *         Null if not found.
 	 */
-	public void pickFractal(Class<? extends Fractal> clazz) {
+	public Fractal pickFractal(Class<? extends Fractal> clazz) {
 		logger.log(Level.FINEST, "Canvas.pickFractal " + clazz.getSimpleName());
 		for (Fractal f : settings.getFractals()) {
-			if (f.getClass().equals(clazz)) {
-				fractal = f;
-				return;
-			}
+			if (f.getClass().equals(clazz))
+				return f;
 		}
+		return null;
 	}
 
 	/**
 	 * Sets the current {@link Canvas#fractal}.<br>
-	 * Keep in mind this method must take the actual original <code>Fractal</code>
-	 * as parameter, not a clone of it.
+	 * Keep in mind this method must take the original reference to the
+	 * <code>Fractal</code> as parameter, not a clone of it.
 	 * 
 	 * @param fractal the reference to the original <code>Fractal</code>.
 	 */

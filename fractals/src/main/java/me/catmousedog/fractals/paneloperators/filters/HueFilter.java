@@ -67,7 +67,8 @@ public class HueFilter extends Filter {
 
 	@Override
 	public int apply(Number V) {
-		return Color.HSBtoRGB(V.floatValue(), 1f, 1f);
+		float v = (float) ((V.doubleValue() + Math.PI) / (2 * Math.PI));
+		return Color.HSBtoRGB(v, 1f, 1f);
 	}
 
 	@Override

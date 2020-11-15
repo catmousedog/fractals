@@ -51,7 +51,7 @@ public class NormalizedFunction extends Function {
 
 	@Override
 	public Double apply(FractalValue v) {
-		if (v.x == 0 && v.y == 0)
+		if (v.isConvergent())
 			return 0d;
 		return v.i + offset - Math.log(Math.log(v.x * v.x + v.y * v.y) / 2) / Math.log(2);
 	}

@@ -23,34 +23,29 @@ public class TestFractal extends MouseFractal {
 		super(fractal);
 	}
 
-	private double ax = 2, ay = 0;
-
 	@Override
 	public FractalValue get(double cx, double cy) {
-		double x = cx, y = cy;
-		double s;
+		double kx = cx / (cx * cx + cy * cy);
+		double ky = -cy / (cx * cx + cy * cy);
 
-		double C, ln, theta, t;
+		double x = kx, y = ky;
+		double tx;
+		double t1, t2;
 
 		for (int i = 0; i < iterations; i++) {
+			tx = x;
 
-			s = x * x + y * y;
+			t1 = x * x;
+			t2 = y * y;
 
-			if (s > bailout)
+			if (t1 + t2 > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			ln = Math.log(s) / 2;
+			x = t1 - t2 + jx;
+			y = 2 * tx * y + jy;
 
-			theta = Math.atan2(y, x);
-
-			C = Math.exp(ax * ln - theta * ay);
-
-			t = ay * ln + theta * ax;
-
-			x = C * Math.cos(t) + jx;
-			y = C * Math.sin(t) + jy;
 		}
-		return new FractalValue(0, 0, iterations, iterations);
+		return new FractalValue(x, y, iterations, iterations);
 	}
 
 	@Override

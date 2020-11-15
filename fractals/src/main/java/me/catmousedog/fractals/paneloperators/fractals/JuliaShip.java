@@ -39,7 +39,7 @@ public class JuliaShip extends MouseFractal {
 			y = Math.abs(2 * tx * y) + jy;
 
 		}
-		return new FractalValue(0, 0, iterations, iterations);
+		return new FractalValue(x, y, iterations, iterations);
 	}
 
 	@Override

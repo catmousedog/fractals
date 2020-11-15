@@ -44,7 +44,7 @@ public class InverseMandelbrot extends Fractal {
 			y = 2 * tx * y + ky;
 
 		}
-		return new FractalValue(0, 0, iterations, iterations);
+		return new FractalValue(x, y, iterations, iterations);
 	}
 
 	@Override

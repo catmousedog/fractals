@@ -6,9 +6,6 @@ import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.filters.HueFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
-import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
-import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 public class EscapeAngleFunction extends Function {
 
@@ -25,7 +22,7 @@ public class EscapeAngleFunction extends Function {
 
 	@Override
 	public @NotNull Double apply(FractalValue v) {
-		return (Math.atan2(v.y, v.x) + Math.PI) / (2 * Math.PI);
+		return Math.atan2(v.y, v.x);
 	}
 
 //	if (v.x == 0 && v.y == 0)

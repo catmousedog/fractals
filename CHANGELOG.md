@@ -276,6 +276,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - keylistener, keybinds.properties and **Settings** keybinds functionality
 - fading logger
 - **Multibrot** fractal, **EscapeAngle** function
+- **HueFilter** for **EscapeAngle** function
 
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
@@ -288,6 +289,8 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - renewed **Canvas.Configuration** to hold a single clone of the **Fractal**
 - Moved *Canvas.savePrevConfig* to *JPI.savePrevConfig* and updated *JPI.allowUndo*
 - packaging (moved canvas to ui)
+- fixed tooltip getting stuck bug
+- convergent point Fractal Value to (x, y, I, I)
 
 ### Removed
 - *Filter.setFilter(Filter)* as this is done is the cloning constructor.
