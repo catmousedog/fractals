@@ -29,14 +29,15 @@ import javax.imageio.ImageIO;
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.LinearTransform;
-import me.catmousedog.fractals.paneloperators.fractals.BurningShip;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal.Location;
-import me.catmousedog.fractals.paneloperators.fractals.InverseMandelbrot;
-import me.catmousedog.fractals.paneloperators.fractals.JuliaSet;
-import me.catmousedog.fractals.paneloperators.fractals.JuliaShip;
-import me.catmousedog.fractals.paneloperators.fractals.Mandelbrot;
-import me.catmousedog.fractals.paneloperators.fractals.Multibrot;
+import me.catmousedog.fractals.paneloperators.fractals.bruningship.BurningShip;
+import me.catmousedog.fractals.paneloperators.fractals.bruningship.JuliaShip;
+import me.catmousedog.fractals.paneloperators.fractals.inversemandelbrot.InverseJulia;
+import me.catmousedog.fractals.paneloperators.fractals.inversemandelbrot.InverseMandelbrot;
+import me.catmousedog.fractals.paneloperators.fractals.mandelbrot.JuliaSet;
+import me.catmousedog.fractals.paneloperators.fractals.mandelbrot.Mandelbrot;
+import me.catmousedog.fractals.paneloperators.fractals.mandelbrot.Multibrot;
 import me.catmousedog.fractals.paneloperators.fractals.TestFractal;
 import me.catmousedog.fractals.ui.GUI;
 import me.catmousedog.fractals.utils.OrderedProperties;
@@ -209,7 +210,7 @@ public class Settings {
 		logger.log(Level.FINER, "Settings.initFractals");
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
-				new InverseMandelbrot(), new Multibrot(), new TestFractal() };
+				new InverseMandelbrot(), new InverseJulia(), new Multibrot(), new TestFractal() };
 
 		// scan and copy resources inside 'conrete_fractals' resource
 

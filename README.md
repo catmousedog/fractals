@@ -6,6 +6,7 @@ A user-friendly application for viewing and generating different fractals for ar
 - Description of all concrete fractals
 - it is interesting to go to interesting location for the mandelbrot to the julia set and move the mouse around close to the location.
 - Mandelbrot >> Multibrot speed
+- Potential Function is not adjusted for the multibrot but only for the second order mandelbrot
 
 ### Controls
 - middle mouse button to view *pixel* information

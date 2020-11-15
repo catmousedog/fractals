@@ -290,6 +290,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - Moved *Canvas.savePrevConfig* to *JPI.savePrevConfig* and updated *JPI.allowUndo*
 - packaging (moved canvas to ui)
 - fixed tooltip getting stuck bug
+- fixed Canvas.undo changing mouselistener
 - convergent point Fractal Value to (x, y, I, I)
 
 ### Removed

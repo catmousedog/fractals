@@ -1,22 +1,24 @@
-package me.catmousedog.fractals.paneloperators.fractals;
+package me.catmousedog.fractals.paneloperators.fractals.bruningship;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.fractals.MouseFractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
-public class JuliaSet extends MouseFractal {
+public class JuliaShip extends MouseFractal {
 
-	public JuliaSet() {
+	public JuliaShip() {
 		super();
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
 		function = functions[0];
 	}
 	
-	private JuliaSet(MouseFractal fractal) {
+	private JuliaShip(MouseFractal fractal) {
 		super(fractal);
 	}
 	
@@ -36,7 +38,7 @@ public class JuliaSet extends MouseFractal {
 				return new FractalValue(x, y, i, iterations);
 
 			x = t1 - t2 + jx;
-			y = 2 * tx * y + jy;
+			y = Math.abs(2 * tx * y) + jy;
 
 		}
 		return new FractalValue(x, y, iterations, iterations);
@@ -44,12 +46,12 @@ public class JuliaSet extends MouseFractal {
 
 	@Override
 	public @NotNull String informalName() {
-		return "Julia Set";
+		return "Julia Ship";
 	}
 
 	@Override
 	public @NotNull String fileName() {
-		return "JuliaSet";
+		return "JuliaShip";
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public class JuliaSet extends MouseFractal {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new JuliaSet(this);
+		return new JuliaShip(this);
 	}
 
 }

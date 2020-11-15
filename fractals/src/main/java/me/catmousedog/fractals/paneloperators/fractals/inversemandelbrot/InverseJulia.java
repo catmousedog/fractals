@@ -1,28 +1,36 @@
-package me.catmousedog.fractals.paneloperators.fractals;
+package me.catmousedog.fractals.paneloperators.fractals.inversemandelbrot;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.fractals.MouseFractal;
+import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
-public class JuliaShip extends MouseFractal {
+public class InverseJulia extends MouseFractal {
 
-	public JuliaShip() {
+	public InverseJulia() {
 		super();
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
+
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
+				new PotentialFunction(this), new EscapeAngleFunction(this) };
 		function = functions[0];
 	}
-	
-	private JuliaShip(MouseFractal fractal) {
+
+	private InverseJulia(MouseFractal fractal) {
 		super(fractal);
 	}
-	
+
 	@Override
 	public FractalValue get(double cx, double cy) {
-		double x = cx, y = cy;
+		double kx = cx / (cx * cx + cy * cy);
+		double ky = -cy / (cx * cx + cy * cy);
+
+		double x = kx, y = ky;
 		double tx;
 		double t1, t2;
 
@@ -36,7 +44,7 @@ public class JuliaShip extends MouseFractal {
 				return new FractalValue(x, y, i, iterations);
 
 			x = t1 - t2 + jx;
-			y = Math.abs(2 * tx * y) + jy;
+			y = 2 * tx * y + jy;
 
 		}
 		return new FractalValue(x, y, iterations, iterations);
@@ -44,12 +52,12 @@ public class JuliaShip extends MouseFractal {
 
 	@Override
 	public @NotNull String informalName() {
-		return "Julia Ship";
+		return "Inverse Julia Set";
 	}
 
 	@Override
 	public @NotNull String fileName() {
-		return "JuliaShip";
+		return "InverseJuliaSet";
 	}
 
 	@Override
@@ -59,7 +67,6 @@ public class JuliaShip extends MouseFractal {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new JuliaShip(this);
+		return new InverseJulia(this);
 	}
-
 }

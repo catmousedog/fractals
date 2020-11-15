@@ -1,8 +1,9 @@
-package me.catmousedog.fractals.paneloperators.fractals;
+package me.catmousedog.fractals.paneloperators.fractals.bruningship;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;

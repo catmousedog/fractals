@@ -22,7 +22,7 @@
 - [x] keylistener
 - [x] fix undo button and action
 - [x] fix getResourceAsStream
-- [ ] add bailout
+- [x] add bailout
 - [ ] sort JPI savable methods to new GUI
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)

@@ -270,6 +270,8 @@ public class GUI {
 		if (jpi.undo()) {
 			jpi.update();
 			jpi.renderNow();
+		} else {
+			logger.log(Level.FINE, "cannot undo");
 		}
 	}
 

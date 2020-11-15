@@ -1,33 +1,32 @@
-package me.catmousedog.fractals.paneloperators.fractals;
+package me.catmousedog.fractals.paneloperators.fractals.mandelbrot;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
-public class InverseMandelbrot extends Fractal {
+public class Mandelbrot extends Fractal {
 
-	public InverseMandelbrot() {
+	public Mandelbrot() {
 		super();
 		items = null;
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
+				new PotentialFunction(this), new EscapeAngleFunction(this) };
 		function = functions[0];
 		mouse = null;
 	}
 
-	private InverseMandelbrot(Fractal fractal) {
+	private Mandelbrot(Fractal fractal) {
 		super(fractal);
 	}
-	
-	@Override
-	public FractalValue get(double cx, double cy) {
-		double kx = cx / (cx * cx + cy * cy);
-		double ky = -cy / (cx * cx + cy * cy);
 
-		double x = kx, y = ky;
+	public FractalValue get(double cx, double cy) {
+		double x = cx, y = cy;
 		double tx;
 		double t1, t2;
 
@@ -40,31 +39,27 @@ public class InverseMandelbrot extends Fractal {
 			if (t1 + t2 > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			x = t1 - t2 + kx;
-			y = 2 * tx * y + ky;
+			x = t1 - t2 + cx;
+			y = 2 * tx * y + cy;
 
 		}
 		return new FractalValue(x, y, iterations, iterations);
 	}
 
-	@Override
 	public @NotNull String informalName() {
-		return "Inverse Mandelbrot";
+		return "Mandelbrot";
 	}
 
-	@Override
 	public @NotNull String fileName() {
-		return "InverseMandelbrot";
+		return informalName();
 	}
 
-	@Override
 	public @NotNull String getTip() {
-		return "TODO";
+		return "<html>TODO</html>";
 	}
 
-	@Override
 	public @NotNull Fractal clone() {
-		return new InverseMandelbrot(this);
+		return new Mandelbrot(this);
 	}
 
 }

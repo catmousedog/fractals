@@ -1,29 +1,28 @@
-package me.catmousedog.fractals.paneloperators.fractals;
+package me.catmousedog.fractals.paneloperators.fractals.mandelbrot;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
-import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
+import me.catmousedog.fractals.paneloperators.fractals.MouseFractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
-public class Mandelbrot extends Fractal {
+public class JuliaSet extends MouseFractal {
 
-	public Mandelbrot() {
+	public JuliaSet() {
 		super();
-		items = null;
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this), new EscapeAngleFunction(this) };
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
 		function = functions[0];
-		mouse = null;
 	}
-
-	private Mandelbrot(Fractal fractal) {
+	
+	private JuliaSet(MouseFractal fractal) {
 		super(fractal);
 	}
-
+	
+	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
 		double tx;
@@ -38,27 +37,31 @@ public class Mandelbrot extends Fractal {
 			if (t1 + t2 > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			x = t1 - t2 + cx;
-			y = 2 * tx * y + cy;
+			x = t1 - t2 + jx;
+			y = 2 * tx * y + jy;
 
 		}
 		return new FractalValue(x, y, iterations, iterations);
 	}
 
+	@Override
 	public @NotNull String informalName() {
-		return "Mandelbrot";
+		return "Julia Set";
 	}
 
+	@Override
 	public @NotNull String fileName() {
-		return informalName();
+		return "JuliaSet";
 	}
 
+	@Override
 	public @NotNull String getTip() {
-		return "<html>TODO</html>";
+		return "TODO";
 	}
 
+	@Override
 	public @NotNull Fractal clone() {
-		return new Mandelbrot(this);
+		return new JuliaSet(this);
 	}
 
 }

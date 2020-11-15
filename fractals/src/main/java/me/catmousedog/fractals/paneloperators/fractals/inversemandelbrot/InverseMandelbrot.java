@@ -1,37 +1,37 @@
-package me.catmousedog.fractals.paneloperators.fractals;
+package me.catmousedog.fractals.paneloperators.fractals.inversemandelbrot;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.catmousedog.fractals.data.FractalValue;
-import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
+import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
-public class TestFractal extends MouseFractal {
+public class InverseMandelbrot extends Fractal {
 
-	public TestFractal() {
+	public InverseMandelbrot() {
 		super();
-
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this), new EscapeAngleFunction(this) };
+		items = null;
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
 		function = functions[0];
+		mouse = null;
 	}
 
-	private TestFractal(MouseFractal fractal) {
+	private InverseMandelbrot(Fractal fractal) {
 		super(fractal);
 	}
-
+	
 	@Override
 	public FractalValue get(double cx, double cy) {
-		double kx = cx;
-		double ky = cy;
+		double kx = cx / (cx * cx + cy * cy);
+		double ky = -cy / (cx * cx + cy * cy);
 
 		double x = kx, y = ky;
 		double tx;
-		double t1, t2, d, dx, dy;
-		
+		double t1, t2;
+
 		for (int i = 0; i < iterations; i++) {
 			tx = x;
 
@@ -41,22 +41,21 @@ public class TestFractal extends MouseFractal {
 			if (t1 + t2 > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			x = t1 - t2 + cx;
-			y = 2 * tx * y + cy;
+			x = t1 - t2 + kx;
+			y = 2 * tx * y + ky;
 
-//			d = (t1+t2)*Math.log(t1+t2)/
 		}
 		return new FractalValue(x, y, iterations, iterations);
 	}
 
 	@Override
 	public @NotNull String informalName() {
-		return "Test Fractal";
+		return "Inverse Mandelbrot";
 	}
 
 	@Override
 	public @NotNull String fileName() {
-		return "TestFractal";
+		return "InverseMandelbrot";
 	}
 
 	@Override
@@ -66,6 +65,7 @@ public class TestFractal extends MouseFractal {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new TestFractal(this);
+		return new InverseMandelbrot(this);
 	}
+
 }
