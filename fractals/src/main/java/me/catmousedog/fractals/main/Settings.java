@@ -550,7 +550,7 @@ public class Settings {
 		String dirPath = "./images/" + fractal.fileName();
 		File dir = new File(dirPath);
 		if (!dir.exists())
-			dir.mkdir();
+			dir.mkdirs();
 
 		String imageName = fractal.getFunction().fileName() + "_" + fractal.getTransform().toString();
 		File imageFile; // actual imageFile with edited path

@@ -3,6 +3,7 @@ package me.catmousedog.fractals.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.logging.FileHandler;
@@ -36,6 +37,9 @@ public class Main implements Runnable, UncaughtExceptionHandler {
 		logger.setLevel(Level.ALL);
 
 		try {
+			File logs = new File("./logs");
+			if (!logs.exists())
+				logs.mkdirs();
 			FileHandler fileHandler = new FileHandler("logs/fractals.log", 1024 * 1024, 2, false);
 			fileHandler.setLevel(Level.ALL);
 			fileHandler.setFormatter(new FileFormatter());

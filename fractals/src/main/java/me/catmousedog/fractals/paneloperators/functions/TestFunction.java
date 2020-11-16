@@ -23,7 +23,7 @@ public class TestFunction extends Function {
 
 	@Override
 	public Double apply(FractalValue v) {
-		return v.x;
+		return v.y;
 	}
 
 	@Override
