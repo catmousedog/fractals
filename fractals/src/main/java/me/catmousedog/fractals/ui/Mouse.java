@@ -143,7 +143,6 @@ public class Mouse implements MouseListener, MouseMotionListener {
 					screenLocation.y + y - 20);
 			tip.show();
 		}
-
 	}
 
 	public void setJPI(JPInterface jpi) {

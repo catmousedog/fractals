@@ -14,14 +14,15 @@ public class JuliaSet extends MouseFractal {
 
 	public JuliaSet() {
 		super();
-		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this), new PotentialFunction(this) };
+		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
+				new PotentialFunction(this) };
 		function = functions[0];
 	}
-	
+
 	private JuliaSet(MouseFractal fractal) {
 		super(fractal);
 	}
-	
+
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
