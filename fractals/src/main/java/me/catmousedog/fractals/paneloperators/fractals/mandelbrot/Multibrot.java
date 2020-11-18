@@ -8,6 +8,7 @@ import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
+import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 import me.catmousedog.fractals.ui.components.Item;
@@ -39,7 +40,8 @@ public class Multibrot extends Fractal {
 		items = new Item[] { ajtf, ajs };
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this) };
+				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
+				new LambertFunction(this) };
 		function = functions[0];
 
 		a = 2;
@@ -53,25 +55,34 @@ public class Multibrot extends Fractal {
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
+		double dx = 1, dy = 0;
+		double tx, tdx;
 		double s;
 
-		double C, t;
-
 		for (int i = 0; i < iterations; i++) {
+			tx = x;
+			tdx = dx;
 
 			s = x * x + y * y;
 
 			if (s > bailout)
-				return new FractalValue(x, y, i, iterations);
+				return new FractalValue(x, y, dx, dy, i, iterations);
 
-			t = a * Math.atan2(y, x);
+			if (usingDerivative) {
+				double D = a * Math.exp((a - 1) * Math.log(s) / 2);
+				double d = (a - 1) * Math.atan2(y, tx);
 
-			C = Math.pow(s, a / 2);
+				dx = D * (tdx * Math.cos(d) - dy * Math.sin(d));
+				dy = D * (dy * Math.cos(d) + tdx * Math.sin(d));
+			}
 
-			x = C * Math.cos(t) + cx;
-			y = C * Math.sin(t) + cy;
+			double K = Math.pow(s, a / 2);
+			double k = a * Math.atan2(y, x);
+
+			x = K * Math.cos(k) + cx;
+			y = K * Math.sin(k) + cy;
 		}
-		return new FractalValue(x, y, iterations, iterations);
+		return new FractalValue(x, y, dx, dy, iterations, iterations);
 	}
 
 	@Override

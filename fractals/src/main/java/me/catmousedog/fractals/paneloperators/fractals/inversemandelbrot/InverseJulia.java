@@ -9,6 +9,7 @@ import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
+import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
@@ -18,7 +19,8 @@ public class InverseJulia extends MouseFractal {
 		super();
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this) };
+				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
+				new LambertFunction(this) };
 		function = functions[0];
 	}
 
@@ -32,23 +34,30 @@ public class InverseJulia extends MouseFractal {
 		double ky = -cy / (cx * cx + cy * cy);
 
 		double x = kx, y = ky;
-		double tx;
-		double t1, t2;
+		double dx = 1, dy = 0;
+		double tx, tdx;
+		double s1, s2;
 
 		for (int i = 0; i < iterations; i++) {
 			tx = x;
+			tdx = dx;
 
-			t1 = x * x;
-			t2 = y * y;
+			s1 = x * x;
+			s2 = y * y;
 
-			if (t1 + t2 > bailout)
-				return new FractalValue(x, y, i, iterations);
+			if (s1 + s2 > bailout)
+				return new FractalValue(x, y, dx, dy, i, iterations);
 
-			x = t1 - t2 + jx;
+			if (usingDerivative) {
+				dx = 2 * (tx * tdx - y * dy);
+				dy = 2 * (y * tdx + tx * dy);
+			}
+
+			x = s1 - s2 + jx;
 			y = 2 * tx * y + jy;
 
 		}
-		return new FractalValue(x, y, iterations, iterations);
+		return new FractalValue(x, y, dx, dy, iterations, iterations);
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class JuliaSet extends MouseFractal {
 				return new FractalValue(x, y, dx, dy, i, iterations);
 
 			if (usingDerivative) {
-				dx = 2 * (tx * tdx - y * dy) + 1;
+				dx = 2 * (tx * tdx - y * dy);
 				dy = 2 * (y * tdx + tx * dy);
 			}
 

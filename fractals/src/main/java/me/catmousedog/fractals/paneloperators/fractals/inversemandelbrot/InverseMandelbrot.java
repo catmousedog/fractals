@@ -8,6 +8,7 @@ import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
+import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
@@ -17,7 +18,8 @@ public class InverseMandelbrot extends Fractal {
 		super();
 		items = null;
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this) };
+				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
+				new LambertFunction(this) };
 		function = functions[0];
 		mouse = null;
 	}
