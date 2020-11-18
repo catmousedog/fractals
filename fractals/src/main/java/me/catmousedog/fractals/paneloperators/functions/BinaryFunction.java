@@ -30,12 +30,12 @@ public class BinaryFunction extends Function {
 
 	@Override
 	public String informalName() {
-		return "Binary Function";
+		return "Binary";
 	}
 
 	@Override
 	public String fileName() {
-		return "BinaryFunction";
+		return informalName();
 	}
 
 	@Override

@@ -28,58 +28,30 @@ public class TestFractal extends MouseFractal {
 
 	@Override
 	public FractalValue get(double cx, double cy) {
-		double kx = cx;
-		double ky = cy;
-
-		double x = kx, y = ky;
-		double tx;
-		double t1 = 0, t2 = 0, t = 0;
-		double tdx, dx = 1, dy = 0;
+		double x = cx, y = cy;
+		double dx = 1, dy = 0;
+		double tx, tdx;
+		double s1, s2;
 
 		for (int i = 0; i < iterations; i++) {
 			tx = x;
 			tdx = dx;
 
-			t1 = tx * tx;
-			t2 = y * y;
-			t = t1 + t2;
+			s1 = tx * tx;
+			s2 = y * y;
 
-			if (t > bailout) {
-				double b = dx * dx + dy * dy;
-				double ux = (x * dx + y * dy) / b;
-				double uy = (y * dx - x * dy) / b;
-				ux /= Math.sqrt(ux * ux + uy * uy);
-				uy /= Math.sqrt(ux * ux + uy * uy);
-//				double h = Math.sqrt(jx * jx + jy * jy);
-//				double l = ux * jx / h + uy * jy / h + h;
-//				l /= (1 + h);
-//				if (l > 1)
-//					l = 1;
-//				if (l < 0)
-//					l = 0;
-				return new FractalValue(ux, uy, 0, iterations);
+			if (s1 + s2 > bailout) {
+				return new FractalValue(x, y, dx, dy, 0, iterations);
 			}
-
-//			h2 = 1.5  # height factor of the incoming light
-//			angle = 45  # incoming direction of light
-//			v = exp(1j*angle*2*pi/360)  # unit 2D vector in this direction
-//			# incoming light 3D vector = (v.re,v.im,h2)
-
-//		    t = u.real*v.real + u.imag*v.imag + h2  # dot product with the incoming light
-//    	    t = t/(1+h2)  # rescale so that t does not get bigger than 1
 
 			dx = 2 * (tx * tdx - y * dy + 1);
 			dy = 2 * (y * tdx + tx * dy);
 
-			x = t1 - t2 + cx;
+			x = s1 - s2 + cx;
 			y = 2 * tx * y + cy;
 		}
-
-		// convergent
-		return new FractalValue(0, y, 0, iterations);
+		return new FractalValue(0, 0, 0, 0, 0, iterations);
 	}
-
-//	t * Math.log(t) / (2 * Math.sqrt(dx * dx + dy * dy) * 1000 * transform.getm()) < 1
 
 	@Override
 	public @NotNull String informalName() {

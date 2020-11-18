@@ -192,12 +192,12 @@ public class BinaryFilter extends Filter {
 
 	@Override
 	public String informalName() {
-		return "Binary Filter";
+		return "Binary";
 	}
 
 	@Override
 	public String fileName() {
-		return "BinaryFilter";
+		return informalName();
 	}
 
 	@Override

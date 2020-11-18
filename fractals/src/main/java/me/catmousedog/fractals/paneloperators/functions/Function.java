@@ -17,6 +17,11 @@ import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 public abstract class Function extends PanelOperator {
 
 	/**
+	 * True if this <code>Function</code> utilises the derivative.
+	 */
+	protected boolean usingDerivative = false;
+
+	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
 	 * <p>
 	 * Null for clones.
@@ -145,6 +150,10 @@ public abstract class Function extends PanelOperator {
 	@NotNull
 	public Filter getFilter() {
 		return filter;
+	}
+
+	public boolean isUsingDerivative() {
+		return usingDerivative;
 	}
 
 	@Override

@@ -122,12 +122,12 @@ public class IterativeLinearFilter extends Filter {
 
 	@Override
 	public String informalName() {
-		return "Linear Filter";
+		return "Linear";
 	}
 
 	@Override
 	public String fileName() {
-		return "LinearFilter";
+		return informalName();
 	}
 
 	@Override

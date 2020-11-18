@@ -10,11 +10,6 @@ public class HueFilter extends Filter {
 		super(fractal);
 	}
 
-	/**
-	 * Constructor used to clone the {@link Filter}.
-	 * 
-	 * @param filter
-	 */
 	private HueFilter(HueFilter filter) {
 		super(filter);
 	}
@@ -32,12 +27,12 @@ public class HueFilter extends Filter {
 
 	@Override
 	public String informalName() {
-		return "Hue Filter";
+		return "Hue";
 	}
 
 	@Override
 	public String fileName() {
-		return "HueFilter";
+		return informalName();
 	}
 
 	@Override

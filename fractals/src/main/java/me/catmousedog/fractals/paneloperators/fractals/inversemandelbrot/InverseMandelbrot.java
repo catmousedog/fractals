@@ -25,30 +25,37 @@ public class InverseMandelbrot extends Fractal {
 	private InverseMandelbrot(Fractal fractal) {
 		super(fractal);
 	}
-	
+
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double kx = cx / (cx * cx + cy * cy);
 		double ky = -cy / (cx * cx + cy * cy);
 
 		double x = kx, y = ky;
-		double tx;
-		double t1, t2;
+		double dx = 1, dy = 0;
+		double tx, tdx;
+		double s1, t2;
 
 		for (int i = 0; i < iterations; i++) {
 			tx = x;
+			tdx = dx;
 
-			t1 = x * x;
+			s1 = x * x;
 			t2 = y * y;
 
-			if (t1 + t2 > bailout)
-				return new FractalValue(x, y, i, iterations);
+			if (s1 + t2 > bailout)
+				return new FractalValue(x, y, dx, dy, i, iterations);
 
-			x = t1 - t2 + kx;
+			if (usingDerivative) {
+				dx = 2 * (tx * tdx - y * dy) + 1;
+				dy = 2 * (y * tdx + tx * dy);
+			}
+
+			x = s1 - t2 + kx;
 			y = 2 * tx * y + ky;
 
 		}
-		return new FractalValue(x, y, iterations, iterations);
+		return new FractalValue(x, y, dx, dy, iterations, iterations);
 	}
 
 	@Override

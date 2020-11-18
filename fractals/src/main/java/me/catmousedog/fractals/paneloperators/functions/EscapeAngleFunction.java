@@ -25,19 +25,6 @@ public class EscapeAngleFunction extends Function {
 		return Math.atan2(v.y, v.x);
 	}
 
-//	if (v.x == 0 && v.y == 0)
-//	return 0d;
-//	return v.i + offset - Math.log(Math.log(v.x * v.x + v.y * v.y) / 2) / Math.log(2);
-
-//	private double angle(double x, double y) {
-//		double t = Math.atan(y / x);
-//		if (x < 0)
-//			return t + Math.PI;
-//		else if (y < 0)
-//			return t + 2 * Math.PI;
-//		return t;
-//	}
-
 	@Override
 	public Function clone() {
 		return new EscapeAngleFunction(this);
@@ -45,12 +32,12 @@ public class EscapeAngleFunction extends Function {
 
 	@Override
 	public String informalName() {
-		return "Escape Angle";
+		return "EscapeAngle";
 	}
 
 	@Override
 	public String fileName() {
-		return "EscapeAngle";
+		return informalName();
 	}
 
 	@Override

@@ -23,10 +23,14 @@
 - [x] fix undo button and action
 - [x] fix getResourceAsStream
 - [x] add bailout
-- [ ] sort JPI savable methods to new GUI
+- [x] sort JPI savable methods to new GUI
+- [x] make logger messages fade
+
+## [0.4] - Derivatives
+- [ ] abstract derivatives in **Fractal**
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
-- [x] make logger messages fade
+- [ ] make working offset for Normalized / Potential
 
 ## Other
 - [ ] julia default fixed point settings

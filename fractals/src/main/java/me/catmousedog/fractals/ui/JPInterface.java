@@ -135,9 +135,18 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void preRender() {
-		/* Window */
-		gui.getWidthjtf().preRender();
-		gui.getHeightjtf().preRender();
+		/* Fractal */
+		gui.getFractaljcb().preRender();
+		gui.getFunctionjcb().preRender();
+		gui.getFilterjcb().preRender();
+		gui.getRepaintjb().preRender();
+		canvas.getFractal().preRender();
+
+		/* Canvas */
+		gui.getZoomjtf().preRender();
+		gui.getZoomjb().preRender();
+		gui.getRenderjb().preRender();
+		gui.getCanceljb().setData(true);
 
 		/* Location */
 		gui.getXjtf().preRender();
@@ -149,25 +158,16 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getLocationjcb().preRender();
 		gui.getUndojb().preRender();
 
-		/* Calculation */
-		gui.getZoomjtf().preRender();
-		gui.getZoomjb().preRender();
-		gui.getRenderjb().preRender();
-		gui.getCanceljb().setData(true);
-
-		/* Fractal */
-		gui.getFractaljcb().preRender();
-		gui.getFunctionjcb().preRender();
-		gui.getFilterjcb().preRender();
-		gui.getRepaintjb().preRender();
-		// specific
-		canvas.getFractal().preRender();
-
 		/* Picture */
 		gui.getPicturewjtf().preRender();
 		gui.getPicturehjtf().preRender();
 		gui.getPicturejb().preRender();
 		gui.getPicturejcb().preRender();
+
+		/* Window */
+		gui.getWidthjtf().preRender();
+		gui.getHeightjtf().preRender();
+
 	}
 
 	/**
@@ -184,9 +184,18 @@ public class JPInterface extends JPanel implements Savable {
 	 */
 	@Override
 	public void postRender() {
-		/* Window */
-		gui.getWidthjtf().postRender();
-		gui.getHeightjtf().postRender();
+		/* Fractal */
+		gui.getFractaljcb().postRender();
+		gui.getFunctionjcb().postRender();
+		gui.getFilterjcb().postRender();
+		gui.getRepaintjb().postRender();
+		canvas.getFractal().postRender();
+
+		/* Canvas */
+		gui.getZoomjtf().postRender();
+		gui.getZoomjb().postRender();
+		gui.getRenderjb().postRender();
+		gui.getCanceljb().setData(false);
 
 		/* Location */
 		gui.getXjtf().postRender();
@@ -200,27 +209,15 @@ public class JPInterface extends JPanel implements Savable {
 			gui.getUndojb().setData(true);
 		}
 
-		/* Calculation */
-		gui.getZoomjtf().postRender();
-		gui.getZoomjb().postRender();
-		gui.getRenderjb().postRender();
-		gui.getCanceljb().setData(false);
-
-		/* Fractal */
-		gui.getFractaljcb().postRender();
-		gui.getFunctionjcb().postRender();
-		gui.getFilterjcb().postRender();
-
-		gui.getRepaintjb().postRender();
-		;
-		// specific
-		canvas.getFractal().postRender();
-
 		/* Picture */
 		gui.getPicturewjtf().postRender();
 		gui.getPicturehjtf().postRender();
 		gui.getPicturejb().postRender();
 		gui.getPicturejcb().postRender();
+
+		/* Window */
+		gui.getWidthjtf().postRender();
+		gui.getHeightjtf().postRender();
 	}
 
 	/**
@@ -236,20 +233,19 @@ public class JPInterface extends JPanel implements Savable {
 	public void save() {
 		logger.log(Level.FINEST, "JPInterface.save");
 
-		/* Window */
-		main.setSize(gui.getWidthjtf().saveAndGet(), gui.getHeightjtf().saveAndGet());
+		/* Fractal */
+		canvas.getFractal().save();
+
+		/* Canvas */
+		canvas.setZoomFactor(gui.getZoomjtf().saveAndGet());
 
 		/* Location */
 		canvas.getFractal().getTransform().setTranslation(gui.getXjtf().saveAndGet(), gui.getYjtf().saveAndGet());
 		canvas.getFractal().getTransform().setScalar(gui.getMjtf().saveAndGet(), gui.getNjtf().saveAndGet());
 		canvas.getFractal().getTransform().setRot(gui.getRjtf().saveAndGet());
 
-		/* Calculation */
-		canvas.setZoomFactor(gui.getZoomjtf().saveAndGet());
-
-		/* Fractal */
-		// specific
-		canvas.getFractal().save();
+		/* Window */
+		main.setSize(gui.getWidthjtf().saveAndGet(), gui.getHeightjtf().saveAndGet());
 	}
 
 	/**
@@ -261,9 +257,13 @@ public class JPInterface extends JPanel implements Savable {
 	public void update() {
 		logger.log(Level.FINEST, "JPInterface.update");
 
-		/* Window */
-		gui.getWidthjtf().setData(canvas.getWidth());
-		gui.getHeightjtf().setData(canvas.getHeight());
+		/* Fractal */
+		gui.getFractaljcb().setDataSafe(canvas.getFractal());
+		gui.getFilterjcb().setDataSafe(canvas.getFractal().getFunction().getFilter());
+		canvas.getFractal().safeUpdate();
+
+		/* Canvas */
+		gui.getZoomjtf().setData(canvas.getZoomFactor());
 
 		/* Location */
 		gui.getXjtf().setData(canvas.getFractal().getTransform().getdx());
@@ -272,14 +272,9 @@ public class JPInterface extends JPanel implements Savable {
 		gui.getNjtf().setData(canvas.getFractal().getTransform().getn());
 		gui.getRjtf().setData(canvas.getFractal().getTransform().getrot());
 
-		/* Calculation */
-		gui.getZoomjtf().setData(canvas.getZoomFactor());
-
-		/* Fractal */
-		gui.getFractaljcb().setDataSafe(canvas.getFractal());
-		gui.getFilterjcb().setDataSafe(canvas.getFractal().getFunction().getFilter());
-		// specific
-		canvas.getFractal().safeUpdate();
+		/* Window */
+		gui.getWidthjtf().setData(canvas.getWidth());
+		gui.getHeightjtf().setData(canvas.getHeight());
 	}
 
 	/**
@@ -314,8 +309,9 @@ public class JPInterface extends JPanel implements Savable {
 	public void updateFunction() {
 		logger.log(Level.FINEST, "JPInterface.updateFunction");
 
-		// function
 		Function function = canvas.getFractal().getFunction();
+
+		// function
 		gui.getFunctionjcb().getComponent().setToolTipText(function.getTip());
 		gui.getFunctionjp().getPanel().removeAll();
 		function.addPanel(gui.getFunctionjp().getPanel());

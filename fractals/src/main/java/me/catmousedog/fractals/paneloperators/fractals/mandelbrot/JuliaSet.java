@@ -9,6 +9,7 @@ import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
+import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
@@ -17,7 +18,8 @@ public class JuliaSet extends MouseFractal {
 	public JuliaSet() {
 		super();
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
-				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this) };
+				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
+				new LambertFunction(this) };
 		function = functions[0];
 	}
 
@@ -28,23 +30,30 @@ public class JuliaSet extends MouseFractal {
 	@Override
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
-		double tx;
-		double t1, t2;
+		double dx = 1, dy = 0;
+		double tx, tdx;
+		double s1, s2;
 
 		for (int i = 0; i < iterations; i++) {
 			tx = x;
+			tdx = dx;
 
-			t1 = x * x;
-			t2 = y * y;
+			s1 = x * x;
+			s2 = y * y;
 
-			if (t1 + t2 > bailout)
-				return new FractalValue(x, y, i, iterations);
+			if (s1 + s2 > bailout)
+				return new FractalValue(x, y, dx, dy, i, iterations);
 
-			x = t1 - t2 + jx;
+			if (usingDerivative) {
+				dx = 2 * (tx * tdx - y * dy) + 1;
+				dy = 2 * (y * tdx + tx * dy);
+			}
+
+			x = s1 - s2 + jx;
 			y = 2 * tx * y + jy;
 
 		}
-		return new FractalValue(x, y, iterations, iterations);
+		return new FractalValue(x, y, dx, dy, iterations, iterations);
 	}
 
 	@Override

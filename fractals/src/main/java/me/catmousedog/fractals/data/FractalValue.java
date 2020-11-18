@@ -14,6 +14,8 @@ public class FractalValue {
 
 	public double x, y;
 
+	public double dx, dy;
+
 	public int I, i;
 
 	/**
@@ -31,19 +33,19 @@ public class FractalValue {
 		this.I = I;
 	}
 
+	public FractalValue(double x, double y, double dx, double dy, int i, int I) {
+		this.x = x;
+		this.y = y;
+		this.dx = dx;
+		this.dy = dy;
+		this.i = i;
+		this.I = I;
+	}
+
 	/**
 	 * @return true if {@link FractalValue#i} equals {@link FractalValue#I}.
 	 */
 	public boolean isConvergent() {
 		return i == I;
 	}
-
-	/**
-	 * @return the square of the absolute value of this complex number, the squared
-	 *         distance.
-	 */
-	public double square() {
-		return x * x + y * y;
-	}
-
 }

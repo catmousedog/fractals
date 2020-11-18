@@ -97,8 +97,11 @@ public class TextFieldDouble extends Data<Double> {
 	public void save() {
 		try {
 			double d = Double.parseDouble(jtf.getText());
-			if (d <= M && d >= m)
-				data = d;
+			if (d > M)
+				d = M;
+			if (d < m)
+				d = m;
+			data = d;
 		} catch (Exception e) {
 		}
 	}

@@ -295,3 +295,12 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 
 ### Removed
 - *Filter.setFilter(Filter)* as this is done is the cloning constructor.
+
+## [0.4] - Derivatives
+
+### Added
+
+### Changed
+
+### Removed
+

@@ -72,6 +72,14 @@ public abstract class Fractal extends PanelOperator {
 	protected boolean render_on_changes = false;
 
 	/**
+	 * True if the derivative should be calculated in the
+	 * {@link Fractal#get(double, double)} method.<br>
+	 * This should be set to false if the <code>Function</code> used doesn't utilise
+	 * the derivative.
+	 */
+	protected boolean usingDerivative = false;
+
+	/**
 	 * Array of all locations used by this {@link Fractal}.<br>
 	 * This array is created at
 	 * {@link Fractal#setProperties(Properties, Properties)} or when the
@@ -162,6 +170,7 @@ public abstract class Fractal extends PanelOperator {
 		iterations = fractal.iterations;
 		bailout = fractal.bailout;
 		render_on_changes = fractal.render_on_changes;
+		usingDerivative = fractal.usingDerivative;
 	}
 
 	/**
@@ -204,6 +213,7 @@ public abstract class Fractal extends PanelOperator {
 
 		iterjtf.setData(iterations);
 		bailoutjtf.setData(bailout);
+		usingDerivative = function.isUsingDerivative();
 	}
 
 	/**
@@ -243,6 +253,9 @@ public abstract class Fractal extends PanelOperator {
 	 * {@link Canvas#render()} if this is not being called by an updating listener
 	 * and the {@link Canvas#fractal} is the same instance as this
 	 * <code>Fractal</code>.
+	 * <p>
+	 * This method is used by change or action listeners from the
+	 * <code>Filter</code>, <code>Function</code> or <code>Fractal</code>.
 	 */
 	public void saveAndRender() {
 		if (allowListeners && canvas.getFractal() == this) {
@@ -257,6 +270,9 @@ public abstract class Fractal extends PanelOperator {
 	 * {@link Canvas#paint()} if this is not being called by an updating listener
 	 * and the {@link Canvas#fractal} is the same instance as this
 	 * <code>Fractal</code>.
+	 * <p>
+	 * This method is used by change or action listeners from the
+	 * <code>Filter</code>, <code>Function</code> or <code>Fractal</code>.
 	 */
 	public void saveAndColour() {
 		if (allowListeners && canvas.getFractal() == this) {
