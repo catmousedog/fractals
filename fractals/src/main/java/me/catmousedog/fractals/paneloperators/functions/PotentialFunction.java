@@ -14,7 +14,7 @@ public class PotentialFunction extends Function {
 		filter = filters[0];
 	}
 
-	private PotentialFunction(Function function) {
+	private PotentialFunction(PotentialFunction function) {
 		super(function);
 	}
 

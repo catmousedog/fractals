@@ -27,10 +27,9 @@
 - [x] make logger messages fade
 
 ## [0.4] - Derivatives
-- [ ] abstract derivatives in **Fractal**
+- [x] derivatives in **Fractal**
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
-- [ ] make working offset for Normalized / Potential
 
 ## Other
 - [ ] julia default fixed point settings

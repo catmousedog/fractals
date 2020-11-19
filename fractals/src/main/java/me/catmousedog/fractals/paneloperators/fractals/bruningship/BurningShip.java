@@ -29,18 +29,18 @@ public class BurningShip extends Fractal {
 	public FractalValue get(double cx, double cy) {
 		double x = cx, y = cy;
 		double tx;
-		double t1, t2;
+		double s1, s2;
 
 		for (int i = 0; i < iterations; i++) {
 			tx = x;
 
-			t1 = x * x;
-			t2 = y * y;
+			s1 = tx * tx;
+			s2 = y * y;
 
-			if (t1 + t2 > bailout)
+			if (s1 + s2 > bailout)
 				return new FractalValue(x, y, i, iterations);
 
-			x = t1 - t2 + cx;
+			x = s1 - s2 + cx;
 			y = Math.abs(2 * tx * y) + cy;
 
 		}

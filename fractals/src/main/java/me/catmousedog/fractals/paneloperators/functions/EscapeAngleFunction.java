@@ -16,7 +16,7 @@ public class EscapeAngleFunction extends Function {
 		filter = filters[0];
 	}
 
-	private EscapeAngleFunction(Function function) {
+	private EscapeAngleFunction(EscapeAngleFunction function) {
 		super(function);
 	}
 

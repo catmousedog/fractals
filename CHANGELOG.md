@@ -299,6 +299,8 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ## [0.4] - Derivatives
 
 ### Added
+- concrete derivatives in Fractals.get()
+- Fractal.usingDerivative boolean
 
 ### Changed
 

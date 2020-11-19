@@ -15,7 +15,7 @@ public class IterativeFunction extends Function {
 		filter = filters[0];
 	}
 
-	private IterativeFunction(Function function) {
+	private IterativeFunction(IterativeFunction function) {
 		super(function);
 	}
 

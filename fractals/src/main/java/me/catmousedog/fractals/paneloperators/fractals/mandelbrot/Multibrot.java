@@ -47,9 +47,9 @@ public class Multibrot extends Fractal {
 		a = 2;
 	}
 
-	private Multibrot(Fractal fractal, double a) {
+	private Multibrot(Multibrot fractal) {
 		super(fractal);
-		this.a = a;
+		a = fractal.a;
 	}
 
 	@Override
@@ -115,6 +115,6 @@ public class Multibrot extends Fractal {
 
 	@Override
 	public @NotNull Fractal clone() {
-		return new Multibrot(this, a);
+		return new Multibrot(this);
 	}
 }

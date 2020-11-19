@@ -10,7 +10,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 public class NormalizedFunction extends Function {
 
-	private double offset;
+	private double offset, o;
 
 	private TextFieldDouble offsetjtf;
 	private SliderDouble offsetjs;
@@ -35,6 +35,7 @@ public class NormalizedFunction extends Function {
 	public void save() {
 		super.save();
 		offset = offsetjtf.saveAndGet();
+		setOffset(offset);
 	}
 
 	@Override
@@ -44,26 +45,34 @@ public class NormalizedFunction extends Function {
 		offsetjs.setDataSafe(offset);
 	}
 
-	private NormalizedFunction(Function function, double offset) {
+	private NormalizedFunction(NormalizedFunction function) {
 		super(function);
-		this.offset = offset;
+		offset = function.offset;
+		o = function.o;
 	}
 
 	@Override
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		return v.i + Math.pow(2, offset) - Math.log(Math.log(v.x * v.x + v.y * v.y) / 2) / Math.log(2);
+		return v.i + o - Math.log(Math.log(v.x * v.x + v.y * v.y) / 2) / Math.log(2);
 	}
 
 	@Override
 	public Function clone() {
-		return new NormalizedFunction(this, offset);
+		return new NormalizedFunction(this);
 	}
 
 	private void offset() {
-		offsetjtf.setData(offsetjs.saveAndGet());
+		double t = offsetjs.saveAndGet();
+		offsetjtf.setData(t);
+		setOffset(t);
 		fractal.saveAndRender();
+	}
+
+	private void setOffset(double offset) {
+		this.offset = offset;
+		o = Math.sinh(offset);
 	}
 
 	@Override
