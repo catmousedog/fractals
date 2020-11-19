@@ -20,9 +20,16 @@ import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Mouse;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
+import me.catmousedog.fractals.ui.components.concrete.CheckBox;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 
+/**
+ * An abstract <code>Fractal</code>. Each implementation should declare
+ * <ul>
+ * <li>{@link Fractal#canUseInterior}
+ * </ul>
+ */
 public abstract class Fractal extends PanelOperator {
 
 	/**
@@ -77,7 +84,16 @@ public abstract class Fractal extends PanelOperator {
 	 * This should be set to false if the <code>Function</code> used doesn't utilise
 	 * the derivative.
 	 */
-	protected boolean usingDerivative = false;
+	public boolean usingDerivative = false;
+
+	/**
+	 * True if this <code>Fractal</code> can use the interior algorithm.<br>
+	 * This needs to be initialised when implementing the <code>Fractal</code>
+	 * class.
+	 * <p>
+	 * The default is <code>true</code>.
+	 */
+	protected boolean canUseInterior = true;
 
 	/**
 	 * Array of all locations used by this {@link Fractal}.<br>
@@ -132,7 +148,9 @@ public abstract class Fractal extends PanelOperator {
 
 		bailoutjtf = new TextFieldDouble.Builder().setLabel("bailout").setTip("TODO").setMin(0).build();
 
-		commonItems = new Item[] { iterjtf, bailoutjtf };
+		interior = new CheckBox("interior algorithm", "TODO", false);
+
+		commonItems = new Item[] { iterjtf, bailoutjtf, interior };
 	}
 
 	/**
@@ -149,6 +167,15 @@ public abstract class Fractal extends PanelOperator {
 	private TextFieldInteger iterjtf;
 
 	private TextFieldDouble bailoutjtf;
+
+	/**
+	 * <code>CheckBox</code> <code>Data</code>, if set to true the interior
+	 * algorithm should be used to speed up calculation in the
+	 * {@link Fractal#get(double, double)} method.<br>
+	 * The algorithm can always be enabled by the user, but there's no guarantee
+	 * it's compatible with the current fractal.
+	 */
+	protected CheckBox interior;
 
 	/**
 	 * Constructor used to create a clone.<br>
@@ -197,6 +224,7 @@ public abstract class Fractal extends PanelOperator {
 
 		iterations = iterjtf.saveAndGet();
 		bailout = bailoutjtf.saveAndGet();
+		// usingDerivative is in JPI.updateFunction()
 	}
 
 	/**
@@ -213,7 +241,6 @@ public abstract class Fractal extends PanelOperator {
 
 		iterjtf.setData(iterations);
 		bailoutjtf.setData(bailout);
-		usingDerivative = function.isUsingDerivative();
 	}
 
 	/**
@@ -246,6 +273,8 @@ public abstract class Fractal extends PanelOperator {
 		function.postRender();
 		for (Item i : commonItems)
 			i.postRender();
+
+		interior.setEnabled(canUseInterior);
 	}
 
 	/**

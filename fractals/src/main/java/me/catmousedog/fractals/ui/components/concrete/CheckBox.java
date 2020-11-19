@@ -40,6 +40,7 @@ public class CheckBox extends Data<Boolean> {
 		jcx.setToolTipText(tip);
 		jcx.setAlignmentX(JCheckBox.LEFT_ALIGNMENT);
 		data = b;
+		update();
 	}
 
 	@Override
@@ -65,5 +66,9 @@ public class CheckBox extends Data<Boolean> {
 	@Override
 	public void update() {
 		jcx.setSelected(data);
+	}
+
+	public void setEnabled(boolean b) {
+		jcx.setEnabled(b);
 	}
 }

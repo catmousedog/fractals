@@ -28,6 +28,7 @@
 
 ## [0.4] - Derivatives
 - [x] derivatives in **Fractal**
+- [ ] make interior checkbox enable derivative
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
 

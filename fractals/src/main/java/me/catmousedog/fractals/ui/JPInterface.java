@@ -309,7 +309,11 @@ public class JPInterface extends JPanel implements Savable {
 	public void updateFunction() {
 		logger.log(Level.FINEST, "JPInterface.updateFunction");
 
-		Function function = canvas.getFractal().getFunction();
+		Fractal fractal = canvas.getFractal();
+		Function function = fractal.getFunction();
+
+		// fractal
+		fractal.usingDerivative = function.isUsingDerivative();
 
 		// function
 		gui.getFunctionjcb().getComponent().setToolTipText(function.getTip());

@@ -11,6 +11,7 @@ import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
+import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 
 public class Mandelbrot extends Fractal {
 
@@ -19,7 +20,7 @@ public class Mandelbrot extends Fractal {
 		items = null;
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this) };
+				new LambertFunction(this), new TestFunction(this) };
 		function = functions[0];
 		mouse = null;
 	}
@@ -45,6 +46,10 @@ public class Mandelbrot extends Fractal {
 				return new FractalValue(x, y, dx, dy, i, iterations);
 
 			if (usingDerivative) {
+				if (interior.saveAndGet())
+					System.out.println("test");
+//					return new FractalValue(x, y, dx, dy, iterations, iterations);
+
 				dx = 2 * (tx * tdx - y * dy) + 1;
 				dy = 2 * (y * tdx + tx * dy);
 			}
