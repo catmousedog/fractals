@@ -87,15 +87,6 @@ public abstract class Fractal extends PanelOperator {
 	public boolean usingDerivative = false;
 
 	/**
-	 * True if this <code>Fractal</code> can use the interior algorithm.<br>
-	 * This needs to be initialised when implementing the <code>Fractal</code>
-	 * class.
-	 * <p>
-	 * The default is <code>true</code>.
-	 */
-	protected boolean canUseInterior = true;
-
-	/**
 	 * Array of all locations used by this {@link Fractal}.<br>
 	 * This array is created at
 	 * {@link Fractal#setProperties(Properties, Properties)} or when the
@@ -148,9 +139,7 @@ public abstract class Fractal extends PanelOperator {
 
 		bailoutjtf = new TextFieldDouble.Builder().setLabel("bailout").setTip("TODO").setMin(0).build();
 
-		interior = new CheckBox("interior algorithm", "TODO", false);
-
-		commonItems = new Item[] { iterjtf, bailoutjtf, interior };
+		commonItems = new Item[] { iterjtf, bailoutjtf };
 	}
 
 	/**
@@ -167,15 +156,6 @@ public abstract class Fractal extends PanelOperator {
 	private TextFieldInteger iterjtf;
 
 	private TextFieldDouble bailoutjtf;
-
-	/**
-	 * <code>CheckBox</code> <code>Data</code>, if set to true the interior
-	 * algorithm should be used to speed up calculation in the
-	 * {@link Fractal#get(double, double)} method.<br>
-	 * The algorithm can always be enabled by the user, but there's no guarantee
-	 * it's compatible with the current fractal.
-	 */
-	protected CheckBox interior;
 
 	/**
 	 * Constructor used to create a clone.<br>
@@ -273,8 +253,6 @@ public abstract class Fractal extends PanelOperator {
 		function.postRender();
 		for (Item i : commonItems)
 			i.postRender();
-
-		interior.setEnabled(canUseInterior);
 	}
 
 	/**

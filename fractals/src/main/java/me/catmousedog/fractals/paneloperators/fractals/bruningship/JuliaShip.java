@@ -14,10 +14,6 @@ import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
 public class JuliaShip extends MouseFractal {
 
-	{
-		canUseInterior = false;
-	}
-
 	public JuliaShip() {
 		super();
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),

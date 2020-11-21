@@ -46,10 +46,6 @@ public class Mandelbrot extends Fractal {
 				return new FractalValue(x, y, dx, dy, i, iterations);
 
 			if (usingDerivative) {
-				if (interior.saveAndGet())
-					System.out.println("test");
-//					return new FractalValue(x, y, dx, dy, iterations, iterations);
-
 				dx = 2 * (tx * tdx - y * dy) + 1;
 				dy = 2 * (y * tdx + tx * dy);
 			}

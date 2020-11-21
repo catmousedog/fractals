@@ -13,10 +13,6 @@ import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
 
 public class BurningShip extends Fractal {
 
-	{
-		canUseInterior = false;
-	}
-	
 	public BurningShip() {
 		super();
 		items = null;
