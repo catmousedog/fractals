@@ -303,6 +303,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - Fractal.usingDerivative boolean
 
 ### Changed
+- Generalised Functions output to [0, 1]
+- Moved interior algorithm to new branch
 
 ### Removed
-

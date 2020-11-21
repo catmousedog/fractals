@@ -61,7 +61,7 @@ public class BrightnessFilter extends Filter {
 	public int apply(Number V) {
 		float v = V.floatValue();
 		if (inverted)
-			v = 1 - v;
+			v = 1f - v;
 		return Color.HSBtoRGB((float) h, (float) s, v);
 	}
 

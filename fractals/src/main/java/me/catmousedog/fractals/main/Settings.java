@@ -210,7 +210,7 @@ public class Settings {
 		logger.log(Level.FINER, "Settings.initFractals");
 
 		allFractals = new Fractal[] { new Mandelbrot(), new JuliaSet(), new BurningShip(), new JuliaShip(),
-				new InverseMandelbrot(), new InverseJulia(), new Multibrot(), new TestFractal() };
+				new InverseMandelbrot(), new InverseJulia(), new Multibrot() };
 
 		// scan and copy resources inside 'conrete_fractals' resource
 

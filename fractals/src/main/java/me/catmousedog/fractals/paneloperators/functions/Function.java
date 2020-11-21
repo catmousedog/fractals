@@ -20,7 +20,7 @@ public abstract class Function extends PanelOperator {
 	 * True if this <code>Function</code> utilises the derivative.<br>
 	 * Only matters for the original functions and not clones of it.
 	 */
-	protected boolean usingDerivative = false;
+	protected boolean usesDerivative = false;
 
 	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
@@ -154,7 +154,7 @@ public abstract class Function extends PanelOperator {
 	}
 
 	public boolean isUsingDerivative() {
-		return usingDerivative;
+		return usesDerivative;
 	}
 
 	@Override

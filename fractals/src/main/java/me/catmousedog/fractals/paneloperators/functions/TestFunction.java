@@ -11,7 +11,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 public class TestFunction extends Function {
 
 	{
-		usingDerivative = true;
+		usesDerivative = true;
 	}
 
 	private double test = 1;

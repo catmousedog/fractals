@@ -28,9 +28,9 @@ public abstract class MouseFractal extends Fractal {
 				.setTip("<html>If enabled, the user can click and drag the mouse along the canvas<br>"
 						+ " to change the fixed julia point.</html>")
 				.build();
-		jxjtf = new TextFieldDouble.Builder().setLabel("Jx").setTip("The fixed julia point's x-coordinate")
+		jxjtf = new TextFieldDouble.Builder().setLabel("Jx").setTip("The fixed Julia point's x-coordinate")
 				.setDefault(jx).build();
-		jyjtf = new TextFieldDouble.Builder().setLabel("Jy").setTip("The fixed julia point's y-coordinate")
+		jyjtf = new TextFieldDouble.Builder().setLabel("Jy").setTip("The fixed Julia point's y-coordinate")
 				.setDefault(jy).build();
 		items = new Item[] { jxjtf, p5, jyjtf, p5, mousejcx };
 

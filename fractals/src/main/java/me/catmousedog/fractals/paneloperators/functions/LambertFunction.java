@@ -12,7 +12,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 public class LambertFunction extends Function {
 
 	{
-		usingDerivative = true;
+		usesDerivative = true;
 	}
 
 	private double a;

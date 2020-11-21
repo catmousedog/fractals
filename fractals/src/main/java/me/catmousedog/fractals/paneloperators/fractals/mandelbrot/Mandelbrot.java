@@ -20,7 +20,7 @@ public class Mandelbrot extends Fractal {
 		items = null;
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this), new TestFunction(this) };
+				new LambertFunction(this) };
 		function = functions[0];
 		mouse = null;
 	}
