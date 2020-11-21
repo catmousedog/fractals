@@ -17,7 +17,8 @@ import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 public abstract class Function extends PanelOperator {
 
 	/**
-	 * True if this <code>Function</code> utilises the derivative.
+	 * True if this <code>Function</code> utilises the derivative.<br>
+	 * Only matters for the original functions and not clones of it.
 	 */
 	protected boolean usingDerivative = false;
 

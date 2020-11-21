@@ -2,8 +2,9 @@ package me.catmousedog.fractals.paneloperators.functions;
 
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
-import me.catmousedog.fractals.paneloperators.filters.IterativeLinearFilter;
-import me.catmousedog.fractals.paneloperators.filters.IterativePeriodicFilter;
+import me.catmousedog.fractals.paneloperators.filters.HueFilter;
+import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
+import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
 public class IterativeFunction extends Function {
@@ -11,7 +12,7 @@ public class IterativeFunction extends Function {
 	public IterativeFunction(Fractal fractal) {
 		super(fractal);
 		items = null;
-		filters = new Filter[] { new IterativeLinearFilter(fractal), new IterativePeriodicFilter(fractal) };
+		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal) };
 		filter = filters[0];
 	}
 
@@ -20,8 +21,8 @@ public class IterativeFunction extends Function {
 	}
 
 	@Override
-	public Integer apply(FractalValue v) {
-		return 255 * (v.I - v.i) / v.I;
+	public Double apply(FractalValue v) {
+		return (v.I - v.i) / (double) v.I;
 	}
 
 	@Override

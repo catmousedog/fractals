@@ -57,24 +57,6 @@ public class Mandelbrot extends Fractal {
 		return new FractalValue(x, y, dx, dy, iterations, iterations);
 	}
 
-	/**
-	 * tx = x; tdx = dx;
-	 * 
-	 * t1 = tx * tx; t2 = y * y; t = t1 + t2;
-	 * 
-	 * if (t > bailout) { double b = dx * dx + dy * dy; double ux = (x * dx + y *
-	 * dy) / b; double uy = (y * dx - x * dy) / b; ux /= Math.sqrt(ux * ux + uy *
-	 * uy); uy /= Math.sqrt(ux * ux + uy * uy); double h = Math.sqrt(jx * jx + jy *
-	 * jy); double l = ux * jx / h + uy * jy / h + h; l /= (1 + h); if (l > 1) l =
-	 * 1; if (l < 0) l = 0; return new FractalValue(ux, uy, 0, iterations); }
-	 * 
-	 * dx = 2 * (tx * tdx - y * dy + 1); dy = 2 * (y * tdx + tx * dy);
-	 * 
-	 * x = t1 - t2 + cx; y = 2 * tx * y + cy;
-	 */
-
-	public boolean ba = true;
-
 	public @NotNull String informalName() {
 		return "Mandelbrot";
 	}

@@ -14,7 +14,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
  * {@link Filter#apply(Number)} takes integers ranging from 0 to 255.<br>
  * The colour pattern is linear and known for its simplicity.
  */
-public class IterativeLinearFilter extends Filter {
+public class LinearFilter extends Filter {
 
 	private boolean inverted;
 
@@ -33,7 +33,7 @@ public class IterativeLinearFilter extends Filter {
 	private TextFieldDouble bjtf;
 	private SliderDouble bjs;
 
-	public IterativeLinearFilter(Fractal fractal) {
+	public LinearFilter(Fractal fractal) {
 		super(fractal);
 
 		Padding p5 = new Padding(5);
@@ -61,9 +61,9 @@ public class IterativeLinearFilter extends Filter {
 	 * 
 	 * @param filter
 	 */
-	private IterativeLinearFilter(IterativeLinearFilter filter) {
+	private LinearFilter(LinearFilter filter) {
 		super(filter);
-		
+
 		inverted = filter.inverted;
 		r = filter.r;
 		g = filter.g;
@@ -72,10 +72,10 @@ public class IterativeLinearFilter extends Filter {
 
 	@Override
 	public int apply(Number V) {
-		int v = V.intValue();
+		double v = V.doubleValue();
 		if (inverted)
-			v = 255 - v;
-		return new Color((int) (v * r), (int) (v * g), (int) (v * b)).getRGB();
+			v = 1.0 - v;
+		return new Color((int) (255 * v * r), (int) (255 * v * g), (int) (255 * v * b)).getRGB();
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class IterativeLinearFilter extends Filter {
 
 	@Override
 	public Filter clone() {
-		return new IterativeLinearFilter(this);
+		return new LinearFilter(this);
 	}
 
 	private void actionInvert() {

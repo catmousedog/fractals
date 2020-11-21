@@ -28,7 +28,7 @@ public class NormalizedFunction extends Function {
 		filters = new Filter[] { new LogPeriodicFilter(fractal) };
 		filter = filters[0];
 
-		offset = 1;
+		setOffset(1);
 	}
 
 	@Override

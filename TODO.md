@@ -28,14 +28,13 @@
 
 ## [0.4] - Derivatives
 - [x] derivatives in **Fractal**
-- [ ] make interior checkbox enable derivative
+- [x] make interior checkbox enable derivative
 - [ ] tips
 - [ ] update settings for all fractals (eg. remove offset)
 
 ## Other
 - [ ] julia default fixed point settings
 - [ ] advanced setting -> overlay for overlaying mandelbrot over julia set
-- [ ] checkbox advanced settings (intertior algorithm, etc.)
 - [ ] fix and add concrete locations and settings for all the fractals
 - [ ] gridbaglayout + option to change JPI width
 - [ ] wide combobox for long fractal names

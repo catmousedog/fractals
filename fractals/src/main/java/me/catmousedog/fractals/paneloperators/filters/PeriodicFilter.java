@@ -15,7 +15,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
  * The colour pattern is periodic, using a different frequency for red, green
  * and blue.
  */
-public class IterativePeriodicFilter extends Filter {
+public class PeriodicFilter extends Filter {
 
 	private boolean inverted;
 
@@ -47,7 +47,7 @@ public class IterativePeriodicFilter extends Filter {
 	private TextFieldDouble bfjtf;
 	private SliderDouble bfjs;
 
-	public IterativePeriodicFilter(Fractal fractal) {
+	public PeriodicFilter(Fractal fractal) {
 		super(fractal);
 
 		Padding p5 = new Padding(5);
@@ -64,13 +64,13 @@ public class IterativePeriodicFilter extends Filter {
 		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
 		String rfTip = "<html>The frequency factor for the red component</html>";
 		rfjtf = new TextFieldDouble.Builder().setLabel("red frequency").setTip(rfTip).build();
-		rfjs = new SliderDouble.Builder().setTip(rfTip).setChange(c -> changeRf()).setMax(0.1).build();
+		rfjs = new SliderDouble.Builder().setTip(rfTip).setChange(c -> changeRf()).setMin(1).setMax(10).build();
 		String gfTip = "<html>The frequency factor for the green component</html>";
 		gfjtf = new TextFieldDouble.Builder().setLabel("green frequency").setTip(gfTip).build();
-		gfjs = new SliderDouble.Builder().setTip(gfTip).setChange(c -> changeGf()).setMax(0.1).build();
+		gfjs = new SliderDouble.Builder().setTip(gfTip).setChange(c -> changeGf()).setMin(1).setMax(10).build();
 		String bfTip = "<html>The frequency factor for the blue component</html>";
 		bfjtf = new TextFieldDouble.Builder().setLabel("blue frequency").setTip(bfTip).build();
-		bfjs = new SliderDouble.Builder().setTip(bfTip).setChange(c -> changeBf()).setMax(0.1).build();
+		bfjs = new SliderDouble.Builder().setTip(bfTip).setChange(c -> changeBf()).setMin(1).setMax(10).build();
 		items = new Item[] { invertjb, p5, rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs, p5, rfjtf, rfjs, p5, gfjtf, gfjs,
 				p5, bfjtf, bfjs };
 
@@ -78,9 +78,9 @@ public class IterativePeriodicFilter extends Filter {
 		r = 1;
 		b = 1;
 		g = 1;
-		rf = 0.01;
-		gf = 0.01;
-		bf = 0.01;
+		rf = 1;
+		gf = 1;
+		bf = 1;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class IterativePeriodicFilter extends Filter {
 	 * 
 	 * @param filter
 	 */
-	private IterativePeriodicFilter(IterativePeriodicFilter filter) {
+	private PeriodicFilter(PeriodicFilter filter) {
 		super(filter);
 
 		inverted = filter.inverted;
@@ -102,14 +102,14 @@ public class IterativePeriodicFilter extends Filter {
 
 	@Override
 	public int apply(Number V) {
-		int v = V.intValue();
+		double v = V.doubleValue();
 		if (inverted)
-			v = 255 - v;
+			v = 1.0 - v;
 		return new Color(curve(r, rf, v), curve(g, gf, v), curve(b, bf, v)).getRGB();
 	}
 
-	private int curve(double a, double f, int v) {
-		return (int) (a * 127.5 * (1 - Math.cos(f * v)));
+	private int curve(double a, double f, double v) {
+		return (int) (a * 127.5 * (1 - Math.cos(f * v * Math.PI)));
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class IterativePeriodicFilter extends Filter {
 
 	@Override
 	public Filter clone() {
-		return new IterativePeriodicFilter(this);
+		return new PeriodicFilter(this);
 	}
 
 	private void actionInvert() {

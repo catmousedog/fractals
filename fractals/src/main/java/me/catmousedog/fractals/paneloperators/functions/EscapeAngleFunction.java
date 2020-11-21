@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.filters.HueFilter;
+import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
+import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
 public class EscapeAngleFunction extends Function {
@@ -12,7 +14,7 @@ public class EscapeAngleFunction extends Function {
 	public EscapeAngleFunction(Fractal fractal) {
 		super(fractal);
 
-		filters = new Filter[] { new HueFilter(fractal) };
+		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal) };
 		filter = filters[0];
 	}
 
@@ -22,7 +24,7 @@ public class EscapeAngleFunction extends Function {
 
 	@Override
 	public @NotNull Double apply(FractalValue v) {
-		return Math.atan2(v.y, v.x);
+		return (Math.atan2(v.y, v.x) + Math.PI) / (2 * Math.PI);
 	}
 
 	@Override
