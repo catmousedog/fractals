@@ -3,6 +3,9 @@ package me.catmousedog.fractals.paneloperators.functions;
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.filters.BrightnessFilter;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.filters.HueFilter;
+import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
+import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
@@ -37,7 +40,8 @@ public class LambertFunction extends Function {
 		hjs = new SliderDouble.Builder().setMin(0).setMax(2).setTip(tipH).setChange(c -> changeH()).build();
 		items = new Item[] { ajtf, ajs, p5, hjtf, hjs };
 
-		filters = new Filter[] { new BrightnessFilter(fractal) };
+		filters = new Filter[] { new LinearFilter(fractal), new BrightnessFilter(fractal), new PeriodicFilter(fractal),
+				new HueFilter(fractal) };
 		filter = filters[0];
 
 		setA(Math.PI);

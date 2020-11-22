@@ -1,7 +1,5 @@
 package me.catmousedog.fractals.paneloperators.filters;
 
-import java.awt.Color;
-
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Button;
@@ -75,7 +73,7 @@ public class LinearFilter extends Filter {
 		double v = V.doubleValue();
 		if (inverted)
 			v = 1.0 - v;
-		return new Color((int) (255 * v * r), (int) (255 * v * g), (int) (255 * v * b)).getRGB();
+		return 0xff000000 | (int) (255 * v * r) << 16 | (int) (255 * v * g) << 8 | (int) (255 * v * b) << 0;
 	}
 
 	@Override
@@ -132,9 +130,7 @@ public class LinearFilter extends Filter {
 
 	@Override
 	public String getTip() {
-		return "<html>A filter designed to be used with iterative fractals."
-				+ "<br>This filter uses a linear function for the red, green and blue components.<br>"
-				+ "Each colour has its own amplitude which can be changed.</html>";
+		return "TODO";
 
 	}
 

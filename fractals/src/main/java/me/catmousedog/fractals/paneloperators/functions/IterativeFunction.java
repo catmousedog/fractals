@@ -1,6 +1,7 @@
 package me.catmousedog.fractals.paneloperators.functions;
 
 import me.catmousedog.fractals.data.FractalValue;
+import me.catmousedog.fractals.paneloperators.filters.BrightnessFilter;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.filters.HueFilter;
 import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
@@ -12,7 +13,8 @@ public class IterativeFunction extends Function {
 	public IterativeFunction(Fractal fractal) {
 		super(fractal);
 		items = null;
-		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal) };
+		filters = new Filter[] { new LinearFilter(fractal), new BrightnessFilter(fractal), new PeriodicFilter(fractal),
+				new HueFilter(fractal) };
 		filter = filters[0];
 	}
 

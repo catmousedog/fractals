@@ -29,8 +29,8 @@
 ## [0.4] - Derivatives
 - [x] derivatives in **Fractal**
 - [x] make interior checkbox enable derivative
-- [ ] tips
-- [ ] update settings for all fractals (eg. remove offset)
+
+## [1.0] - 
 
 ## Other
 - [ ] julia default fixed point settings

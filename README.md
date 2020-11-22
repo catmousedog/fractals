@@ -7,6 +7,7 @@ A user-friendly application for viewing and generating different fractals for ar
 - it is interesting to go to interesting location for the mandelbrot to the julia set and move the mouse around close to the location.
 - Mandelbrot >> Multibrot speed
 - Potential Function is not adjusted for the multibrot but only for the second order mandelbrot
+- Periodic Filter: use multiples of 2 to get a periodic behaviour for functions like EscapeAngle 
 
 ### Controls
 - middle mouse button to view *pixel* information

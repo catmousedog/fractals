@@ -221,7 +221,6 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - ComboBox for predefined resolutions
 - concrete locations
 - middle mouse button shows Pixel information
-- *apache.commons.imaging* dependency for changing image properties
 - image name now includes the location
 - nullable *Fractal.mouse* field for allowing *fractals* to have *MouseMotionListener*.
 - zooming can no longer be done by dragging.
@@ -269,7 +268,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 
 ### Added
 - **MouseFractal** abstract fractal
-- added **UI** abstract class and made **Fractal**, **Function** and **Filter**
+- added **PanelOperator** abstract class and made **Fractal**, **Function** and **Filter**
 - **Nameable** interface for common *String* methods
 - **NormalizedFunction** offset to *items*
 - logging
@@ -281,7 +280,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Changed
 - ordered hierarchy Fractal -> Function -> Filter
 - resources names to match new hierarchy
-- fixes to **UI** and renamed to **PanelConstruct**
+- fixes to **PanelOperator**
 - the JPI update methods (Fractal, Function and Filter)
 - GUI layout
 - Merged **InitialSize** into **Settings**
@@ -301,9 +300,23 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Added
 - concrete derivatives in Fractals.get()
 - Fractal.usingDerivative boolean
+- Lambert Function (normal map using Lambert lighting)
 
 ### Changed
 - Generalised Functions output to [0, 1]
 - Moved interior algorithm to new branch
+
+### Removed
+
+
+## [1.0] - 
+
+### Added
+- offset to **PeriodicFilter**
+- Filters to all the compatible Functions
+
+### Changed
+
+
 
 ### Removed
