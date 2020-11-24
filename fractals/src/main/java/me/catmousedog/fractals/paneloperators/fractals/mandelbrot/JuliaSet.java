@@ -12,6 +12,7 @@ import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
+import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 
 public class JuliaSet extends MouseFractal {
 
@@ -19,7 +20,7 @@ public class JuliaSet extends MouseFractal {
 		super();
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this) };
+				new LambertFunction(this), new TestFunction(this) };
 		function = functions[0];
 	}
 
@@ -45,7 +46,7 @@ public class JuliaSet extends MouseFractal {
 				return new FractalValue(x, y, dx, dy, i, iterations);
 
 			if (usingDerivative) {
-				dx = 2 * (tx * tdx - y * dy);
+				dx = 2 * (tx * tdx - y * dy) + 1;
 				dy = 2 * (y * tdx + tx * dy);
 			}
 

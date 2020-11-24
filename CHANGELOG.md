@@ -309,7 +309,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Removed
 
 
-## [1.0] - 
+## [1.0]
 
 ### Added
 - offset to **PeriodicFilter**

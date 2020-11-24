@@ -6,19 +6,12 @@ import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
+import me.catmousedog.fractals.ui.components.concrete.SubTitle;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 public class LogPeriodicFilter extends Filter {
 
 	private double r, g, b;
-
-	private double K;
-
-	private double rf, gf, bf;
-
-	private double D;
-
-	private double rd, gd, bd;
 
 	private TextFieldDouble rjtf;
 	private SliderDouble rjs;
@@ -29,8 +22,12 @@ public class LogPeriodicFilter extends Filter {
 	private TextFieldDouble bjtf;
 	private SliderDouble bjs;
 
+	private double K, k;
+
 	private TextFieldDouble kjtf;
 	private SliderDouble kjs;
+
+	private double rf, gf, bf;
 
 	private TextFieldDouble rajtf;
 	private SliderDouble rajs;
@@ -41,8 +38,12 @@ public class LogPeriodicFilter extends Filter {
 	private TextFieldDouble bajtf;
 	private SliderDouble bajs;
 
+	private double D;
+
 	private TextFieldDouble djtf;
 	private SliderDouble djs;
+
+	private double rd, gd, bd;
 
 	private TextFieldDouble rdjtf;
 	private SliderDouble rdjs;
@@ -57,6 +58,8 @@ public class LogPeriodicFilter extends Filter {
 		super(fractal);
 
 		Padding p5 = new Padding(5);
+
+		SubTitle amp = new SubTitle("amplitude");
 		String rTip = "<html>The amplitude for the red curve</html>";
 		rjtf = new TextFieldDouble.Builder().setLabel("red factor").setTip(rTip).build();
 		rjs = new SliderDouble.Builder().setTip(rTip).setChange(c -> changeR()).build();
@@ -66,9 +69,11 @@ public class LogPeriodicFilter extends Filter {
 		String bTip = "<html>The amplitude for the blue curve</html>";
 		bjtf = new TextFieldDouble.Builder().setLabel("blue factor").setTip(bTip).build();
 		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
+
+		SubTitle fre = new SubTitle("frequency");
 		String tipK = "<html>The inverse frequency factor.<br> The close to zero this value is, the higher the frequency of the global colour filter.</html>";
 		kjtf = new TextFieldDouble.Builder().setLabel("inverse frequency").setTip(tipK).setDefault(K).build();
-		kjs = new SliderDouble.Builder().setTip(tipK).setMin(0.01).setMax(1).setChange(c -> changeK()).build();
+		kjs = new SliderDouble.Builder().setTip(tipK).setMin(0.01).setMax(0.25).setChange(c -> changeK()).build();
 		String tipRa = "<html>The frequency factor for the red component</html>";
 		rajtf = new TextFieldDouble.Builder().setLabel("red frequency").setTip(tipRa).build();
 		rajs = new SliderDouble.Builder().setTip(tipRa).setChange(c -> changeRf()).build();
@@ -78,6 +83,8 @@ public class LogPeriodicFilter extends Filter {
 		String tipBa = "<html>The frequency factor for the blue component</html>";
 		bajtf = new TextFieldDouble.Builder().setLabel("blue frequency").setTip(tipBa).build();
 		bajs = new SliderDouble.Builder().setTip(tipBa).setChange(c -> changeBf()).build();
+
+		SubTitle off = new SubTitle("offset");
 		String tipD = "TODO";
 		djtf = new TextFieldDouble.Builder().setLabel("colour offset").setTip(tipD).build();
 		djs = new SliderDouble.Builder().setTip(tipD).setMax(Math.PI * 2).setChange(c -> changeD()).build();
@@ -90,13 +97,13 @@ public class LogPeriodicFilter extends Filter {
 		String tipBd = "<html>The offset for the red component</html>";
 		bdjtf = new TextFieldDouble.Builder().setLabel("blue offset").setTip(tipBd).build();
 		bdjs = new SliderDouble.Builder().setTip(tipBd).setMax(Math.PI * 2).setChange(c -> changeBd()).build();
-		items = new Item[] { rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs, p5, kjtf, kjs, p5, rajtf, rajs, p5, gajtf, gajs,
-				p5, bajtf, bajs, p5, djtf, djs, p5, rdjtf, rdjs, p5, gdjtf, gdjs, p5, bdjtf, bdjs };
+		items = new Item[] { amp, rjtf, rjs, gjtf, gjs, bjtf, bjs, p5, fre, kjtf, kjs, rajtf, rajs, gajtf, gajs, bajtf,
+				bajs, p5, off, djtf, djs, rdjtf, rdjs, gdjtf, gdjs, bdjtf, bdjs };
 
 		r = 1;
 		g = 1;
 		b = 1;
-		K = 0.5;
+		setK(0.25);
 		rf = 1;
 		gf = 1;
 		bf = 1;
@@ -117,7 +124,7 @@ public class LogPeriodicFilter extends Filter {
 		r = filter.r;
 		g = filter.g;
 		b = filter.b;
-		K = filter.K;
+		setK(filter.K);
 		rf = filter.rf;
 		gf = filter.gf;
 		bf = filter.bf;
@@ -136,7 +143,7 @@ public class LogPeriodicFilter extends Filter {
 	}
 
 	private int curve(double a, double f, double d, double v) {
-		return (int) (a * 127.5 * (1.0 - Math.cos(f * Math.log(Math.abs(v)) / K - d - D)));
+		return (int) (a * 127.5 * (1.0 - Math.cos(f * Math.log(Math.abs(v)) * k - d - D)));
 	}
 
 	@Override
@@ -144,7 +151,7 @@ public class LogPeriodicFilter extends Filter {
 		r = rjtf.saveAndGet();
 		g = gjtf.saveAndGet();
 		b = bjtf.saveAndGet();
-		K = kjtf.saveAndGet();
+		setK(kjtf.saveAndGet());
 		rf = rajtf.saveAndGet();
 		gf = gajtf.saveAndGet();
 		bf = bajtf.saveAndGet();
@@ -238,6 +245,11 @@ public class LogPeriodicFilter extends Filter {
 	private void changeBd() {
 		bdjtf.setData(bdjs.saveAndGet());
 		fractal.saveAndColour();
+	}
+
+	private void setK(double K) {
+		this.K = K;
+		k = 1 / K;
 	}
 
 	@Override

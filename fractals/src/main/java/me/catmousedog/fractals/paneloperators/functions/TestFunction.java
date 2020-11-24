@@ -1,8 +1,12 @@
 package me.catmousedog.fractals.paneloperators.functions;
 
 import me.catmousedog.fractals.data.FractalValue;
-import me.catmousedog.fractals.paneloperators.filters.BinaryFilter;
+import me.catmousedog.fractals.paneloperators.filters.BrightnessFilter;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.filters.HueFilter;
+import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
+import me.catmousedog.fractals.paneloperators.filters.LogPeriodicFilter;
+import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
@@ -14,7 +18,7 @@ public class TestFunction extends Function {
 		usesDerivative = true;
 	}
 
-	private double test = 1;
+	private double test = 1, T;
 
 	private TextFieldDouble testjtf;
 	private SliderDouble testjs;
@@ -23,31 +27,41 @@ public class TestFunction extends Function {
 		super(fractal);
 
 		testjtf = new TextFieldDouble.Builder().setLabel("test").build();
-		testjs = new SliderDouble.Builder().setMax(20).setChange(c -> changeTest()).build();
+		testjs = new SliderDouble.Builder().setMax(10).setChange(c -> changeTest()).build();
 
 		items = new Item[] { testjtf, testjs };
-		filters = new Filter[] { new BinaryFilter(fractal) };
+		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal),
+				new BrightnessFilter(fractal), new LogPeriodicFilter(fractal) };
 		filter = filters[0];
-		test = 1;
+		setTest(1);
 	}
 
 	private TestFunction(TestFunction function) {
 		super(function);
-		test = function.test;
+		setTest(function.test);
 	}
 
 	@Override
-	public Integer apply(FractalValue v) {
-		if (v.isConvergent()) {
-			return 0;
-		}
-		return 1;
+	public Double apply(FractalValue v) {
+		if (v.isConvergent())
+			return 0d;
+		double z = Math.sqrt(v.x * v.x + v.y * v.y);
+		double a = T * z * Math.log(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+		return f(a);
+	}
+
+//	private double n = 0.1;
+
+	private double f(double x) {
+		return Math.sqrt(x) / Math.sqrt(x + 1);
+//		return Math.pow(x, T) / Math.pow(x + 1, T);
+//		return 1 - Math.exp(-x);
 	}
 
 	@Override
 	public void save() {
 		super.save();
-		test = testjtf.saveAndGet();
+		setTest(testjtf.saveAndGet());
 	}
 
 	@Override
@@ -60,6 +74,11 @@ public class TestFunction extends Function {
 	@Override
 	public Function clone() {
 		return new TestFunction(this);
+	}
+
+	private void setTest(double test) {
+		this.test = test;
+		T = Math.exp(test);
 	}
 
 	private void changeTest() {

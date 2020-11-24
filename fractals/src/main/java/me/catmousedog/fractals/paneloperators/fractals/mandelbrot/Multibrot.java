@@ -11,6 +11,7 @@ import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
+import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
@@ -41,7 +42,7 @@ public class Multibrot extends Fractal {
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this) };
+				new LambertFunction(this), new TestFunction(this) };
 		function = functions[0];
 
 		a = 2;

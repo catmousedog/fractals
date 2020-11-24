@@ -2,19 +2,26 @@ package me.catmousedog.fractals.paneloperators.functions;
 
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
+import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
 import me.catmousedog.fractals.paneloperators.filters.LogPeriodicFilter;
+import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
-public class PotentialFunction extends Function {
+public class DistanceEstimator extends Function {
 
-	public PotentialFunction(Fractal fractal) {
+	{
+		usesDerivative = true;
+	}
+
+	public DistanceEstimator(Fractal fractal) {
 		super(fractal);
 		items = null;
-		filters = new Filter[] { new LogPeriodicFilter(fractal) };
+		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal),
+				new LogPeriodicFilter(fractal) };
 		filter = filters[0];
 	}
 
-	private PotentialFunction(PotentialFunction function) {
+	private DistanceEstimator(DistanceEstimator function) {
 		super(function);
 	}
 
@@ -22,22 +29,23 @@ public class PotentialFunction extends Function {
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		return (Math.log(v.x * v.x + v.y * v.y) / Math.pow(2, v.i));
+		double z = Math.sqrt(v.x * v.x + v.y * v.y);
+		return 1 - Math.exp(-z * Math.log(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy));
 	}
 
 	@Override
 	public Function clone() {
-		return new PotentialFunction(this);
+		return new DistanceEstimator(this);
 	}
 
 	@Override
 	public String informalName() {
-		return "Potential";
+		return "Distance Estimator";
 	}
 
 	@Override
 	public String fileName() {
-		return informalName();
+		return "DistanceEstimator";
 	}
 
 	@Override

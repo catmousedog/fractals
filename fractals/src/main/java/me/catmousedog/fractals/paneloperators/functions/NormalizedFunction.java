@@ -47,15 +47,14 @@ public class NormalizedFunction extends Function {
 
 	private NormalizedFunction(NormalizedFunction function) {
 		super(function);
-		offset = function.offset;
-		o = function.o;
+		setOffset(function.offset);
 	}
 
 	@Override
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		return v.i + o - Math.log(Math.log(v.x * v.x + v.y * v.y) / 2) / Math.log(2);
+		return (o + v.i * Math.log(2) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5));
 	}
 
 	@Override

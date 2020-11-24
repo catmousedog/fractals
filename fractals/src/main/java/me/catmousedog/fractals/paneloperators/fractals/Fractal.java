@@ -20,7 +20,6 @@ import me.catmousedog.fractals.ui.JPInterface;
 import me.catmousedog.fractals.ui.Mouse;
 import me.catmousedog.fractals.ui.components.Data;
 import me.catmousedog.fractals.ui.components.Item;
-import me.catmousedog.fractals.ui.components.concrete.CheckBox;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldInteger;
 

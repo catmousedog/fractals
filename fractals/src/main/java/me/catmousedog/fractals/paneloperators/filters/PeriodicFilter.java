@@ -1,11 +1,8 @@
 package me.catmousedog.fractals.paneloperators.filters;
 
-import java.awt.Font;
-
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.Button;
-import me.catmousedog.fractals.ui.components.concrete.Label;
 import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.SubTitle;
