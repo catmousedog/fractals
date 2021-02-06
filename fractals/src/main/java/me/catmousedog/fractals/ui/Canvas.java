@@ -135,8 +135,17 @@ public class Canvas extends JPanel {
 		});
 	}
 
+	/**
+	 * boolean to prevent calling multiple
+	 * {@link RenderWorker#runScheduledGenerator()} and
+	 * {@link RenderWorker#runScheduledPainter()}.
+	 */
 	private boolean allowRender = false;
 
+	/**
+	 * boolean to prevent calling multiple
+	 * {@link RenderWorker#runScheduledPainter()}.
+	 */
 	private boolean allowPainter = false;
 
 	/**

@@ -17,7 +17,7 @@ import me.catmousedog.fractals.ui.components.ActiveData;
 /**
  * Represents a {@link JSlider} that goes from a given minimum to a given
  * maximum through {@link Builder#setMin(int)} and {@link Builder#setMax(int)}.
- * The default extrema is [0, 100].
+ * The default extrema are [0, 100].
  */
 public class SliderInteger extends ActiveData<Integer> {
 

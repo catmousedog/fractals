@@ -24,7 +24,7 @@ public class TestFractal extends MouseFractal {
 		List<Item> l = new ArrayList<Item>(m + 1);
 		l.add(new SliderDouble.Builder().setLabel("C").setMin(-10).setMax(10).setChange(c -> changePole()).build());
 		for (int i = 0; i < m; i++) {
-			l.add(new SliderDouble.Builder().setLabel(Integer.toString(i)).setMin(-2).setMax(2)
+			l.add(new SliderDouble.Builder().setLabel(Integer.toString(i)).setMin(-3).setMax(3)
 					.setChange(c -> changePole()).build());
 		}
 		items = new Item[m + 1];
@@ -47,7 +47,7 @@ public class TestFractal extends MouseFractal {
 	}
 
 	// poles
-	private int m = 6;
+	private int m = 2;
 	private Complex[] t;
 	// powers
 	private double[] T;
@@ -59,16 +59,8 @@ public class TestFractal extends MouseFractal {
 		t = new Complex[m];
 		T = new double[m];
 
-		int n = m;
-		double a = 2;
-		for (int i = 0; i < n; i++) {
-//			t[i] = new Complex(a * Math.cos(2 * Math.PI * i / n), a * Math.sin(2 * Math.PI * i / n));
-			t[i] = new Complex(i - (m - 1) / 2.0, i - (m - 1) / 2.0);
-		}
-//		t[0] = new Complex(1, 0);
-//		t[1] = new Complex(0, -1);
-//		t[2] = new Complex(-1, 0);
-//		t[3] = new Complex(0, 1);
+		t[0] = new Complex(1, 0);
+		t[1] = new Complex(-1, 0);
 		for (int j = 0; j < m; j++) {
 			T[j] = 1;
 		}
@@ -108,7 +100,7 @@ public class TestFractal extends MouseFractal {
 	@Override
 	public void update() {
 		super.update();
-
+		
 		((SliderDouble) items[0]).setDataSafe(Math.log(C));
 		for (int i = 0; i < m; i++)
 			((SliderDouble) items[i + 1]).setDataSafe(T[i]);
@@ -174,7 +166,8 @@ public class TestFractal extends MouseFractal {
 
 		public void power(double a) {
 			double theta = Math.atan2(y, x);
-			double Z = Math.pow(x * x + y * y, a / 2);
+//			double Z = Math.pow(x * x + y * y, a / 2);
+			double Z = Math.exp(Math.log(x * x + y * y) * a / 2);
 			x = Math.cos(a * theta) * Z;
 			y = Math.sin(a * theta) * Z;
 		}
