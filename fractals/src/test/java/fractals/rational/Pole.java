@@ -1,4 +1,4 @@
-package fractals;
+package fractals.rational;
 
 public class Pole extends Complex {
 
@@ -11,8 +11,8 @@ public class Pole extends Complex {
 
 	public Complex poly(Complex q) {
 		Complex c = q.clone();
-		c.subtract(this);
-		c.power(m);
+		c = c.subtract(this);
+		c = c.power(m);
 		return c;
 	}
 

@@ -1,4 +1,4 @@
-package fractals;
+package fractals.rational;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,10 +37,6 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 	private double a = 0;
 
 	private final List<Pole> poles = new ArrayList<Pole>(20);
-
-	{
-
-	}
 
 	private final Field field;
 	private final RenderWorker renderer;

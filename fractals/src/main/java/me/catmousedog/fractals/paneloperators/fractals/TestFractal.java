@@ -23,11 +23,20 @@ public class TestFractal extends MouseFractal {
 
 		for (int i = 0; i < n; i++) {
 			double t = T * i / (double) (n + 1);
-			Complex z = Complex.exp(t);
-			r[i] = f(z);
+			r[i] = f(Complex.exp(t));
 		}
 
-		jx = 1.0;
+		// test limit
+		Complex q = new Complex(0.7, -0.22);
+		Complex omega = new Complex(1, 0);
+		for (int j = 0; j < n; j++) {
+			omega = omega.multiply(q.subtract(r[j]));
+		}
+		omega = omega.multiply(C);
+//		System.out.println(omega);
+		//
+
+		jx = a;
 		jy = 0.0;
 	}
 
@@ -39,18 +48,19 @@ public class TestFractal extends MouseFractal {
 	}
 
 	private double T = 2 * Math.PI;
-	private int n = 400;
+	private int n = 100;
+	private double a = 1;
+	private Complex C = new Complex(1, 0);
+
 	private Complex[] r = new Complex[n];
 
 	private Complex f(Complex z) {
-		return new Complex(Math.sin(z.x) * Math.cosh(z.y), Math.cos(z.x) * Math.sinh(z.y));
+		return new Complex(Math.sinh(z.x), Math.sinh(z.x + z.y));
 	}
 
 	@Override
 	public FractalValue get(double cx, double cy) {
 		Complex q = new Complex(cx, cy);
-
-		Complex C = new Complex(jx, jy);
 
 		for (int i = 0; i < iterations; i++) {
 
@@ -58,18 +68,13 @@ public class TestFractal extends MouseFractal {
 				return new FractalValue(q.x, q.y, 0, 0, i, iterations);
 			}
 
-//			for (int j = 0; j < n; j++) {
-//				if (q.subtract(r[j]).power(2.0).mag() < 0.001)
-//					return new FractalValue(0, 0, 0, 0, iterations, iterations);
-//			}
-
-			Complex temp = new Complex(1, 0);
+			Complex omega = new Complex(1, 0);
 			for (int j = 0; j < n; j++) {
-				temp = temp.multiply(q.subtract(r[j]));
+				omega = omega.multiply(q.subtract(r[j]));
 			}
-			temp = temp.multiply(C.power(-n));
-			temp = q.multiply(temp.add(new Complex(1, 0)));
-			q = temp;
+			omega = omega.multiply(C.power(-n));
+			omega = q.multiply(omega.add(new Complex(1, 0)));
+			q = omega.clone();
 		}
 		return new FractalValue(0, 0, 0, 0, iterations, iterations);
 	}
@@ -130,13 +135,18 @@ public class TestFractal extends MouseFractal {
 			double ty = Math.sin(a * theta) * Z;
 			return new Complex(tx, ty);
 		}
-		
+
 		public static Complex exp(double a) {
 			return new Complex(Math.cos(a), Math.sin(a));
 		}
 
 		public double mag() {
 			return x * x + y * y;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%f\t%f", x, y);
 		}
 
 		@Override

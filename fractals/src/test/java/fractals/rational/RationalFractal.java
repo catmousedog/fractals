@@ -1,4 +1,4 @@
-package fractals;
+package fractals.rational;
 
 import java.util.List;
 
@@ -46,10 +46,10 @@ public class RationalFractal extends Fractal {
 			// calculate R(q)
 			Complex P = new Complex(1, 0);
 			for (Pole p : poles) {
-				P.multiply(p.poly(q));
+				P = P.multiply(p.poly(q));
 			}
 
-			P.multiply(new Complex(C, 0));
+			P = P.multiply(new Complex(C, 0));
 			q = P;
 		}
 		return new FractalValue(0, 0, 0, 0, iterations, iterations);
