@@ -67,6 +67,10 @@ public class TestFilter extends Filter {
 
 	@Override
 	public int apply(Number v) {
+		double d = v.doubleValue();
+		if (d == 0) {
+			return Color.HSBtoRGB(0.15f, 1.0f, 1.0f);
+		}
 		return Color.HSBtoRGB(0f, 0f, v.floatValue());
 	}
 

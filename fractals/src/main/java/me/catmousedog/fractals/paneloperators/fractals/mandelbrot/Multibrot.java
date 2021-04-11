@@ -5,24 +5,23 @@ import org.jetbrains.annotations.NotNull;
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
+import me.catmousedog.fractals.paneloperators.functions.DistanceEstimator;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
-import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 public class Multibrot extends Fractal {
 
+	// field is Fractal.degree
+
 	private TextFieldDouble ajtf;
-
 	private SliderDouble ajs;
-
-	private double a;
 
 	private void changeA() {
 		ajtf.setData(ajs.saveAndGet());
@@ -42,15 +41,15 @@ public class Multibrot extends Fractal {
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this), new TestFunction(this) };
+				new LambertFunction(this), new DistanceEstimator(this) };
 		function = functions[0];
 
-		a = 2;
+		//fractal.degree = 2 by default
 	}
 
 	private Multibrot(Multibrot fractal) {
 		super(fractal);
-		a = fractal.a;
+		this.degree = fractal.degree;
 	}
 
 	@Override
@@ -70,15 +69,15 @@ public class Multibrot extends Fractal {
 				return new FractalValue(x, y, dx, dy, i, iterations);
 
 			if (usingDerivative) {
-				double D = a * Math.exp((a - 1) * Math.log(s) / 2);
-				double d = (a - 1) * Math.atan2(y, tx);
+				double D = degree * Math.exp((degree - 1) * Math.log(s) / 2);
+				double d = (degree - 1) * Math.atan2(y, tx);
 
 				dx = D * (tdx * Math.cos(d) - dy * Math.sin(d));
 				dy = D * (dy * Math.cos(d) + tdx * Math.sin(d));
 			}
 
-			double K = Math.pow(s, a / 2);
-			double k = a * Math.atan2(y, x);
+			double K = Math.pow(s, degree / 2);
+			double k = degree * Math.atan2(y, x);
 
 			x = K * Math.cos(k) + cx;
 			y = K * Math.sin(k) + cy;
@@ -88,14 +87,14 @@ public class Multibrot extends Fractal {
 
 	@Override
 	public void save() {
-		a = ajtf.saveAndGet();
+		degree = ajtf.saveAndGet();
 		super.save();
 	}
 
 	@Override
 	public void update() {
-		ajtf.setData(a);
-		ajs.setDataSafe(a);
+		ajtf.setData(degree);
+		ajs.setDataSafe(degree);
 		super.update();
 	}
 

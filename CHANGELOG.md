@@ -263,7 +263,7 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 - made **Settings** a singleton.
 - made fractals with mouse listeners able to zoom whilst dragging if mouse listener is disabled.
 - moved *properties* files to ordered hierarchy of files
- 
+
 ## [0.3] - Fractal Function Filter (fractal_functions)
 
 ### Added
@@ -309,14 +309,17 @@ The original idea of making the **JPInterface** a class to access and retrieve d
 ### Removed
 
 
-## [1.0]
+## [0.5]
 
 ### Added
 - offset to **PeriodicFilter**
 - Filters to all the compatible Functions
+- added degree field to **Fractal**
 
 ### Changed
 
+- use degree field in Normalized function
 
 
-### Removed
+
+#### Removed

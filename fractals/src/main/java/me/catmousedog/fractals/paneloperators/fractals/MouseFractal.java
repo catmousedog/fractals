@@ -54,7 +54,7 @@ public abstract class MouseFractal extends Fractal {
 	}
 
 	/**
-	 * Clones the <code>MouseFracatl</code>
+	 * Clones the <code>MouseFractal</code>
 	 * 
 	 * @param fractal
 	 */

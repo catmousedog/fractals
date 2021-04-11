@@ -33,6 +33,7 @@ public class Pixel {
 
 	@Override
 	public String toString() {
+		
 		return String.format("%f : %f = %s", tx, ty, Double.toString(v.doubleValue()));
 	}
 }

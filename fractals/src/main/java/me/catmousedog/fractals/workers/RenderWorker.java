@@ -325,4 +325,13 @@ public class RenderWorker {
 		return scheduled_workers && scheduledPainter != null;
 	}
 
+	/**
+	 * Enable or disable the scheduled workers feature.
+	 * 
+	 * @param scheduled_workers
+	 */
+	public void setScheduled_workers(boolean scheduled_workers) {
+		this.scheduled_workers = scheduled_workers;
+	}
+
 }
