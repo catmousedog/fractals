@@ -6,6 +6,7 @@ import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.fractals.MouseFractal;
 import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
+import me.catmousedog.fractals.paneloperators.functions.DistanceEstimator;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
@@ -21,7 +22,7 @@ public class InverseJulia extends MouseFractal {
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this) };
+				new LambertFunction(this), new DistanceEstimator(this) };
 		function = functions[0];
 	}
 

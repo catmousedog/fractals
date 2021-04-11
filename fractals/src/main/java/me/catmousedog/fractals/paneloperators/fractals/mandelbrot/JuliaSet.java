@@ -6,13 +6,13 @@ import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.paneloperators.fractals.MouseFractal;
 import me.catmousedog.fractals.paneloperators.functions.BinaryFunction;
+import me.catmousedog.fractals.paneloperators.functions.DistanceEstimator;
 import me.catmousedog.fractals.paneloperators.functions.EscapeAngleFunction;
 import me.catmousedog.fractals.paneloperators.functions.Function;
 import me.catmousedog.fractals.paneloperators.functions.IterativeFunction;
 import me.catmousedog.fractals.paneloperators.functions.LambertFunction;
 import me.catmousedog.fractals.paneloperators.functions.NormalizedFunction;
 import me.catmousedog.fractals.paneloperators.functions.PotentialFunction;
-import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 
 public class JuliaSet extends MouseFractal {
 
@@ -20,7 +20,7 @@ public class JuliaSet extends MouseFractal {
 		super();
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
-				new LambertFunction(this), new TestFunction(this) };
+				new LambertFunction(this), new DistanceEstimator(this) };
 		function = functions[0];
 	}
 

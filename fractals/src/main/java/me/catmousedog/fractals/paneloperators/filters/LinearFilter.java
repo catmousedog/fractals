@@ -7,11 +7,6 @@ import me.catmousedog.fractals.ui.components.concrete.Padding;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
 import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
-/**
- * A {@link Filter} designed to be used with iterative {@link Fractal}s. The
- * {@link Filter#apply(Number)} takes integers ranging from 0 to 255.<br>
- * The colour pattern is linear and known for its simplicity.
- */
 public class LinearFilter extends Filter {
 
 	private boolean inverted;
@@ -31,6 +26,11 @@ public class LinearFilter extends Filter {
 	private TextFieldDouble bjtf;
 	private SliderDouble bjs;
 
+	private double s, is;
+
+	private TextFieldDouble sjtf;
+	private SliderDouble sjs;
+
 	public LinearFilter(Fractal fractal) {
 		super(fractal);
 
@@ -46,12 +46,17 @@ public class LinearFilter extends Filter {
 		String bTip = "<html>The blue brightness factor</html>";
 		bjtf = new TextFieldDouble.Builder().setLabel("blue factor").setTip(bTip).build();
 		bjs = new SliderDouble.Builder().setTip(bTip).setChange(c -> changeB()).build();
-		items = new Item[] { invertjb, p5, rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs };
+		String sTip = "<html>The slope of the linear filter</html>";
+		sjtf = new TextFieldDouble.Builder().setLabel("slope").setTip(sTip).build();
+		sjs = new SliderDouble.Builder().setTip(sTip).setMin(0.1).setMax(10).setChange(c -> changeS()).build();
+		items = new Item[] { invertjb, p5, rjtf, rjs, p5, gjtf, gjs, p5, bjtf, bjs, p5, sjtf, sjs };
 
 		inverted = false;
 		r = 1;
 		b = 1;
 		g = 1;
+		s = 1;
+		is = 1 / s;
 	}
 
 	/**
@@ -66,14 +71,28 @@ public class LinearFilter extends Filter {
 		r = filter.r;
 		g = filter.g;
 		b = filter.b;
+		s = filter.s;
+		is = filter.is;
 	}
 
 	@Override
 	public int apply(Number V) {
 		double v = V.doubleValue();
 		if (inverted)
-			v = 1.0 - v;
-		return 0xff000000 | (int) (255 * v * r) << 16 | (int) (255 * v * g) << 8 | (int) (255 * v * b) << 0;
+			v = is - v;
+		int R = (int) (255 * v * r * s);
+		int G = (int) (255 * v * g * s);
+		int B = (int) (255 * v * b * s);
+
+		return 0xff000000 | bound(R) << 16 | bound(G) << 8 | bound(B) << 0;
+	}
+
+	private int bound(int x) {
+		if (x < 0)
+			return 0;
+		else if (x > 255)
+			return 255;
+		return x;
 	}
 
 	@Override
@@ -81,6 +100,8 @@ public class LinearFilter extends Filter {
 		r = rjtf.saveAndGet();
 		g = gjtf.saveAndGet();
 		b = bjtf.saveAndGet();
+		s = sjtf.saveAndGet();
+		is = 1 / s;
 	}
 
 	@Override
@@ -88,9 +109,11 @@ public class LinearFilter extends Filter {
 		rjs.setDataSafe(r);
 		gjs.setDataSafe(g);
 		bjs.setDataSafe(b);
+		sjs.setDataSafe(s);
 		rjtf.setData(r);
 		gjtf.setData(g);
 		bjtf.setData(b);
+		sjtf.setData(s);
 	}
 
 	@Override
@@ -115,6 +138,11 @@ public class LinearFilter extends Filter {
 
 	private void changeB() {
 		bjtf.setData(bjs.saveAndGet());
+		fractal.saveAndColour();
+	}
+
+	private void changeS() {
+		sjtf.setData(sjs.saveAndGet());
 		fractal.saveAndColour();
 	}
 
