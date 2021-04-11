@@ -73,6 +73,11 @@ public abstract class Fractal extends PanelOperator {
 	protected double bailout = 10000;
 
 	/**
+	 * The degree of the {@link Fractal}. Used in the some {@link Function}s.
+	 */
+	protected double degree = 2.0;
+
+	/**
 	 * from {@link Settings#isRender_on_changes()}
 	 */
 	protected boolean render_on_changes = false;
@@ -380,6 +385,10 @@ public abstract class Fractal extends PanelOperator {
 
 	public double getBailout() {
 		return bailout;
+	}
+	
+	public double getDegree() {
+		return degree;
 	}
 
 	/**

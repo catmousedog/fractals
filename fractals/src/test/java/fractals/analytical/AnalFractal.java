@@ -3,6 +3,7 @@ package fractals.analytical;
 import java.util.ArrayList;
 import java.util.List;
 
+import fractals.drawer.Region;
 import fractals.rational.Complex;
 import me.catmousedog.fractals.data.FractalValue;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
@@ -15,35 +16,35 @@ public class AnalFractal extends Fractal {
 		functions = new Function[] { new IterativeFunction(this) };
 		function = functions[0];
 
-		add(1, 0);
-		add(-0.1, 0.23);
-		
-		for (int i = 0; i < r.length; i++) {
-			r[i] = f(new Complex(2 * Math.PI * i / (double) N));
+		regions.add(new Coefficients());
+		regions.add(new Coefficients());
+		regions.add(new Coefficients());
+		regions.add(new Coefficients());
+		regions.add(new Coefficients());
+
+		for (Coefficients item : regions) {
+			item.update();
 		}
+	}
+
+	private void add(int i, double x, double y) {
+		regions.get(i).add(x, y);
 	}
 
 	private AnalFractal(AnalFractal fractal) {
 		super(fractal);
-		for (Complex c : fractal.coefficients) {
-			coefficients.add(c.clone());
-		}
-		for (int i = 0; i < r.length; i++) {
-			r[i] = f(new Complex(2 * Math.PI * i / (double) N));
+		for (Coefficients c : fractal.regions) {
+			regions.add(c);
 		}
 	}
 
 	{
-		iterations = 10;
+		iterations = 15;
 	}
-	
-	public static final int N = 100;
-	public static final Complex[] r = new Complex[N];
 
-	/**
-	 * coefficients of laurent series 1, 0, -1, ...
-	 */
-	public final List<Complex> coefficients = new ArrayList<Complex>();
+	public final List<Coefficients> regions = new ArrayList<Coefficients>();
+
+	Complex t = new Complex(0, 0);
 
 	@Override
 	public FractalValue get(double cx, double cy) {
@@ -55,27 +56,37 @@ public class AnalFractal extends Fractal {
 				return new FractalValue(q.x, q.y, 0, 0, i, iterations);
 			}
 
-			Complex omega = new Complex(1, 0);
-			for (int j = 0; j < N; j++) {
-				omega = omega.multiply(q.subtract(r[j]));
+			q = q.subtract(t);
+
+			// f(z)
+			Complex sum = new Complex(0, 0);
+			for (Coefficients region : regions) {
+				sum = sum.add(region.omega(q));
 			}
-			omega = omega.multiply(coefficients.get(0).power(-N));
-			omega = q.multiply(omega.add(new Complex(1, 0)));
-			q = omega.clone();
+			sum = sum.inverse();
+			sum = q.multiply(sum);
+			//
+//			
+//			Complex sum = new Complex(0, 0);
+//			for (int l = 0; l < regions.size(); l++) {
+//				Complex omega = new Complex(1, 0);
+//				for (int j = 0; j < Coefficients.N; j++) {
+//					omega = omega.multiply(q.subtract(regions.get(l).r[j]));
+//				}
+//				omega = omega.multiply(regions.get(l).get(0).power(-Coefficients.N));
+//				omega = omega.add(new Complex(1, 0));
+//				omega = omega.inverse();
+//
+//				sum = sum.add(omega);
+//			}
+//			sum = sum.inverse();
+//			sum = q.multiply(sum);
+			//
+			q = sum;
+
+			q = q.add(t);
 		}
 		return new FractalValue(0, 0, 0, 0, iterations, iterations);
-	}
-
-	private Complex f(Complex z) {
-		Complex sum = new Complex(0, 0);
-		for (int i = 0; i < coefficients.size(); i++) {
-			sum = sum.add(z.power(1 - i).multiply(coefficients.get(i)));
-		}
-		return sum;
-	}
-
-	public void add(double x, double y) {
-		coefficients.add(new Complex(x, y));
 	}
 
 	@Override

@@ -8,7 +8,7 @@ public class Complex {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public Complex(double a) {
 		this.x = Math.cos(a);
 		this.y = Math.sin(a);
@@ -39,6 +39,10 @@ public class Complex {
 		return new Complex(Math.cos(a * theta) * Z, Math.sin(a * theta) * Z);
 	}
 
+	public Complex inverse() {
+		return new Complex(1, 0).divide(this);
+	}
+
 	public double mag() {
 		return x * x + y * y;
 	}
@@ -47,7 +51,7 @@ public class Complex {
 	public Complex clone() {
 		return new Complex(x, y);
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("%f\t%f", x, y);

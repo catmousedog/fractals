@@ -7,6 +7,7 @@ import me.catmousedog.fractals.paneloperators.filters.HueFilter;
 import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
 import me.catmousedog.fractals.paneloperators.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
+import me.catmousedog.fractals.paneloperators.filters.TestFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
 import me.catmousedog.fractals.ui.components.concrete.SliderDouble;
@@ -18,7 +19,7 @@ public class TestFunction extends Function {
 		usesDerivative = true;
 	}
 
-	private double test = 1, T;
+	private double test;
 
 	private TextFieldDouble testjtf;
 	private SliderDouble testjs;
@@ -30,7 +31,7 @@ public class TestFunction extends Function {
 		testjs = new SliderDouble.Builder().setMax(10).setChange(c -> changeTest()).build();
 
 		items = new Item[] { testjtf, testjs };
-		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal),
+		filters = new Filter[] { new TestFilter(fractal), new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal),
 				new BrightnessFilter(fractal), new LogPeriodicFilter(fractal) };
 		filter = filters[0];
 		setTest(1);
@@ -45,17 +46,7 @@ public class TestFunction extends Function {
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		double z = Math.sqrt(v.x * v.x + v.y * v.y);
-		double a = T * z * Math.log(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
-		return f(a);
-	}
-
-//	private double n = 0.1;
-
-	private double f(double x) {
-		return Math.sqrt(x) / Math.sqrt(x + 1);
-//		return Math.pow(x, T) / Math.pow(x + 1, T);
-//		return 1 - Math.exp(-x);
+		return (Math.sinh(2.2) + v.i * Math.log(test) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5));
 	}
 
 	@Override
@@ -78,7 +69,6 @@ public class TestFunction extends Function {
 
 	private void setTest(double test) {
 		this.test = test;
-		T = Math.exp(test);
 	}
 
 	private void changeTest() {

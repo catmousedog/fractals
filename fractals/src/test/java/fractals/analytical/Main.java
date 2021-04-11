@@ -13,7 +13,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -30,11 +34,11 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 	private JFrame jf;
 	private JPanel jp;
 
-	private int w = 400, h = 400;
+	private int w = 600, h = 600;
 	private boolean allowRender = false;
 
-	private final Field field;
-	private final RenderWorker renderer;
+	private Field field;
+	private final RenderWorker renderer = RenderWorker.getInstance();
 	private final AnalFractal fractal = new AnalFractal();
 
 	public static void main(String[] args) {
@@ -45,41 +49,68 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 
 	public Main() {
 
+		File f = new File("C:\\Users\\Gebruiker\\Desktop\\CPP\\images\\name.png");
+		if (!f.exists())
+			return;
+
+		BufferedImage img;
+		try {
+			img = ImageIO.read(f);
+			System.out.println(img.getWidth());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+
 		jp = new JPanel() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				if (field != null)
-					g.drawImage(field.getImg(), 0, 0, null);
+				if (field != null) {
+					BufferedImage t = field.getImg();
 
-				//coefficients
-				LinearTransform tr = fractal.getTransform();
-				double c = Math.cos(tr.getrot());
-				double s = Math.sin(tr.getrot());
-				for (int i = 0; i < fractal.coefficients.size(); i++) {
-					Complex p = fractal.coefficients.get(i);
-					double ty = (c * (p.y - tr.getdy()) + s * (tr.getdx() - p.x)) / (s + c * c);
-					int y = (int) (ty / tr.getn() + tr.getOy());
-					double tx = (p.x + ty * s - tr.getdx());
-					int x = (int) (tx / tr.getm() + tr.getOx());
+					for (int x = 0; x < img.getWidth(); x++) {
+						for (int y = 0; y < img.getHeight(); y++) {
+							if (img.getRGB(x, y) == 0xff000000) {
+								t.setRGB(x, y, 0x80000000);
+							}
+						}
+					}
 
-					g.setColor(Color.getHSBColor((float) (Math.tanh(i) / 4.0), 1, 1));
-					g.fillOval(x - r, y - r, 2 * r, 2 * r);
+					g.drawImage(t, 0, 0, null);
 				}
-				//r
-				tr = fractal.getTransform();
-				c = Math.cos(tr.getrot());
-				s = Math.sin(tr.getrot());
-				for (int i = 0; i < AnalFractal.r.length; i++) {
-					Complex p = AnalFractal.r[i];
-					double ty = (c * (p.y - tr.getdy()) + s * (tr.getdx() - p.x)) / (s + c * c);
-					int y = (int) (ty / tr.getn() + tr.getOy());
-					double tx = (p.x + ty * s - tr.getdx());
-					int x = (int) (tx / tr.getm() + tr.getOx());
 
-					g.setColor(Color.BLUE);
-					g.drawOval(x - r, y - r, 2 * r, 2 * r);
+				// coefficients
+				for (int l = 0; l < fractal.regions.size(); l++) {
+					LinearTransform tr = fractal.getTransform();
+					double c = Math.cos(tr.getrot());
+					double s = Math.sin(tr.getrot());
+					for (int i = 0; i < fractal.regions.get(l).size(); i++) {
+						Complex p = fractal.regions.get(l).get(i);
+						double ty = (c * (p.y - tr.getdy()) + s * (tr.getdx() - p.x)) / (s + c * c);
+						int y = (int) (ty / tr.getn() + tr.getOy());
+						double tx = (p.x + ty * s - tr.getdx());
+						int x = (int) (tx / tr.getm() + tr.getOx());
+
+						g.setColor(Color.getHSBColor((float) (Math.tanh(i) / 4.0), 1, 1));
+						g.fillOval(x - r, y - r, 2 * r, 2 * r);
+					}
+					// r
+					tr = fractal.getTransform();
+					c = Math.cos(tr.getrot());
+					s = Math.sin(tr.getrot());
+					for (int i = 0; i < fractal.regions.get(l).r.length; i++) {
+						Complex p = fractal.regions.get(l).r[i];
+						double ty = (c * (p.y - tr.getdy()) + s * (tr.getdx() - p.x)) / (s + c * c);
+						int y = (int) (ty / tr.getn() + tr.getOy());
+						double tx = (p.x + ty * s - tr.getdx());
+						int x = (int) (tx / tr.getm() + tr.getOx());
+
+						g.setColor(Color.BLUE);
+						g.drawOval(x - r, y - r, 2 * r, 2 * r);
+					}
 				}
 
 				if (allowRender) {
@@ -100,8 +131,7 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 		jf.pack();
 
 		field = new Field(w, h);
-		renderer = RenderWorker.getInstance();
-		renderer.setScheduled_workers(false);
+		renderer.setScheduled_workers(true);
 		fractal.getTransform().setOrigin(w / 2, h / 2);
 		fractal.getTransform().zoom(1);
 
@@ -114,6 +144,9 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 	}
 
 	private void update() {
+		for (Coefficients e : fractal.regions) {
+			e.update();
+		}
 		renderer.newRender(field, fractal.clone(), () -> {
 			allowRender = true;
 			jp.repaint();
@@ -128,12 +161,14 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 	private Complex getNearest(double x, double y) {
 		Complex nearest = null;
 		double d = Double.MAX_VALUE;
-		for (Complex p : fractal.coefficients) {
-			Complex ref = new Complex(x - p.x, y - p.y);
-			double a = ref.mag();
-			if (a <= d) {
-				nearest = p;
-				d = a;
+		for (int l = 0; l < fractal.regions.size(); l++) {
+			for (Complex p : fractal.regions.get(l)) {
+				Complex ref = new Complex(x - p.x, y - p.y);
+				double a = ref.mag();
+				if (a <= d) {
+					nearest = p;
+					d = a;
+				}
 			}
 		}
 		return nearest;
@@ -141,18 +176,55 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			Point p = MouseInfo.getPointerInfo().getLocation();
-			SwingUtilities.convertPointFromScreen(p, jp);
-			double[] c = fractal.getTransform().apply(p.x, p.y);
-			fractal.add(c[0], c[1]);
-			update();
+		if (e.getKeyCode() == KeyEvent.VK_1) {
+			if (fractal.regions.size() >= 1) {
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, jp);
+				double[] c = fractal.getTransform().apply(p.x, p.y);
+				fractal.regions.get(0).add(c[0], c[1]);
+				update();
+			}
+
+		} else if (e.getKeyCode() == KeyEvent.VK_2) {
+			if (fractal.regions.size() >= 2) {
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, jp);
+				double[] c = fractal.getTransform().apply(p.x, p.y);
+				fractal.regions.get(1).add(c[0], c[1]);
+				update();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_3) {
+			if (fractal.regions.size() >= 3) {
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, jp);
+				double[] c = fractal.getTransform().apply(p.x, p.y);
+				fractal.regions.get(2).add(c[0], c[1]);
+				update();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_4) {
+			if (fractal.regions.size() >= 4) {
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, jp);
+				double[] c = fractal.getTransform().apply(p.x, p.y);
+				fractal.regions.get(3).add(c[0], c[1]);
+				update();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_5) {
+			if (fractal.regions.size() >= 5) {
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, jp);
+				double[] c = fractal.getTransform().apply(p.x, p.y);
+				fractal.regions.get(4).add(c[0], c[1]);
+				update();
+			}
 		} else if (e.getKeyCode() == KeyEvent.VK_G) {
 			update();
 		} else if (e.getKeyCode() == KeyEvent.VK_S) {
-			System.out.println("save");
-			for (Complex l : fractal.coefficients) {
-				System.out.printf("%f\t%f\n", l.x, l.y);
+			System.out.println();
+			for (int l = 0; l < fractal.regions.size(); l++) {
+				for (Complex p : fractal.regions.get(l)) {
+					System.out.printf("add(%d, %f, %f);\n", l, p.x, p.y);
+				}
 			}
 		}
 	}
@@ -184,7 +256,12 @@ public class Main implements MouseMotionListener, MouseListener, MouseWheelListe
 			double[] c = fractal.getTransform().apply(e.getX(), e.getY());
 			Complex nearest = getNearest(c[0], c[1]);
 			if (nearest != null) {
-				fractal.coefficients.remove(nearest);
+				for (int l = 0; l < fractal.regions.size(); l++) {
+					if (fractal.regions.get(l).remove(nearest)) {
+						update();
+						return;
+					}
+				}
 				update();
 			}
 		}
