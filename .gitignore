@@ -7,6 +7,9 @@ fractals/logs
 fractals/fractals
 fractals/locations
 
+#test files
+fractals/src/test
+
 # Compiled class file
 *.class
 

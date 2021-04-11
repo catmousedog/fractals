@@ -5,6 +5,7 @@ import me.catmousedog.fractals.paneloperators.filters.BrightnessFilter;
 import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.filters.HueFilter;
 import me.catmousedog.fractals.paneloperators.filters.LinearFilter;
+import me.catmousedog.fractals.paneloperators.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.paneloperators.filters.PeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 import me.catmousedog.fractals.ui.components.Item;
@@ -41,7 +42,7 @@ public class LambertFunction extends Function {
 		items = new Item[] { ajtf, ajs, p5, hjtf, hjs };
 
 		filters = new Filter[] { new LinearFilter(fractal), new BrightnessFilter(fractal), new PeriodicFilter(fractal),
-				new HueFilter(fractal) };
+				new HueFilter(fractal), new LogPeriodicFilter(fractal) };
 		filter = filters[0];
 
 		setA(Math.PI);
@@ -78,11 +79,6 @@ public class LambertFunction extends Function {
 		this.a = a;
 		ax = Math.cos(a);
 		ay = Math.sin(a);
-
-//		double t = Math.sqrt(ax * ax + ay * ay + az * az);
-//		ax /= t;
-//		ay /= t;
-//		az /= t;
 	}
 
 	@Override

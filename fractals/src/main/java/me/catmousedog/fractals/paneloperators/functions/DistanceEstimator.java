@@ -18,7 +18,7 @@ public class DistanceEstimator extends Function {
 		items = null;
 		filters = new Filter[] { new LinearFilter(fractal), new PeriodicFilter(fractal),
 				new LogPeriodicFilter(fractal) };
-		filter = filters[0];
+		filter = filters[2];
 	}
 
 	private DistanceEstimator(DistanceEstimator function) {

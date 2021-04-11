@@ -70,7 +70,12 @@ public abstract class Fractal extends PanelOperator {
 	 * The bailout radius, if the fractal value goes beyond this value the iteration
 	 * is stopped. Each {@link Fractal} might use this differently.
 	 */
-	protected double bailout = 100;
+	protected double bailout = 10000;
+
+	/**
+	 * The degree of the {@link Fractal}. Used in the some {@link Function}s.
+	 */
+	protected double degree = 2.0;
 
 	/**
 	 * from {@link Settings#isRender_on_changes()}
@@ -380,6 +385,10 @@ public abstract class Fractal extends PanelOperator {
 
 	public double getBailout() {
 		return bailout;
+	}
+	
+	public double getDegree() {
+		return degree;
 	}
 
 	/**
