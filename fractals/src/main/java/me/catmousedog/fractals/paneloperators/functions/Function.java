@@ -23,6 +23,11 @@ public abstract class Function extends PanelOperator {
 	protected boolean usesDerivative = false;
 
 	/**
+	 * {@link Fractal#getDegree()}
+	 */
+	protected double degree;
+	
+	/**
 	 * The <code>Fractal</code> to which this <code>Function</code> belongs to.
 	 * <p>
 	 * Null for clones.
@@ -62,6 +67,7 @@ public abstract class Function extends PanelOperator {
 		super();
 		logger.log(Level.FINER, "Function " + className + " init");
 		this.fractal = fractal;
+		this.degree = fractal.getDegree();
 	}
 
 	/**
@@ -82,6 +88,7 @@ public abstract class Function extends PanelOperator {
 		logger.log(Level.FINEST, "Function " + className + " clone");
 		filters = null;
 		filter = function.getFilter().clone();
+		degree = function.degree;
 	}
 
 	@NotNull
@@ -96,6 +103,7 @@ public abstract class Function extends PanelOperator {
 	 */
 	@Override
 	public void save() {
+		degree = fractal.getDegree();
 		filter.save();
 	}
 

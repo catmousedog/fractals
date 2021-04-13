@@ -15,8 +15,6 @@ public class NormalizedFunction extends Function {
 	private TextFieldDouble offsetjtf;
 	private SliderDouble offsetjs;
 
-	private double degree;
-
 	public NormalizedFunction(Fractal fractal) {
 		super(fractal);
 
@@ -31,13 +29,11 @@ public class NormalizedFunction extends Function {
 		filter = filters[0];
 
 		setOffset(1);
-		this.degree = fractal.getDegree();
 	}
 
 	private NormalizedFunction(NormalizedFunction function) {
 		super(function);
 		setOffset(function.offset);
-		this.degree = function.degree;
 	}
 
 	@Override
@@ -45,7 +41,6 @@ public class NormalizedFunction extends Function {
 		super.save();
 		offset = offsetjtf.saveAndGet();
 		setOffset(offset);
-		this.degree = fractal.getDegree();
 	}
 
 	@Override

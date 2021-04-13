@@ -30,26 +30,20 @@ public class Multibrot extends Fractal {
 
 	public Multibrot() {
 		super();
-
+		
 		String tipA = "TODO";
-
 		ajtf = new TextFieldDouble.Builder().setLabel("exponent").setTip(tipA).build();
-
 		ajs = new SliderDouble.Builder().setMin(-5).setMax(5).setChange(c -> changeA()).setTip(tipA).build();
-
 		items = new Item[] { ajtf, ajs };
 
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
 				new LambertFunction(this), new DistanceEstimator(this) };
 		function = functions[0];
-
-		//fractal.degree = 2 by default
 	}
 
 	private Multibrot(Multibrot fractal) {
 		super(fractal);
-		this.degree = fractal.degree;
 	}
 
 	@Override

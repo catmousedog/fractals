@@ -5,16 +5,20 @@ import me.catmousedog.fractals.paneloperators.filters.Filter;
 import me.catmousedog.fractals.paneloperators.filters.LogPeriodicFilter;
 import me.catmousedog.fractals.paneloperators.fractals.Fractal;
 
-public class PotentialFunction extends Function {
+public class GradientFunction extends Function {
 
-	public PotentialFunction(Fractal fractal) {
+	{
+		usesDerivative = true;
+	}
+	
+	public GradientFunction(Fractal fractal) {
 		super(fractal);
 		items = null;
 		filters = new Filter[] { new LogPeriodicFilter(fractal) };
 		filter = filters[0];
 	}
 
-	private PotentialFunction(PotentialFunction function) {
+	private GradientFunction(GradientFunction function) {
 		super(function);
 	}
 
@@ -27,12 +31,12 @@ public class PotentialFunction extends Function {
 
 	@Override
 	public Function clone() {
-		return new PotentialFunction(this);
+		return new GradientFunction(this);
 	}
 
 	@Override
 	public String informalName() {
-		return "Potential";
+		return "Gradient";
 	}
 
 	@Override
@@ -42,6 +46,6 @@ public class PotentialFunction extends Function {
 
 	@Override
 	public String getTip() {
-		return "TODO";
+		return "The gradient of the potential.";
 	}
 }
