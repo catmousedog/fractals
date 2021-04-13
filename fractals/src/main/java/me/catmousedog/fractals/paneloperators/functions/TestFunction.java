@@ -31,28 +31,42 @@ public class TestFunction extends Function {
 		testjs = new SliderDouble.Builder().setMax(10).setChange(c -> changeTest()).build();
 
 		items = new Item[] { testjtf, testjs };
-		filters = new Filter[] { new TestFilter(fractal), new LinearFilter(fractal), new PeriodicFilter(fractal), new HueFilter(fractal),
-				new BrightnessFilter(fractal), new LogPeriodicFilter(fractal) };
-		filter = filters[0];
+		filters = new Filter[] { new TestFilter(fractal), new LinearFilter(fractal), new PeriodicFilter(fractal),
+				new HueFilter(fractal), new BrightnessFilter(fractal), new LogPeriodicFilter(fractal) };
+		filter = filters[5];
 		setTest(1);
+		this.degree = fractal.getDegree();
 	}
 
 	private TestFunction(TestFunction function) {
 		super(function);
 		setTest(function.test);
+		this.degree = function.degree;
 	}
+
+	private double degree;
 
 	@Override
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		return (Math.sinh(2.2) + v.i * Math.log(test) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5));
+		
+		// POT
+		return 0.5 * Math.log(v.x * v.x + v.y * v.y) * Math.pow(degree, -v.i); //bands
+
+		// GRAD POT
+//		return Math.sqrt(v.dx * v.dx + v.dy * v.dy) / Math.sqrt(v.x * v.x + v.y * v.y) * Math.pow(degree, -v.i);
+
+		// DE = POT / GRAD POT
+//		double z = Math.sqrt(v.x * v.x + v.y * v.y);
+//		return Math.log(z) * z / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
 	}
 
 	@Override
 	public void save() {
 		super.save();
 		setTest(testjtf.saveAndGet());
+		this.degree = fractal.getDegree();
 	}
 
 	@Override

@@ -182,6 +182,7 @@ public abstract class Fractal extends PanelOperator {
 		bailout = fractal.bailout;
 		render_on_changes = fractal.render_on_changes;
 		usingDerivative = fractal.usingDerivative;
+		degree = fractal.degree;
 	}
 
 	/**

@@ -11,11 +11,11 @@ public class PotentialFunction extends Function {
 
 	public PotentialFunction(Fractal fractal) {
 		super(fractal);
-		items = null;
+		
+		this.degree = fractal.getDegree();
+		
 		filters = new Filter[] { new LogPeriodicFilter(fractal) };
 		filter = filters[0];
-
-		this.degree = fractal.getDegree();
 	}
 
 	private PotentialFunction(PotentialFunction function) {
@@ -27,7 +27,13 @@ public class PotentialFunction extends Function {
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		return (0.5 * Math.log(v.x * v.x + v.y * v.y) / Math.pow(degree, v.i));
+		return 0.5 * Math.log(v.x * v.x + v.y * v.y) * Math.pow(degree, -v.i);
+	}
+	
+	@Override
+	public void save() {
+		super.save();
+		degree = fractal.getDegree();
 	}
 
 	@Override

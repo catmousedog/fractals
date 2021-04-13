@@ -85,6 +85,7 @@ public class LinearFilter extends Filter {
 		int B = (int) (255 * v * b * s);
 
 		return 0xff000000 | bound(R) << 16 | bound(G) << 8 | bound(B) << 0;
+//		return 0xff000000 | (int) (255 * v * r) << 16 | (int) (255 * v * g) << 8 | (int) (255 * v * b) << 0;
 	}
 
 	private int bound(int x) {
