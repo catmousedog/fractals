@@ -15,9 +15,7 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 public class TestFunction extends Function {
 
-	{
-		usesDerivative = true;
-	}
+	
 
 	private double test;
 
@@ -27,15 +25,17 @@ public class TestFunction extends Function {
 	public TestFunction(Fractal fractal) {
 		super(fractal);
 
+		this.degree = fractal.getDegree();
+
 		testjtf = new TextFieldDouble.Builder().setLabel("test").build();
 		testjs = new SliderDouble.Builder().setMax(10).setChange(c -> changeTest()).build();
-
 		items = new Item[] { testjtf, testjs };
+
 		filters = new Filter[] { new TestFilter(fractal), new LinearFilter(fractal), new PeriodicFilter(fractal),
 				new HueFilter(fractal), new BrightnessFilter(fractal), new LogPeriodicFilter(fractal) };
 		filter = filters[5];
+
 		setTest(1);
-		this.degree = fractal.getDegree();
 	}
 
 	private TestFunction(TestFunction function) {
@@ -46,20 +46,32 @@ public class TestFunction extends Function {
 
 	private double degree;
 
+	{
+		usesDerivative = false;
+	}
+	
 	@Override
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
 			return 0d;
-		
+
+		// REAL ITER
+//		double z = v.x * v.x + v.y * v.y;
+//		double i = 1 + v.i + (Math.log(Math.log(b)) - Math.log(0.5 * Math.log(z))) / Math.log(degree);
+//		return i;
+
 		// POT
-		return 0.5 * Math.log(v.x * v.x + v.y * v.y) * Math.pow(degree, -v.i); //bands
+//		return 0.5 * Math.log(v.x * v.x + v.y * v.y) * Math.pow(test, -v.i); //bands
+
+		// NORM
+		return 1 + v.i * Math.log(test) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5);
 
 		// GRAD POT
-//		return Math.sqrt(v.dx * v.dx + v.dy * v.dy) / Math.sqrt(v.x * v.x + v.y * v.y) * Math.pow(degree, -v.i);
+//		return Math.sqrt(v.dx * v.dx + v.dy * v.dy) / (Math.sqrt(v.x * v.x + v.y * v.y) * Math.pow(degree, v.i));
 
 		// DE = POT / GRAD POT
 //		double z = Math.sqrt(v.x * v.x + v.y * v.y);
-//		return Math.log(z) * z / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+//		return 0.5 * Math.log(z) * Math.sqrt(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
 	}
 
 	@Override
