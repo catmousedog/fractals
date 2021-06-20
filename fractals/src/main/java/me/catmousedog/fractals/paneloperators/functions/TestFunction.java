@@ -15,8 +15,6 @@ import me.catmousedog.fractals.ui.components.concrete.TextFieldDouble;
 
 public class TestFunction extends Function {
 
-	
-
 	private double test;
 
 	private TextFieldDouble testjtf;
@@ -35,7 +33,7 @@ public class TestFunction extends Function {
 				new HueFilter(fractal), new BrightnessFilter(fractal), new LogPeriodicFilter(fractal) };
 		filter = filters[5];
 
-		setTest(1);
+		setTest(5);
 	}
 
 	private TestFunction(TestFunction function) {
@@ -49,7 +47,7 @@ public class TestFunction extends Function {
 	{
 		usesDerivative = false;
 	}
-	
+
 	@Override
 	public Double apply(FractalValue v) {
 		if (v.isConvergent())
@@ -67,11 +65,18 @@ public class TestFunction extends Function {
 		return 1 + v.i * Math.log(test) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5);
 
 		// GRAD POT
-//		return Math.sqrt(v.dx * v.dx + v.dy * v.dy) / (Math.sqrt(v.x * v.x + v.y * v.y) * Math.pow(degree, v.i));
+//		return Math.sqrt(v.dx * v.dx + v.dy * v.dy) / (Math.sqrt(v.x * v.x + v.y * v.y) * Math.pow(test, v.i));
 
 		// DE = POT / GRAD POT
 //		double z = Math.sqrt(v.x * v.x + v.y * v.y);
-//		return 0.5 * Math.log(z) * Math.sqrt(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+//		return Math.log(z) * z / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+		
+//		double z = Math.sqrt(v.x * v.x + v.y * v.y);
+//		return 1 - Math.exp(-z * Math.log(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy));
+
+		// DE bandless attempt
+//		double z = Math.sqrt(v.x * v.x + v.y * v.y);
+//		return Math.log(z) * Math.sqrt(z) * Math.pow(test, v.i) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
 	}
 
 	@Override

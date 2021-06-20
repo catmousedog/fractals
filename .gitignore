@@ -17,6 +17,7 @@ fractals/src/test
 fractals/target/
 
 # images
+fractals/images
 *.jpg
 *.png
 
