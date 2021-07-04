@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +28,7 @@ import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 public class TestFractal extends MouseFractal {
 
 	private final int o = 1;
-	
+
 	private List<Region> origins = new LinkedList<Region>();
 
 	private List<Region> regions = new LinkedList<Region>();
@@ -33,10 +37,14 @@ public class TestFractal extends MouseFractal {
 		super();
 
 		// N, s, C in file
+		int T = 19;
+		Integer[] N = new Integer[T];
 		Path par = Path.of("C:\\Users\\Gebruiker\\source\\repos\\FractalDrawer\\FractalDrawer\\data\\parameters.txt");
 		try (BufferedReader parameters = Files.newBufferedReader(par)) {
-			for (int i = 0; i <= 0; i++) {
-				double C = Double.parseDouble(parameters.readLine().split(",")[2]);
+			for (int i = 0; i < T; i++) {
+				String[] p = parameters.readLine().split(",");
+				N[i] = Integer.parseInt(p[0]);
+				double C = Double.parseDouble(p[2]);
 				Region region = new Region(C);
 
 				Path segment = Path
@@ -44,19 +52,23 @@ public class TestFractal extends MouseFractal {
 								+ Integer.toString(i) + ".txt");
 				try (BufferedReader reader = Files.newBufferedReader(segment)) {
 					String line;
-					while ((line = reader.readLine()) != null) {
+					for (int j = 0; (line = reader.readLine()) != null && j < N[i]; j++) {
 						String[] l = line.split(",");
-						region.leja.add(new Complex(Double.parseDouble(l[0]), Double.parseDouble(l[1])));
+						region.leja.add(new Complex(Double.parseDouble(l[0]), -Double.parseDouble(l[1])));
 					}
 				}
 				regions.add(region);
 				if (i < o)
 					origins.add(region);
 			}
+			// calculate degree
+			List<Integer> degreeList = Arrays.asList(N);
+			Collections.sort(degreeList);
+			degree = 1 + degreeList.get(0); // 1 + d0
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 //		degree = regions.get(regions.size() - 1).N + 2;
 //		degree = 26;
 
