@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,25 +25,21 @@ import me.catmousedog.fractals.paneloperators.functions.TestFunction;
 
 public class TestFractal extends MouseFractal {
 
-	private final int o = 1;
-
-	private List<Region> origins = new LinkedList<Region>();
-
-	private List<Region> regions = new LinkedList<Region>();
+	private List<Region> leja = new LinkedList<Region>();
 
 	public TestFractal() {
 		super();
 
 		// N, s, C in file
-		int T = 19;
+		int T = 2;
 		Integer[] N = new Integer[T];
 		Path par = Path.of("C:\\Users\\Gebruiker\\source\\repos\\FractalDrawer\\FractalDrawer\\data\\parameters.txt");
 		try (BufferedReader parameters = Files.newBufferedReader(par)) {
 			for (int i = 0; i < T; i++) {
 				String[] p = parameters.readLine().split(",");
 				N[i] = Integer.parseInt(p[0]);
-				double C = Double.parseDouble(p[2]);
-				Region region = new Region(C);
+				double s = Double.parseDouble(p[1]);
+				Region region = new Region(s);
 
 				Path segment = Path
 						.of("C:\\Users\\Gebruiker\\source\\repos\\FractalDrawer\\FractalDrawer\\data\\leja\\segment_"
@@ -54,12 +48,11 @@ public class TestFractal extends MouseFractal {
 					String line;
 					for (int j = 0; (line = reader.readLine()) != null && j < N[i]; j++) {
 						String[] l = line.split(",");
-						region.leja.add(new Complex(Double.parseDouble(l[0]), -Double.parseDouble(l[1])));
+						region.points.add(new Complex(Double.parseDouble(l[0]), -Double.parseDouble(l[1])));
 					}
 				}
-				regions.add(region);
-				if (i < o)
-					origins.add(region);
+				region.setC();
+				leja.add(region);
 			}
 			// calculate degree
 			List<Integer> degreeList = Arrays.asList(N);
@@ -69,9 +62,6 @@ public class TestFractal extends MouseFractal {
 			e.printStackTrace();
 		}
 
-//		degree = regions.get(regions.size() - 1).N + 2;
-//		degree = 26;
-
 		functions = new Function[] { new IterativeFunction(this), new NormalizedFunction(this),
 				new PotentialFunction(this), new EscapeAngleFunction(this), new BinaryFunction(this),
 				new LambertFunction(this), new TestFunction(this), new DistanceEstimator(this) };
@@ -80,8 +70,7 @@ public class TestFractal extends MouseFractal {
 
 	private TestFractal(TestFractal fractal) {
 		super(fractal);
-		origins = fractal.origins;
-		regions = fractal.regions;
+		leja = fractal.leja;
 	}
 
 	@Override
@@ -96,22 +85,22 @@ public class TestFractal extends MouseFractal {
 			}
 
 			// f(z)
-			Complex S = new Complex(0, 0);
-//			Complex dOmega = new Complex(0, 0); // W' = 0
-			for (Region region : regions) {
-				Complex iomega = region.omega(q).inverse(); // w^-1
-				S = S.add(iomega); // S += w^-1
-//				if (usingDerivative) {
-//					dOmega = dOmega.add(region.dOmega(q).multiply(iomega1.square())); // W' += (w+1)' / (w+1)^2
-//				}
+			Complex O = new Complex(0, 0); // Omega // W = 1/Omega
+			Complex dW = new Complex(0, 0); // W' = (1/Omega)'
+			for (Region region : leja) {
+				Complex iomega = region.omega(q).inverse(); // o^-1
+				O = O.add(iomega); // O += o^-1
+				if (usingDerivative) {
+					dW = dW.add(region.domega(q).multiply(iomega.square())); // W' += o'o^-2
+				}
 			}
-			S = S.inverse(); // W = S^-1
+			O = O.inverse(); // O = O^-1
 
-//			if (usingDerivative) {
-//				dq = dq.multiply(Omega.add(q.multiply(Omega.square()).multiply(dOmega))); // z' = z'(W + z * W^2 * W')
-//			}
+			if (usingDerivative) {
+				dq = dq.multiply(O.add(q.multiply(dW).multiply(O.square()))); // z' = z'O+zO' = z'(O + zW'O²)
+			}
 
-			q = q.multiply(S); // z = z * W
+			q = q.multiply(O); // z = zO
 			//
 		}
 		return new FractalValue(q.x, q.y, dq.x, dq.y, iterations, iterations);
@@ -137,39 +126,4 @@ public class TestFractal extends MouseFractal {
 		return new TestFractal(this);
 	}
 
-	private static class Region {
-
-		public final List<Complex> leja = new LinkedList<Complex>();
-
-		public final double C;
-
-		public Region(double C) {
-			this.C = C;
-		}
-
-		// w
-		private Complex omega(Complex q) {
-			Complex omega = new Complex(1, 0);
-			for (Complex r : leja) {
-				omega = omega.multiply(q.subtract(r));
-			}
-			return omega.multiply(C);
-		}
-
-		// (w+1)' = w'
-		private Complex dOmega(Complex q) {
-			Complex dOmega = new Complex(0, 0); // w' = 0
-
-			for (int i = 0; i < leja.size(); i++) {
-				Complex term = new Complex(1, 0); // term = 1
-				for (int j = 0; j < leja.size(); j++) {
-					if (i != j)
-						term = term.multiply(q.subtract(leja.get(j))); // term *= (z-r)
-				}
-				dOmega = dOmega.add(term); // w' += term
-			}
-			dOmega = dOmega.multiply(C); // w' *= C
-			return dOmega;
-		}
-	}
 }

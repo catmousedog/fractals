@@ -62,21 +62,21 @@ public class TestFunction extends Function {
 //		return 0.5 * Math.log(v.x * v.x + v.y * v.y) * Math.pow(test, -v.i); //bands
 
 		// NORM
-		return 1 + v.i * Math.log(test) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5);
+//		return 1 + v.i * Math.log(test) - Math.log(Math.log(v.x * v.x + v.y * v.y) * 0.5);
 
 		// GRAD POT
 //		return Math.sqrt(v.dx * v.dx + v.dy * v.dy) / (Math.sqrt(v.x * v.x + v.y * v.y) * Math.pow(test, v.i));
 
 		// DE = POT / GRAD POT
-//		double z = Math.sqrt(v.x * v.x + v.y * v.y);
-//		return Math.log(z) * z / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
-		
+		double z = Math.sqrt(v.x * v.x + v.y * v.y);
+		return Math.log(z) * z / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+
 //		double z = Math.sqrt(v.x * v.x + v.y * v.y);
 //		return 1 - Math.exp(-z * Math.log(z) / Math.sqrt(v.dx * v.dx + v.dy * v.dy));
 
 		// DE bandless attempt
 //		double z = Math.sqrt(v.x * v.x + v.y * v.y);
-//		return Math.log(z) * Math.sqrt(z) * Math.pow(test, v.i) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+//		return Math.log(z) * z * Math.pow(test, v.i) / Math.sqrt(v.dx * v.dx + v.dy * v.dy);
 	}
 
 	@Override
